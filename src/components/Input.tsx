@@ -20,7 +20,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         <div
-          className="relative h-[56px] rounded-[12px] transition-all duration-300 flex items-center overflow-hidden px-4 gap-3"
+          className="relative h-[56px] rounded-[12px] transition-all duration-300 flex items-center overflow-hidden px-6 gap-4"
           style={{
             background: 'transparent',
             border: `1px solid ${
@@ -50,9 +50,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               className
             )}
             placeholder={label}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
             {...props}
+            onFocus={(e) => {
+              setFocused(true)
+              props.onFocus?.(e)
+            }}
+            onBlur={(e) => {
+              setFocused(false)
+              props.onBlur?.(e)
+            }}
           />
 
           {isPassword && (

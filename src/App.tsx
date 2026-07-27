@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import type { Transition } from 'framer-motion'
 import LoginPage from '@/pages/LoginPage'
 import SignupPage from '@/pages/SignupPage'
 
@@ -9,7 +10,7 @@ const pageVariants = {
   exit: { opacity: 0, filter: 'blur(4px)', scale: 1.01 },
 }
 
-const pageTransition = {
+const pageTransition: Transition = {
   duration: 0.35,
   ease: [0.22, 1, 0.36, 1],
 }

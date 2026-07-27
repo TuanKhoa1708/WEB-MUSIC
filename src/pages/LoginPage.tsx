@@ -4,13 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 import { Mail, Lock } from 'lucide-react'
 
 import { HeroPanel } from '@/components/HeroPanel'
 import { Logo } from '@/components/Logo'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
-import { GoogleIcon, AppleIcon, SpotifyIcon } from '@/components/SocialIcons'
+
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -20,7 +21,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -28,7 +29,7 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
@@ -85,8 +86,8 @@ export default function LoginPage() {
 
         {/* ── Auth Card ── */}
         <motion.div
-          className="relative w-full mx-auto p-8 sm:p-10 lg:p-12 rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/[0.05]"
-          style={{ maxWidth: 520, background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(24px)' }}
+          className="relative w-full mx-auto rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/[0.05]"
+          style={{ maxWidth: 580, padding: '48px 56px', background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(24px)' }}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -118,7 +119,7 @@ export default function LoginPage() {
 
           {/* ── Form ── */}
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <motion.div className="flex flex-col gap-6" variants={itemVariants}>
+            <motion.div className="flex flex-col gap-8" variants={itemVariants}>
               <Input
                 label="Email address"
                 type="email"
@@ -158,6 +159,7 @@ export default function LoginPage() {
                   <AnimatePresence>
                     {rememberMe && (
                       <motion.svg
+                        key="check-icon"
                         width="9" height="7" viewBox="0 0 9 7" fill="none"
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -200,25 +202,7 @@ export default function LoginPage() {
             </motion.div>
           </form>
 
-          {/* Divider */}
-          <motion.div className="flex items-center gap-4 my-8" variants={itemVariants}>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }} />
-            <span className="text-[#444] text-[11px] font-semibold tracking-[0.18em] uppercase">or</span>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }} />
-          </motion.div>
 
-          {/* Social Login */}
-          <motion.div className="grid grid-cols-3 gap-3" variants={itemVariants}>
-            <Button variant="social" icon={<GoogleIcon size={17} />} id="btn-google-signin">
-              Google
-            </Button>
-            <Button variant="social" icon={<AppleIcon size={17} />} id="btn-apple-signin">
-              Apple
-            </Button>
-            <Button variant="social" icon={<SpotifyIcon size={17} />} id="btn-spotify-signin">
-              Spotify
-            </Button>
-          </motion.div>
 
           {/* Footer link */}
           <motion.p

@@ -1,11 +1,10 @@
 import { motion } from 'framer-motion'
 import { Music2, Headphones, Clock } from 'lucide-react'
-import { Equalizer } from './Equalizer'
-
 interface FloatingCardProps {
   type: 'trending' | 'artist' | 'recent'
   className?: string
   delay?: number
+  floatClass?: string
 }
 
 const cardData = {

@@ -9,7 +9,7 @@ import { User, AtSign, Mail, Lock } from 'lucide-react'
 import { Logo } from '@/components/Logo'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
-import { GoogleIcon, AppleIcon, SpotifyIcon } from '@/components/SocialIcons'
+
 import { MusicWave } from '@/components/Equalizer'
 
 const signupSchema = z
@@ -59,49 +59,85 @@ export default function SignupPage() {
           src="/hero-artist.png"
           alt="Artist"
           className="w-full h-full object-cover object-center"
-          style={{ filter: 'brightness(0.55) saturate(1.2) contrast(1.1)' }}
+          style={{
+            filter:
+              'brightness(.42) contrast(1.15) saturate(1.15) blur(2px)',
+            transform: 'scale(1.05)',
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#090909]/50 to-[#090909]" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#090909] via-transparent to-[#090909]/40" />
       </div>
 
       {/* ── Content Layout ── */}
-      <div className="relative z-10 w-full max-w-[1400px] min-h-screen flex flex-col lg:flex-row items-stretch">
+      <div
+        className="
+    relative
+    z-10
+    w-full
+    max-w-[1680px]
+    min-h-screen
+    mx-auto
+    flex
+    flex-col
+    lg:flex-row
+    items-center
+  "
+      >
 
         {/* ══ LEFT COLUMN ══ */}
-        <div className="w-full lg:w-[50%] flex flex-col justify-between p-8 sm:p-10 lg:p-14 xl:p-16">
+        <div
+          className="
+    w-full
+    lg:w-[56%]
+    flex
+    flex-col
+    h-screen
+    px-10
+    lg:px-20
+    xl:px-28
+    py-10
+  "
+        >
 
           {/* Top: Logo */}
-          <div className="mt-6 lg:mt-10">
+          <div className="pt-2">
             <Logo size="md" />
           </div>
 
           {/* Center: Hero text */}
-          <div className="py-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-[1px] bg-[#3FD6FF]" />
-              <span className="text-[#3FD6FF] text-[10px] font-bold tracking-[0.2em] uppercase">
-                Your Music Universe
-              </span>
+          <div className="flex-1 flex items-center">
+            <div className="max-w-[520px]">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-8 h-[1px] bg-[#3FD6FF]" />
+                <span className="text-[#3FD6FF] text-[10px] font-bold tracking-[0.2em] uppercase">
+                  Your Music Universe
+                </span>
+              </div>
+
+              <h1 className="font-bold leading-[1.05] mb-5 tracking-tight"
+                style={{
+                  fontSize: 'clamp(58px, 6vw, 86px)',
+                  letterSpacing: '-0.04em'
+                }}>
+                <span className="text-white">Feel</span>
+                <br />
+                <span className="text-[#3FD6FF]">Every Beat.</span>
+              </h1>
+
+              <p className="text-[#999] text-[15px] leading-relaxed max-w-[420px] mb-6">
+                Millions of songs, endless discovery.<br />
+                Your perfect soundtrack awaits.
+              </p>
+
+              <div className="mt-8">
+                <MusicWave className="h-7 opacity-80" />
+              </div>
             </div>
-
-            <h1 className="font-bold leading-[1.05] mb-5 tracking-tight"
-              style={{ fontSize: 'clamp(42px, 7vw, 72px)' }}>
-              <span className="text-white">Feel</span>
-              <br />
-              <span className="text-[#3FD6FF]">Every Beat.</span>
-            </h1>
-
-            <p className="text-[#999] text-[15px] leading-relaxed max-w-[300px] mb-6">
-              Millions of songs, endless discovery.<br />
-              Your perfect soundtrack awaits.
-            </p>
-
-            <MusicWave className="h-6 opacity-70" />
           </div>
 
           {/* Bottom: footer */}
-          <div>
+          <div className="pb-6">
             <p className="text-[#555] text-xs">
               © 2024 Pulse. All rights reserved. &nbsp;·&nbsp; Terms of Service &nbsp;·&nbsp; Privacy Policy
             </p>
@@ -109,7 +145,18 @@ export default function SignupPage() {
         </div>
 
         {/* ══ RIGHT COLUMN ══ */}
-        <div className="w-full lg:w-[50%] flex items-center justify-center p-6 lg:py-12">
+        <div
+          className="
+        w-full
+        lg:w-[44%]
+        flex
+        items-center
+        justify-center
+        px-8
+        lg:px-12
+        py-12
+    "
+        >
           {/*
             Per spec:
             - Card Width: 500px
@@ -125,9 +172,9 @@ export default function SignupPage() {
           <motion.div
             className="w-full rounded-[24px]"
             style={{
-              maxWidth: 500,
+              maxWidth: 580,
               minHeight: 780,
-              padding: 40,
+              padding: '48px 56px',
               background: 'rgba(13,13,13,0.92)',
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
@@ -141,28 +188,14 @@ export default function SignupPage() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Heading */}
-            <div className="mb-7">
+            <div className="mb-10">
               <h2 className="text-[32px] font-bold text-white tracking-tight leading-tight mb-2">
                 Create Account
               </h2>
               <p className="text-[#888] text-[15px]">Join millions of music lovers.</p>
             </div>
 
-            {/* Social buttons */}
-            <div className="grid grid-cols-3 gap-3 mb-7">
-              <Button variant="social" icon={<GoogleIcon size={16} />}>Google</Button>
-              <Button variant="social" icon={<AppleIcon size={16} />}>Apple</Button>
-              <Button variant="social" icon={<SpotifyIcon size={16} />}>Spotify</Button>
-            </div>
-
-            {/* Divider */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex-1 h-[1px] bg-white/[0.07]" />
-              <span className="text-[#555] text-[11px] font-semibold tracking-[0.15em] uppercase">or</span>
-              <div className="flex-1 h-[1px] bg-white/[0.07]" />
-            </div>
-
-            {/* Form — spacing 20px between fields, input height 56px */}
+            {/* Form */}
             <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col">
               <div className="flex flex-col gap-5">
                 <Input
@@ -203,7 +236,7 @@ export default function SignupPage() {
               </div>
 
               {/* Terms checkbox */}
-              <div className="mt-8 flex flex-col gap-2">
+              <div className="mt-6 flex flex-col gap-2">
                 <button
                   type="button"
                   className="flex items-start gap-3 cursor-pointer text-left w-full"
@@ -220,8 +253,8 @@ export default function SignupPage() {
                       border: agreeTerms
                         ? '2px solid #3FD6FF'
                         : errors.agreeTerms
-                        ? '2px solid rgba(239,68,68,0.6)'
-                        : '2px solid rgba(255,255,255,0.18)',
+                          ? '2px solid rgba(239,68,68,0.6)'
+                          : '2px solid rgba(255,255,255,0.18)',
                       boxShadow: agreeTerms ? '0 0 10px rgba(63,214,255,0.3)' : 'none',
                     }}
                   >
@@ -250,7 +283,7 @@ export default function SignupPage() {
               </div>
 
               {/* Submit button — margin-top: 30px per spec */}
-              <div className="mt-10">
+              <div className="mt-8">
                 <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
                   Create Account
                 </Button>
@@ -258,7 +291,7 @@ export default function SignupPage() {
             </form>
 
             {/* Bottom link — padding-bottom accounted by container's 40px padding */}
-            <p className="text-center mt-6 text-[13px] text-[#777]">
+            <p className="text-center mt-auto pt-10 text-[13px] text-[#777]">
               Already have an account?{' '}
               <Link to="/" className="text-[#3FD6FF] font-semibold hover:text-white transition-colors">
                 Sign In
@@ -270,3 +303,17 @@ export default function SignupPage() {
     </div>
   )
 }
+<div
+  className="
+    relative
+    z-10
+    w-full
+    max-w-[1680px]
+    min-h-screen
+    mx-auto
+    flex
+    flex-col
+    lg:flex-row
+    items-center
+  "
+></div>

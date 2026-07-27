@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { FloatingCard } from './FloatingCard'
+
 import { Logo } from './Logo'
 import { MusicWave } from './Equalizer'
 
@@ -37,15 +37,16 @@ export function HeroPanel() {
       />
 
       {/* ── CONTENT LAYOUT ── */}
-      <div className="relative h-full flex flex-col p-12 lg:p-16 xl:p-20 pl-16 lg:pl-24 xl:pl-32">
+      <div className="relative h-full flex flex-col px-10 lg:px-20 xl:px-28 py-10">
 
         {/* TOP: Logo */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 pt-2">
           <Logo size="md" />
         </div>
 
         {/* MIDDLE: Tagline — vertically centered */}
-        <div className="flex-1 flex flex-col justify-center mt-6">
+        <div className="flex-1 flex items-center">
+          <div className="max-w-[520px]">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
@@ -61,10 +62,10 @@ export function HeroPanel() {
 
             {/* Heading */}
             <h1
-              className="font-extrabold leading-[1.05] mb-6"
+              className="font-extrabold leading-[1.05] mb-5 tracking-tight"
               style={{
-                fontSize: 'clamp(3rem, 5vw, 4.5rem)',
-                letterSpacing: '-0.03em',
+                fontSize: 'clamp(58px, 6vw, 86px)',
+                letterSpacing: '-0.04em',
               }}
             >
               <span className="text-white">Feel</span>
@@ -72,30 +73,24 @@ export function HeroPanel() {
               <span style={{ color: '#3FD6FF' }}>Every Beat.</span>
             </h1>
 
-            <p className="text-[#A0A0A0] text-[0.95rem] leading-[1.7] max-w-[280px]">
-              Millions of songs, endless discovery. Your perfect soundtrack awaits.
+            <p className="text-[#999] text-[15px] leading-relaxed max-w-[420px] mb-6">
+              Millions of songs, endless discovery.<br />
+              Your perfect soundtrack awaits.
             </p>
 
             {/* Waveform */}
             <motion.div
-              className="mt-7"
+              className="mt-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9 }}
             >
-              <MusicWave className="h-9" />
+              <MusicWave className="h-7 opacity-80" />
             </motion.div>
           </motion.div>
-        </div>
-
-        {/* BOTTOM: Three stacked floating cards — constrained to max 260px */}
-        <div className="flex-shrink-0 pb-4">
-          <div className="space-y-2" style={{ maxWidth: 260 }}>
-            <FloatingCard type="trending" delay={0.45} floatClass="float-card" />
-            <FloatingCard type="artist"   delay={0.60} floatClass="float-card-delayed" />
-            <FloatingCard type="recent"   delay={0.75} floatClass="float-card-delayed-2" />
           </div>
         </div>
+
       </div>
     </div>
   )
