@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { User, AtSign, Mail, Lock } from 'lucide-react'
+import { useRegister } from '@/hooks/useRegister'
 
 import { Logo } from '@/components/Logo'
 import { Input } from '@/components/Input'
@@ -34,8 +35,8 @@ const signupSchema = z
 type SignupFormData = z.infer<typeof signupSchema>
 
 export default function SignupPage() {
-  const [isLoading, setIsLoading] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
+  const { mutate: registerMutate, isPending } = useRegister()
 
   const {
     register,
@@ -44,10 +45,13 @@ export default function SignupPage() {
     setValue,
   } = useForm<SignupFormData>({ resolver: zodResolver(signupSchema) })
 
-  const onSubmit = async (_data: SignupFormData) => {
-    setIsLoading(true)
-    await new Promise((r) => setTimeout(r, 2000))
-    setIsLoading(false)
+  const onSubmit = (data: SignupFormData) => {
+    registerMutate({
+      fullName: data.fullName,
+      username: data.username,
+      email: data.email,
+      password: data.password,
+    })
   }
 
   return (
@@ -203,6 +207,7 @@ export default function SignupPage() {
                   type="text"
                   icon={<User size={16} />}
                   error={errors.fullName?.message}
+                  disabled={isPending}
                   {...register('fullName')}
                 />
                 <Input
@@ -210,6 +215,7 @@ export default function SignupPage() {
                   type="text"
                   icon={<AtSign size={16} />}
                   error={errors.username?.message}
+                  disabled={isPending}
                   {...register('username')}
                 />
                 <Input
@@ -217,6 +223,7 @@ export default function SignupPage() {
                   type="email"
                   icon={<Mail size={16} />}
                   error={errors.email?.message}
+                  disabled={isPending}
                   {...register('email')}
                 />
                 <Input
@@ -224,6 +231,7 @@ export default function SignupPage() {
                   type="password"
                   icon={<Lock size={16} />}
                   error={errors.password?.message}
+                  disabled={isPending}
                   {...register('password')}
                 />
                 <Input
@@ -231,6 +239,7 @@ export default function SignupPage() {
                   type="password"
                   icon={<Lock size={16} />}
                   error={errors.confirmPassword?.message}
+                  disabled={isPending}
                   {...register('confirmPassword')}
                 />
               </div>
@@ -284,7 +293,7 @@ export default function SignupPage() {
 
               {/* Submit button — margin-top: 30px per spec */}
               <div className="mt-8">
-                <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
+                <Button type="submit" variant="primary" fullWidth isLoading={isPending}>
                   Create Account
                 </Button>
               </div>
@@ -302,18 +311,4 @@ export default function SignupPage() {
       </div>
     </div>
   )
-}
-<div
-  className="
-    relative
-    z-10
-    w-full
-    max-w-[1680px]
-    min-h-screen
-    mx-auto
-    flex
-    flex-col
-    lg:flex-row
-    items-center
-  "
-></div>
+}

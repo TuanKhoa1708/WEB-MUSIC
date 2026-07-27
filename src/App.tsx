@@ -3,6 +3,30 @@ import { AnimatePresence, motion } from 'framer-motion'
 import type { Transition } from 'framer-motion'
 import LoginPage from '@/pages/LoginPage'
 import SignupPage from '@/pages/SignupPage'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
+
+// ─── Placeholder home page (replace with real page later) ────────────────────
+function HomePage() {
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#090909',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        fontSize: '1.5rem',
+        fontWeight: 600,
+        letterSpacing: '-0.02em',
+      }}
+    >
+      🎵 Welcome to Pulse — Home
+    </div>
+  )
+}
+
+// ─── Page transition config ───────────────────────────────────────────────────
 
 const pageVariants = {
   initial: { opacity: 0, filter: 'blur(4px)', scale: 0.99 },
@@ -30,8 +54,16 @@ function AnimatedRoutes() {
         style={{ width: '100%', height: '100%' }}
       >
         <Routes location={location}>
+          {/* Public routes */}
           <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<HomePage />} />
+          </Route>
+
+          {/* Fallback */}
           <Route path="*" element={<LoginPage />} />
         </Routes>
       </motion.div>

@@ -6,12 +6,12 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { Mail, Lock } from 'lucide-react'
+import { useLogin } from '@/hooks/useLogin'
 
 import { HeroPanel } from '@/components/HeroPanel'
 import { Logo } from '@/components/Logo'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
-
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -39,8 +39,8 @@ const itemVariants: Variants = {
 }
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+  const { mutate: loginMutate, isPending } = useLogin()
 
   const {
     register,
@@ -48,10 +48,8 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) })
 
-  const onSubmit = async (_data: LoginFormData) => {
-    setIsLoading(true)
-    await new Promise((r) => setTimeout(r, 2000))
-    setIsLoading(false)
+  const onSubmit = (data: LoginFormData) => {
+    loginMutate({ email: data.email, password: data.password })
   }
 
   return (
@@ -125,6 +123,7 @@ export default function LoginPage() {
                 type="email"
                 icon={<Mail size={15} />}
                 error={errors.email?.message}
+                disabled={isPending}
                 {...register('email')}
               />
               <Input
@@ -132,6 +131,7 @@ export default function LoginPage() {
                 type="password"
                 icon={<Lock size={15} />}
                 error={errors.password?.message}
+                disabled={isPending}
                 {...register('password')}
               />
             </motion.div>
@@ -194,7 +194,7 @@ export default function LoginPage() {
                 type="submit"
                 variant="primary"
                 fullWidth
-                isLoading={isLoading}
+                isLoading={isPending}
                 id="btn-sign-in"
               >
                 Sign In
