@@ -116,8 +116,8 @@ export default function LoginPage() {
           </motion.div>
 
           {/* ── Form ── */}
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <motion.div className="flex flex-col gap-8" variants={itemVariants}>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
+            <motion.div className="flex flex-col gap-5" variants={itemVariants}>
               <Input
                 label="Email address"
                 type="email"
@@ -138,7 +138,7 @@ export default function LoginPage() {
 
             {/* Remember + Forgot */}
             <motion.div
-              className="flex items-center justify-between mt-6"
+              className="flex items-center justify-between mt-2"
               variants={itemVariants}
             >
               <button
@@ -189,7 +189,7 @@ export default function LoginPage() {
             </motion.div>
 
             {/* Submit */}
-            <motion.div className="mt-8" variants={itemVariants}>
+            <motion.div className="mt-4" variants={itemVariants}>
               <Button
                 type="submit"
                 variant="primary"
