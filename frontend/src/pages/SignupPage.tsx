@@ -18,8 +18,7 @@ const signupSchema = z
     fullName: z.string().min(2, 'Name must be at least 2 characters'),
     username: z
       .string()
-      .min(3, 'Username must be at least 3 characters')
-      .regex(/^[a-z0-9_]+$/, 'Only lowercase letters, numbers and underscores'),
+      .min(3, 'Username must be at least 3 characters'),
     email: z.string().email('Please enter a valid email'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string(),
@@ -200,7 +199,7 @@ export default function SignupPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col">
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col gap-6">
               <div className="flex flex-col gap-5">
                 <Input
                   label="Full Name"
@@ -245,7 +244,7 @@ export default function SignupPage() {
               </div>
 
               {/* Terms checkbox */}
-              <div className="mt-6 flex flex-col gap-2">
+              <div className="mt-2 flex flex-col gap-2">
                 <button
                   type="button"
                   className="flex items-start gap-3 cursor-pointer text-left w-full"
@@ -292,15 +291,15 @@ export default function SignupPage() {
               </div>
 
               {/* Submit button — margin-top: 30px per spec */}
-              <div className="mt-8">
+              <div className="mt-4">
                 <Button type="submit" variant="primary" fullWidth isLoading={isPending}>
                   Create Account
                 </Button>
               </div>
             </form>
 
-            {/* Bottom link — padding-bottom accounted by container's 40px padding */}
-            <p className="text-center mt-auto pt-10 text-[13px] text-[#777]">
+            {/* Bottom link */}
+            <p className="text-center mt-8 text-[13px] text-[#777]">
               Already have an account?{' '}
               <Link to="/" className="text-[#3FD6FF] font-semibold hover:text-white transition-colors">
                 Sign In

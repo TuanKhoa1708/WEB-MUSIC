@@ -12,21 +12,16 @@ export function HeroPanel() {
           src="/hero-artist.png"
           alt="Artist"
           className="w-full h-full object-cover object-center"
-          style={{ filter: 'brightness(0.45) saturate(1.2) blur(3px)', transform: 'scale(1.05)' }}
+          style={{
+            filter: 'brightness(.42) contrast(1.15) saturate(1.15) blur(2px)',
+            transform: 'scale(1.05)',
+          }}
         />
       </div>
 
-      {/* Gradient overlays — cinematic dark vignette */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            linear-gradient(to right, rgba(9,9,9,0.5) 0%, rgba(9,9,9,0.85) 100%),
-            linear-gradient(to top, rgba(9,9,9,1) 0%, rgba(9,9,9,0.6) 30%, transparent 60%),
-            linear-gradient(to bottom, rgba(9,9,9,0.9) 0%, transparent 30%)
-          `,
-        }}
-      />
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#090909]/50 to-[#090909]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#090909] via-transparent to-[#090909]/40" />
 
       {/* Cyan ambient radial */}
       <div
@@ -53,16 +48,16 @@ export function HeroPanel() {
             transition={{ duration: 0.85, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Label */}
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-7 h-[1.5px] rounded-full bg-[#3FD6FF]" />
-              <span className="text-[#3FD6FF] text-[10px] font-bold tracking-[0.22em] uppercase">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-8 h-[1px] bg-[#3FD6FF]" />
+              <span className="text-[#3FD6FF] text-[10px] font-bold tracking-[0.2em] uppercase">
                 Your Music Universe
               </span>
             </div>
 
             {/* Heading */}
             <h1
-              className="font-extrabold leading-[1.05] mb-5 tracking-tight"
+              className="font-bold leading-[1.05] mb-5 tracking-tight"
               style={{
                 fontSize: 'clamp(58px, 6vw, 86px)',
                 letterSpacing: '-0.04em',
@@ -70,7 +65,7 @@ export function HeroPanel() {
             >
               <span className="text-white">Feel</span>
               <br />
-              <span style={{ color: '#3FD6FF' }}>Every Beat.</span>
+              <span className="text-[#3FD6FF]">Every Beat.</span>
             </h1>
 
             <p className="text-[#999] text-[15px] leading-relaxed max-w-[420px] mb-6">
