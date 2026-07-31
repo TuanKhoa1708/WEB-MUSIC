@@ -39,6 +39,22 @@ const userSchema = new mongoose.Schema(
             enum: ["user", "artist", "admin"],
             default: "user",
         },
+
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
+
+        lastLogin: {
+            type: Date,
+            default: null,
+        }
+        
     },
     {
         timestamps: true,

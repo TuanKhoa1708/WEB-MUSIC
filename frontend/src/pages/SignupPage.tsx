@@ -191,7 +191,7 @@ export default function SignupPage() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Heading */}
-            <div className="mb-10">
+            <div style={{ marginBottom: '40px' }}>
               <h2 className="text-[32px] font-bold text-white tracking-tight leading-tight mb-2">
                 Create Account
               </h2>

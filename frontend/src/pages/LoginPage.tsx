@@ -4,14 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Variants } from 'framer-motion'
 import { Mail, Lock } from 'lucide-react'
 import { useLogin } from '@/hooks/useLogin'
 
-import { HeroPanel } from '@/components/HeroPanel'
 import { Logo } from '@/components/Logo'
 import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
+import { MusicWave } from '@/components/Equalizer'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -20,23 +19,6 @@ const loginSchema = z.object({
 })
 
 type LoginFormData = z.infer<typeof loginSchema>
-
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.07, delayChildren: 0.15 },
-  },
-}
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 14 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  },
-}
 
 export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
@@ -53,172 +35,198 @@ export default function LoginPage() {
   }
 
   return (
-    /* Full viewport height, no scroll on outer shell */
-    <div className="h-screen flex overflow-hidden" style={{ backgroundColor: '#090909' }}>
+    <div className="min-h-screen w-full relative flex items-center justify-center overflow-x-hidden bg-[#090909]">
 
-      {/* ══ LEFT: Hero Panel ══ */}
-      <motion.div
-        className="hidden lg:flex lg:w-[54%] xl:w-[57%] h-full flex-shrink-0 relative"
-        initial={{ opacity: 0, x: -24 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <HeroPanel />
-      </motion.div>
-
-      {/* ══ RIGHT: Auth Panel ══ */}
-      <div
-        className="flex-1 h-full flex flex-col items-center justify-center px-10 lg:px-16 xl:px-20 relative overflow-y-auto"
-        style={{
-          background: 'linear-gradient(155deg, #111111 0%, #0a0a0a 50%, #090909 100%)',
-          borderLeft: '1px solid rgba(255,255,255,0.045)',
-        }}
-      >
-        {/* Ambient background glows */}
-        <div
-          className="absolute inset-0 pointer-events-none"
+      {/* ── Background Image ── */}
+      <div className="absolute inset-y-0 left-0 w-full lg:w-[65%] overflow-hidden">
+        <img
+          src="/hero-artist.png"
+          alt="Artist"
+          className="w-full h-full object-cover object-center"
           style={{
-            background: 'radial-gradient(circle at top right, rgba(63,214,255,0.06) 0%, transparent 40%), radial-gradient(circle at bottom left, rgba(63,214,255,0.04) 0%, transparent 50%)',
+            filter: 'brightness(.42) contrast(1.15) saturate(1.15) blur(2px)',
+            transform: 'scale(1.05)',
           }}
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#090909]/50 to-[#090909]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090909] via-transparent to-[#090909]/40" />
+      </div>
 
-        {/* ── Auth Card ── */}
-        <motion.div
-          className="relative w-full mx-auto rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/[0.05]"
-          style={{ maxWidth: 580, padding: '48px 56px', background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(24px)' }}
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Mobile-only Logo */}
-          <motion.div className="lg:hidden mb-8" variants={itemVariants}>
+      {/* ── Content Layout ── */}
+      <div className="relative z-10 w-full max-w-[1680px] min-h-screen mx-auto flex flex-col lg:flex-row items-center">
+
+        {/* ══ LEFT COLUMN ══ */}
+        <div className="w-full lg:w-[56%] flex flex-col h-screen px-10 lg:px-20 xl:px-28 py-10">
+          {/* Top: Logo */}
+          <div className="pt-2">
             <Logo size="md" />
-          </motion.div>
+          </div>
 
-          {/* Heading */}
-          <motion.div className="mb-7" variants={itemVariants}>
-            <h2
-              className="font-extrabold mb-3 leading-[1.1]"
-              style={{
-                fontSize: 'clamp(2rem, 3vw, 2.5rem)',
-                letterSpacing: '-0.03em',
-                background: 'linear-gradient(135deg, #FFFFFF 0%, rgba(255,255,255,0.78) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              Welcome Back
-            </h2>
-            <p className="text-[#7A7A7A] text-[0.875rem] leading-relaxed">
-              Sign in to continue your music journey.
+          {/* Center: Hero text */}
+          <div className="flex-1 flex items-center">
+            <div className="max-w-[520px]">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-8 h-[1px] bg-[#3FD6FF]" />
+                <span className="text-[#3FD6FF] text-[10px] font-bold tracking-[0.2em] uppercase">
+                  Your Music Universe
+                </span>
+              </div>
+
+              <h1 className="font-bold leading-[1.05] mb-5 tracking-tight"
+                style={{
+                  fontSize: 'clamp(58px, 6vw, 86px)',
+                  letterSpacing: '-0.04em'
+                }}>
+                <span className="text-white">Feel</span>
+                <br />
+                <span className="text-[#3FD6FF]">Every Beat.</span>
+              </h1>
+
+              <p className="text-[#999] text-[15px] leading-relaxed max-w-[420px] mb-6">
+                Millions of songs, endless discovery.<br />
+                Your perfect soundtrack awaits.
+              </p>
+
+              <div className="mt-8">
+                <MusicWave className="h-7 opacity-80" />
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom: footer */}
+          <div className="pb-6 hidden lg:block">
+            <p className="text-[#555] text-xs">
+              © 2024 Pulse. All rights reserved. &nbsp;·&nbsp; Terms of Service &nbsp;·&nbsp; Privacy Policy
+            </p>
+          </div>
+        </div>
+
+        {/* ══ RIGHT COLUMN ══ */}
+        <div className="w-full lg:w-[44%] flex items-center justify-center px-8 lg:px-12 py-12">
+          <motion.div
+            className="w-full rounded-[24px]"
+            style={{
+              maxWidth: 580,
+              padding: '48px 56px',
+              background: 'rgba(13,13,13,0.92)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              boxShadow: '0 32px 64px -12px rgba(0,0,0,0.7)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Heading */}
+            <div style={{ marginBottom: '40px' }}>
+              <h2 className="text-[32px] font-bold text-white tracking-tight leading-tight mb-2">
+                Welcome Back
+              </h2>
+              <p className="text-[#888] text-[15px]">
+                Sign in to continue your music journey.
+              </p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col gap-6">
+              <div className="flex flex-col gap-5">
+                <Input
+                  label="Email address"
+                  type="email"
+                  icon={<Mail size={16} />}
+                  error={errors.email?.message}
+                  disabled={isPending}
+                  {...register('email')}
+                />
+                <Input
+                  label="Password"
+                  type="password"
+                  icon={<Lock size={16} />}
+                  error={errors.password?.message}
+                  disabled={isPending}
+                  {...register('password')}
+                />
+              </div>
+
+              {/* Remember + Forgot */}
+              <div className="flex items-center justify-between mt-2">
+                <button
+                  type="button"
+                  className="flex items-center gap-3 cursor-pointer text-left"
+                  onClick={() => setRememberMe(!rememberMe)}
+                >
+                  <div
+                    className="w-5 h-5 rounded-[4px] flex items-center justify-center transition-all duration-200 shrink-0 mt-[1px]"
+                    style={{
+                      background: rememberMe ? '#3FD6FF' : 'transparent',
+                      border: rememberMe
+                        ? '2px solid #3FD6FF'
+                        : '2px solid rgba(255,255,255,0.18)',
+                      boxShadow: rememberMe ? '0 0 10px rgba(63,214,255,0.3)' : 'none',
+                    }}
+                  >
+                    <AnimatePresence>
+                      {rememberMe && (
+                        <motion.svg
+                          key="check-icon"
+                          width="10" height="8" viewBox="0 0 10 8" fill="none"
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                        >
+                          <path
+                            d="M1 4L3.5 6.5L9 1"
+                            stroke="#090909" strokeWidth="1.8"
+                            strokeLinecap="round" strokeLinejoin="round"
+                          />
+                        </motion.svg>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                  <span className="text-[#888] text-[13px] leading-relaxed hover:text-white transition-colors duration-200">
+                    Remember me
+                  </span>
+                </button>
+
+                <Link
+                  to="/forgot-password"
+                  className="text-[13px] text-[#3FD6FF] hover:text-white transition-colors duration-200 font-medium"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              {/* Submit */}
+              <div className="mt-4">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  fullWidth
+                  isLoading={isPending}
+                  id="btn-sign-in"
+                >
+                  Sign In
+                </Button>
+              </div>
+            </form>
+
+            {/* Footer link */}
+            <p className="text-center mt-8 text-[13px] text-[#777]">
+              Don't have an account?{' '}
+              <Link
+                to="/signup"
+                className="text-[#3FD6FF] font-semibold hover:text-white transition-colors duration-200"
+                id="link-create-account"
+              >
+                Create one
+              </Link>
             </p>
           </motion.div>
-
-          {/* ── Form ── */}
-          <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
-            <motion.div className="flex flex-col gap-5" variants={itemVariants}>
-              <Input
-                label="Email address"
-                type="email"
-                icon={<Mail size={15} />}
-                error={errors.email?.message}
-                disabled={isPending}
-                {...register('email')}
-              />
-              <Input
-                label="Password"
-                type="password"
-                icon={<Lock size={15} />}
-                error={errors.password?.message}
-                disabled={isPending}
-                {...register('password')}
-              />
-            </motion.div>
-
-            {/* Remember + Forgot */}
-            <motion.div
-              className="flex items-center justify-between mt-2"
-              variants={itemVariants}
-            >
-              <button
-                type="button"
-                className="flex items-center gap-2 group cursor-pointer"
-                onClick={() => setRememberMe(!rememberMe)}
-              >
-                <div
-                  className="w-[17px] h-[17px] rounded-[4px] flex items-center justify-center transition-all duration-200 flex-shrink-0"
-                  style={{
-                    background: rememberMe ? '#3FD6FF' : 'transparent',
-                    border: rememberMe
-                      ? '1.5px solid #3FD6FF'
-                      : '1.5px solid rgba(255,255,255,0.14)',
-                    boxShadow: rememberMe ? '0 0 12px rgba(63,214,255,0.35)' : 'none',
-                  }}
-                >
-                  <AnimatePresence>
-                    {rememberMe && (
-                      <motion.svg
-                        key="check-icon"
-                        width="9" height="7" viewBox="0 0 9 7" fill="none"
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                      >
-                        <path
-                          d="M1 3L3.2 5.5L8 1"
-                          stroke="#090909" strokeWidth="1.7"
-                          strokeLinecap="round" strokeLinejoin="round"
-                        />
-                      </motion.svg>
-                    )}
-                  </AnimatePresence>
-                </div>
-                <span className="text-[#707070] text-[0.82rem] group-hover:text-white transition-colors duration-200">
-                  Remember me
-                </span>
-              </button>
-
-              <Link
-                to="/forgot-password"
-                className="text-[0.82rem] text-[#3FD6FF] hover:text-white transition-colors duration-200 font-medium"
-              >
-                Forgot password?
-              </Link>
-            </motion.div>
-
-            {/* Submit */}
-            <motion.div className="mt-4" variants={itemVariants}>
-              <Button
-                type="submit"
-                variant="primary"
-                fullWidth
-                isLoading={isPending}
-                id="btn-sign-in"
-              >
-                Sign In
-              </Button>
-            </motion.div>
-          </form>
-
-
-
-          {/* Footer link */}
-          <motion.p
-            className="text-center mt-8 text-[0.875rem] text-[#7A7A7A]"
-            variants={itemVariants}
-          >
-            Don't have an account?{' '}
-            <Link
-              to="/signup"
-              className="text-[#3FD6FF] font-semibold hover:text-white transition-colors duration-200"
-              id="link-create-account"
-            >
-              Create one
-            </Link>
-          </motion.p>
-        </motion.div>
+        </div>
       </div>
     </div>
   )
