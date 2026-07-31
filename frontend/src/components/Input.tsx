@@ -18,10 +18,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputType = isPassword ? (showPassword ? 'text' : 'password') : type
 
     return (
-      <div className="relative">
+      <div className="relative w-full">
         <div
-          className="relative h-[56px] rounded-[12px] transition-all duration-300 flex items-center overflow-hidden px-6 gap-4"
+          className="relative w-full h-[56px] rounded-[12px] transition-all duration-300 flex items-center overflow-hidden gap-4"
           style={{
+            padding: '0 20px',
             background: 'transparent',
             border: `1px solid ${
               focused
