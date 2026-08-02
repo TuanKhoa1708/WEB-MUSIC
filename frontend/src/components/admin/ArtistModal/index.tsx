@@ -59,14 +59,14 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
     if (isEditing && artist) {
       await onSubmit({ id: artist.id, ...data })
     } else {
-      await onSubmit(data)
+      await onSubmit(data as CreateArtistInput)
     }
     onClose()
   }
 
   // Avatar initials preview
   const initials = watchedName
-    ? watchedName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    ? watchedName.split(' ').map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase()
     : '?'
   const statusCfg = STATUS_OPTIONS.find(s => s.value === watchedStatus) ?? STATUS_OPTIONS[0]
 
