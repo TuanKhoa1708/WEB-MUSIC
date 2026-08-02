@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 
-import { Logo } from './Logo'
-import { MusicWave } from './Equalizer'
+import { Logo } from '@/components/common/Logo/Logo'
+import { MusicWave } from '@/components/auth/Equalizer/Equalizer'
 
 export function HeroPanel() {
   return (

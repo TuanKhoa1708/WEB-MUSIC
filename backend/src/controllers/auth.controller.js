@@ -51,6 +51,7 @@ export const register = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 avatarUrl: user.avatarUrl,
+                role: user.role,
             },
         });
     } catch (error) {
@@ -102,9 +103,11 @@ export const login = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 avatarUrl: user.avatarUrl,
+                role: user.role,
             },
         });
     } catch (error) {
+        console.error("Login Error:", error);
         res.status(500).json({
             message: error.message,
         });

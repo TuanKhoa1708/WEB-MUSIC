@@ -7,10 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Lock } from 'lucide-react'
 import { useLogin } from '@/hooks/useLogin'
 
-import { Logo } from '@/components/Logo'
-import { Input } from '@/components/Input'
-import { Button } from '@/components/Button'
-import { MusicWave } from '@/components/Equalizer'
+import { Logo } from '@/components/common/Logo/Logo'
+import { Input } from '@/components/common/Input/Input'
+import { Button } from '@/components/common/Button/Button'
+import { MusicWave } from '@/components/auth/Equalizer/Equalizer'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),

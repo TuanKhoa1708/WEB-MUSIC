@@ -1,11 +1,21 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Transition } from 'framer-motion'
-import LoginPage from '@/pages/LoginPage'
-import SignupPage from '@/pages/SignupPage'
-import { ProtectedRoute } from '@/components/ProtectedRoute'
 
-// ─── Placeholder home page (replace with real page later) ────────────────────
+import LoginPage from '@/pages/auth/Login/Login'
+import SignupPage from '@/pages/auth/Signup/Signup'
+import { ProtectedRoute } from '@/routes/ProtectedRoute'
+import { AdminRoute } from '@/routes/AdminRoute'
+import { AdminLayout } from '@/layouts/AdminLayout'
+
+// Admin pages
+import { ArtistManagementPage } from '@/pages/admin/ArtistManagement'
+import { AdminDashboardPage } from '@/pages/admin/Dashboard'
+
+// Other pages
+import { UnauthorizedPage } from '@/pages/Unauthorized'
+
+// ─── Placeholder home page ────────────────────────────────────────────────────
 function HomePage() {
   return (
     <div
@@ -57,10 +67,19 @@ function AnimatedRoutes() {
           {/* Public routes */}
           <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-          {/* Protected routes */}
+          {/* Protected user routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<HomePage />} />
+          </Route>
+
+          {/* Protected admin routes */}
+          <Route element={<AdminRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+              <Route path="/admin/artists" element={<ArtistManagementPage />} />
+            </Route>
           </Route>
 
           {/* Fallback */}
