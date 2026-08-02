@@ -156,6 +156,19 @@ body {
   100% { background-position: 200% 0; }
 }
 
+.shimmer {
+  background: linear-gradient(90deg, #1a1a1a 25%, #242424 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Admin layout — prevent body scroll bleed */
+.admin-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
 /* Page fade in */
 @keyframes fade-up {
   from {

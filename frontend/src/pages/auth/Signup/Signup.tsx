@@ -7,11 +7,11 @@ import { motion } from 'framer-motion'
 import { User, AtSign, Mail, Lock } from 'lucide-react'
 import { useRegister } from '@/hooks/useRegister'
 
-import { Logo } from '@/components/Logo'
-import { Input } from '@/components/Input'
-import { Button } from '@/components/Button'
+import { Logo } from '@/components/common/Logo/Logo'
+import { Input } from '@/components/common/Input/Input'
+import { Button } from '@/components/common/Button/Button'
 
-import { MusicWave } from '@/components/Equalizer'
+import { MusicWave } from '@/components/auth/Equalizer/Equalizer'
 
 const signupSchema = z
   .object({

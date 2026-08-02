@@ -20,7 +20,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   // On mount: check whether a token already exists in storage.
-  // If yes, we consider the session still alive (no silent refresh implemented here).
   useEffect(() => {
     const token = getToken()
     if (!token) {
@@ -28,14 +27,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
     // If you later add a /auth/me endpoint, call it here to hydrate user.
-    // For now we mark as authenticated with a null user object until the
-    // first API call that returns user data.
     setLoading(false)
   }, [])
 
-  const login = useCallback(async (data: LoginRequest): Promise<void> => {
+  const login = useCallback(async (data: LoginRequest): Promise<AuthUser> => {
     const loggedInUser = await loginService(data)
     setUser(loggedInUser)
+    return loggedInUser
   }, [])
 
   const logout = useCallback((): void => {

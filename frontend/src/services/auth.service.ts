@@ -1,4 +1,4 @@
-import { loginApi, registerApi } from '@/api/auth.api'
+import { loginApi, registerApi } from '@/api/endpoints'
 import { setToken, removeToken } from '@/utils/token'
 import type {
   LoginRequest,
