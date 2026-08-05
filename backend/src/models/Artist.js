@@ -2,18 +2,51 @@ import mongoose from "mongoose";
 
 const artistSchema = new mongoose.Schema(
     {
-        name: {
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+
+        stageName: {
             type: String,
-            required: [true, "Artist name is required"],
+            required: true,
             trim: true,
         },
+
         bio: {
             type: String,
             default: "",
         },
-        imageUrl: {
+
+        avatarUrl: {
             type: String,
             default: "",
+        },
+
+        coverImage: {
+            type: String,
+            default: "",
+        },
+
+        followers: {
+            type: Number,
+            default: 0,
+        },
+
+        socialLinks: {
+            facebook: {
+                type: String,
+                default: "",
+            },
+            instagram: {
+                type: String,
+                default: "",
+            },
+            youtube: {
+                type: String,
+                default: "",
+            },
         },
     },
     {
