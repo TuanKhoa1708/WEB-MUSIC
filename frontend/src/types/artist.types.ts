@@ -1,48 +1,54 @@
 // ─── Artist Domain Types ──────────────────────────────────────────────────────
 
-export type ArtistStatus = 'verified' | 'pending' | 'suspended'
-
 export interface Artist {
-  id: string
-  stageName: string
-  email: string
-  genre: string
-  followers: number
-  albums: number
-  songs: number
-  status: ArtistStatus
-  avatarUrl?: string
-  createdAt: string
+  _id: string;
+  userId: string;
+  stageName: string;
+  bio?: string;
+  avatarUrl?: string;
+  coverImage?: string;
+  followers: number;
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    youtube?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
 }
 
-export type CreateArtistInput = Omit<Artist, 'id' | 'createdAt' | 'followers' | 'albums' | 'songs'>
-export type UpdateArtistInput = Partial<CreateArtistInput> & { id: string }
+export type CreateArtistInput = {
+  userId: string;
+  stageName: string;
+  bio?: string;
+  avatarUrl?: string;
+  coverImage?: string;
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    youtube?: string;
+  };
+}
+
+export type UpdateArtistInput = Partial<CreateArtistInput> & { _id: string }
 
 // ─── Stats ───────────────────────────────────────────────────────────────────
 
 export interface ArtistStats {
-  totalArtists: number
-  verifiedArtists: number
-  newThisMonth: number
-  totalFollowers: number
+  totalArtists: number;
 }
 
 // ─── Filter / Query ───────────────────────────────────────────────────────────
 
 export interface ArtistQueryParams {
-  search?: string
-  genre?: string
-  status?: ArtistStatus | ''
-  sortBy?: 'stageName' | 'followers' | 'createdAt' | 'albums'
-  sortOrder?: 'asc' | 'desc'
-  page?: number
-  pageSize?: number
+  keyword?: string;
+  page?: number;
+  limit?: number;
 }
 
 export interface PaginatedArtists {
-  data: Artist[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
+  data: Artist[];
+  total: number;
+  page: number;
+  totalPages: number;
 }

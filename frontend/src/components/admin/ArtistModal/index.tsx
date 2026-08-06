@@ -1,17 +1,22 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Save, Loader2, User, Mail, Music, ShieldCheck } from 'lucide-react'
+import { X, Save, Loader2, User, Key, FileText, Image, Link } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Artist, CreateArtistInput, UpdateArtistInput } from '@/types/artist.types'
 
 const schema = z.object({
+  userId: z.string().min(1, 'User ID is required'),
   stageName: z.string().min(1, 'Stage name is required').max(100),
-  email: z.string().email('Invalid email address'),
-  genre: z.string().min(1, 'Genre is required'),
-  status: z.enum(['verified', 'pending', 'suspended']),
+  bio: z.string().optional(),
   avatarUrl: z.string().optional(),
+  coverImage: z.string().optional(),
+  socialLinks: z.object({
+    facebook: z.string().optional(),
+    instagram: z.string().optional(),
+    youtube: z.string().optional(),
+  }).optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -24,40 +29,53 @@ interface ArtistModalProps {
   isLoading?: boolean
 }
 
-const GENRE_OPTIONS = [
-  'Pop', 'Hip-Hop', 'R&B', 'Rock', 'Electronic', 'Indie Pop',
-  'Indie Rock', 'Jazz', 'Classical', 'Country', 'Bass', 'Other',
-]
-
-const STATUS_OPTIONS = [
-  { value: 'pending',   label: 'Pending Review', color: '#F7B500', desc: 'Awaiting verification' },
-  { value: 'verified',  label: 'Verified',        color: '#3DDC84', desc: 'Fully verified artist' },
-  { value: 'suspended', label: 'Suspended',        color: '#FF5B5B', desc: 'Account suspended' },
-]
-
 export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: ArtistModalProps) {
   const isEditing = !!artist
 
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { stageName: '', email: '', genre: '', status: 'pending', avatarUrl: '' },
+    defaultValues: { 
+      userId: '', 
+      stageName: '', 
+      bio: '', 
+      avatarUrl: '', 
+      coverImage: '',
+      socialLinks: { facebook: '', instagram: '', youtube: '' }
+    },
   })
 
-  const watchedName   = watch('stageName')
-  const watchedStatus = watch('status')
+  const watchedName = watch('stageName')
 
   useEffect(() => {
     if (isOpen) {
       reset(artist
-        ? { stageName: artist.stageName, email: artist.email, genre: artist.genre, status: artist.status, avatarUrl: artist.avatarUrl || '' }
-        : { stageName: '', email: '', genre: '', status: 'pending', avatarUrl: '' }
+        ? { 
+            userId: artist.userId,
+            stageName: artist.stageName, 
+            bio: artist.bio || '', 
+            avatarUrl: artist.avatarUrl || '',
+            coverImage: artist.coverImage || '',
+            socialLinks: {
+              facebook: artist.socialLinks?.facebook || '',
+              instagram: artist.socialLinks?.instagram || '',
+              youtube: artist.socialLinks?.youtube || '',
+            }
+          }
+        : { 
+            userId: '', 
+            stageName: '', 
+            bio: '', 
+            avatarUrl: '', 
+            coverImage: '',
+            socialLinks: { facebook: '', instagram: '', youtube: '' }
+          }
       )
     }
   }, [isOpen, artist, reset])
 
   const onFormSubmit = async (data: FormData) => {
     if (isEditing && artist) {
-      await onSubmit({ id: artist.id, ...data })
+      await onSubmit({ _id: artist._id, ...data })
     } else {
       await onSubmit(data as CreateArtistInput)
     }
@@ -68,7 +86,6 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
   const initials = watchedName
     ? watchedName.split(' ').map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase()
     : '?'
-  const statusCfg = STATUS_OPTIONS.find(s => s.value === watchedStatus) ?? STATUS_OPTIONS[0]
 
   return (
     <AnimatePresence>
@@ -127,6 +144,7 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
                 </p>
               </div>
               <button
+                type="button"
                 onClick={onClose}
                 style={{
                   width: 32, height: 32, borderRadius: 8,
@@ -176,26 +194,26 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
                     <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: '0 0 2px' }}>
                       {watchedName || 'Artist Name'}
                     </p>
-                    <p style={{ fontSize: 11, color: '#444', margin: '0 0 8px' }}>
-                      Avatar preview · Upload coming soon
+                    <p style={{ fontSize: 11, color: '#444', margin: '0' }}>
+                      Avatar preview
                     </p>
-                    {/* Status pill in preview */}
-                    <span style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 5,
-                      padding: '2px 8px', borderRadius: 6,
-                      background: `${statusCfg.color}15`,
-                      border: `1px solid ${statusCfg.color}25`,
-                      fontSize: 10, fontWeight: 700, color: statusCfg.color,
-                      letterSpacing: '0.04em', textTransform: 'uppercase',
-                    }}>
-                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: statusCfg.color }} />
-                      {statusCfg.label}
-                    </span>
                   </div>
                 </div>
 
                 {/* Fields */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                  {/* User ID */}
+                  <FieldWrapper label="User ID" icon={<Key size={13} />} error={errors.userId?.message}>
+                    <input
+                      {...register('userId')}
+                      type="text"
+                      placeholder="MongoDB User ObjectId"
+                      style={inputStyle(!!errors.userId)}
+                      onFocus={e => { e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)' }}
+                      onBlur={e => { e.currentTarget.style.borderColor = errors.userId ? 'rgba(255,91,91,0.5)' : 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = 'none' }}
+                    />
+                  </FieldWrapper>
 
                   {/* Stage Name */}
                   <FieldWrapper label="Stage Name" icon={<User size={13} />} error={errors.stageName?.message}>
@@ -209,105 +227,73 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
                     />
                   </FieldWrapper>
 
-                  {/* Email */}
-                  <FieldWrapper label="Email Address" icon={<Mail size={13} />} error={errors.email?.message}>
-                    <input
-                      {...register('email')}
-                      type="email"
-                      placeholder="contact@artist.com"
-                      style={inputStyle(!!errors.email)}
+                  {/* Bio */}
+                  <FieldWrapper label="Bio" icon={<FileText size={13} />} error={errors.bio?.message}>
+                    <textarea
+                      {...register('bio')}
+                      placeholder="Artist biography..."
+                      rows={3}
+                      style={{ ...inputStyle(!!errors.bio), height: 'auto', paddingTop: 10, resize: 'none' }}
                       onFocus={e => { e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)' }}
-                      onBlur={e => { e.currentTarget.style.borderColor = errors.email ? 'rgba(255,91,91,0.5)' : 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = 'none' }}
+                      onBlur={e => { e.currentTarget.style.borderColor = errors.bio ? 'rgba(255,91,91,0.5)' : 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = 'none' }}
                     />
                   </FieldWrapper>
 
-                  {/* Genre — 2-column grid */}
-                  <FieldWrapper label="Primary Genre" icon={<Music size={13} />} error={errors.genre?.message}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                      {GENRE_OPTIONS.map(g => {
-                        const isSelected = watch('genre') === g
-                        return (
-                          <label
-                            key={g}
-                            style={{
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              padding: '8px 4px', borderRadius: 10,
-                              border: isSelected ? '1px solid rgba(63,214,255,0.5)' : '1px solid rgba(255,255,255,0.06)',
-                              background: isSelected ? 'rgba(63,214,255,0.08)' : 'rgba(255,255,255,0.02)',
-                              color: isSelected ? '#3FD6FF' : '#555',
-                              fontSize: 11, fontWeight: 600,
-                              cursor: 'pointer', transition: 'all 0.15s',
-                              userSelect: 'none',
-                            }}
-                          >
-                            <input
-                              {...register('genre')}
-                              type="radio" value={g}
-                              style={{ display: 'none' }}
-                            />
-                            {g}
-                          </label>
-                        )
-                      })}
-                    </div>
-                  </FieldWrapper>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    {/* Avatar URL */}
+                    <FieldWrapper label="Avatar URL" icon={<Image size={13} />} error={errors.avatarUrl?.message}>
+                      <input
+                        {...register('avatarUrl')}
+                        type="url"
+                        placeholder="https://..."
+                        style={inputStyle(!!errors.avatarUrl)}
+                        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)' }}
+                        onBlur={e => { e.currentTarget.style.borderColor = errors.avatarUrl ? 'rgba(255,91,91,0.5)' : 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = 'none' }}
+                      />
+                    </FieldWrapper>
 
-                  {/* Status */}
-                  <FieldWrapper label="Account Status" icon={<ShieldCheck size={13} />} error={errors.status?.message}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {STATUS_OPTIONS.map(opt => {
-                        const isSelected = watchedStatus === opt.value
-                        return (
-                          <label
-                            key={opt.value}
-                            style={{
-                              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                              padding: '12px 14px', borderRadius: 10,
-                              border: isSelected ? `1px solid ${opt.color}40` : '1px solid rgba(255,255,255,0.05)',
-                              background: isSelected ? `${opt.color}08` : 'rgba(255,255,255,0.02)',
-                              cursor: 'pointer', transition: 'all 0.15s',
-                              userSelect: 'none',
-                            }}
-                          >
-                            <input
-                              {...register('status')}
-                              type="radio" value={opt.value}
-                              style={{ display: 'none' }}
-                            />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              <span style={{
-                                width: 8, height: 8, borderRadius: '50%',
-                                background: isSelected ? opt.color : '#333',
-                                boxShadow: isSelected ? `0 0 6px ${opt.color}` : 'none',
-                                transition: 'all 0.15s',
-                              }} />
-                              <div>
-                                <p style={{ fontSize: 12, fontWeight: 600, color: isSelected ? '#fff' : '#666', margin: 0 }}>
-                                  {opt.label}
-                                </p>
-                                <p style={{ fontSize: 10, color: '#3a3a3a', margin: '1px 0 0' }}>
-                                  {opt.desc}
-                                </p>
-                              </div>
-                            </div>
-                            {isSelected && (
-                              <div style={{
-                                width: 16, height: 16, borderRadius: '50%',
-                                background: opt.color,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              }}>
-                                <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
-                                  <path d="M2 5l2.5 2.5L8 3" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                              </div>
-                            )}
-                          </label>
-                        )
-                      })}
+                    {/* Cover Image */}
+                    <FieldWrapper label="Cover Image URL" icon={<Image size={13} />} error={errors.coverImage?.message}>
+                      <input
+                        {...register('coverImage')}
+                        type="url"
+                        placeholder="https://..."
+                        style={inputStyle(!!errors.coverImage)}
+                        onFocus={e => { e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)' }}
+                        onBlur={e => { e.currentTarget.style.borderColor = errors.coverImage ? 'rgba(255,91,91,0.5)' : 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = 'none' }}
+                      />
+                    </FieldWrapper>
+                  </div>
+
+                  {/* Social Links */}
+                  <div style={{ marginTop: 8 }}>
+                    <h3 style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Link size={14} color="#888" />
+                      Social Links
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <input
+                        {...register('socialLinks.facebook')}
+                        type="url"
+                        placeholder="Facebook URL"
+                        style={inputStyle(!!errors.socialLinks?.facebook)}
+                      />
+                      <input
+                        {...register('socialLinks.instagram')}
+                        type="url"
+                        placeholder="Instagram URL"
+                        style={inputStyle(!!errors.socialLinks?.instagram)}
+                      />
+                      <input
+                        {...register('socialLinks.youtube')}
+                        type="url"
+                        placeholder="Youtube URL"
+                        style={inputStyle(!!errors.socialLinks?.youtube)}
+                      />
                     </div>
-                  </FieldWrapper>
+                  </div>
+
                 </div>
-
               </form>
             </div>
 
