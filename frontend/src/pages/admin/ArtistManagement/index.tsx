@@ -2,14 +2,12 @@ import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import {
   Mic2,
-  BadgeCheck,
-  Calendar,
-  Users,
   Plus,
   Eye,
   Edit2,
   Trash2,
   Radio,
+  Image as ImageIcon,
 } from 'lucide-react'
 import { 
   useArtists, 
@@ -25,92 +23,21 @@ import { SearchBar } from '@/components/admin/SearchBar'
 import { Pagination } from '@/components/admin/Pagination'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import { ArtistModal } from '@/components/admin/ArtistModal'
-import type { Artist, ArtistStatus, ArtistQueryParams, CreateArtistInput, UpdateArtistInput } from '@/types/artist.types'
+import type { Artist, ArtistQueryParams, CreateArtistInput, UpdateArtistInput } from '@/types/artist.types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PAGE_SIZE = 10
 
-const GENRES = [
-  'All Genres',
-  'Pop',
-  'Hip-Hop',
-  'R&B',
-  'Rock',
-  'Electronic',
-  'Indie Pop',
-  'Indie Rock',
-  'Jazz',
-  'Classical',
-  'Country',
-  'Bass',
-]
-
-const SORT_OPTIONS = [
-  { label: 'Stage Name A–Z',     value: 'stageName_asc'    },
-  { label: 'Stage Name Z–A',     value: 'stageName_desc'   },
-  { label: 'Most Followers',     value: 'followers_desc'   },
-  { label: 'Least Followers',    value: 'followers_asc'    },
-  { label: 'Newest First',       value: 'createdAt_desc'   },
-  { label: 'Oldest First',       value: 'createdAt_asc'    },
-]
-
-// ─── Badge ────────────────────────────────────────────────────────────────────
-
-const STATUS_CONFIG: Record<
-  ArtistStatus,
-  { label: string; color: string; bg: string; dot: string }
-> = {
-  verified:  { label: 'Verified',  color: '#3DDC84', bg: 'rgba(61,220,132,0.1)',  dot: '#3DDC84' },
-  pending:   { label: 'Pending',   color: '#F7B500', bg: 'rgba(247,181,0,0.1)',   dot: '#F7B500' },
-  suspended: { label: 'Suspended', color: '#FF5B5B', bg: 'rgba(255,91,91,0.1)',   dot: '#FF5B5B' },
-}
-
-function StatusBadge({ status }: { status: ArtistStatus }) {
-  const cfg = STATUS_CONFIG[status]
-  return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 6,
-        padding: '4px 10px',
-        borderRadius: 8,
-        background: cfg.bg,
-        color: cfg.color,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: '0.02em',
-        border: `1px solid ${cfg.color}20`,
-      }}
-    >
-      <span
-        style={{
-          width: 5,
-          height: 5,
-          borderRadius: '50%',
-          background: cfg.dot,
-          flexShrink: 0,
-          boxShadow: `0 0 4px ${cfg.dot}`,
-        }}
-      />
-      {cfg.label}
-    </span>
-  )
-}
-
 // ─── Avatar initials ──────────────────────────────────────────────────────────
 
 function ArtistAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
   const initials = name
-    .split(' ')
-    .map((w) => w[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+    ? name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+    : '?'
 
   const colors = ['#3FD6FF', '#3DDC84', '#F7B500', '#FF5B5B', '#A78BFA', '#FB923C']
-  const color = colors[name.charCodeAt(0) % colors.length]
+  const color = name ? colors[name.charCodeAt(0) % colors.length] : '#3FD6FF'
 
   return (
     <div
@@ -169,64 +96,11 @@ function ArtistEmptyState() {
   )
 }
 
-// ─── Select helper ────────────────────────────────────────────────────────────
-
-function FilterSelect({
-  value,
-  onChange,
-  options,
-  placeholder,
-}: {
-  value: string
-  onChange: (v: string) => void
-  options: { label: string; value: string }[]
-  placeholder?: string
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      style={{
-        height: 38,
-        paddingLeft: 12,
-        paddingRight: 28,
-        borderRadius: 10,
-        border: '1px solid rgba(255,255,255,0.07)',
-        background: 'rgba(255,255,255,0.04)',
-        color: value ? '#fff' : '#555',
-        fontSize: 13,
-        outline: 'none',
-        cursor: 'pointer',
-        appearance: 'none',
-        WebkitAppearance: 'none',
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'right 10px center',
-        minWidth: 140,
-      }}
-    >
-      {placeholder && (
-        <option value="" style={{ background: '#181818' }}>
-          {placeholder}
-        </option>
-      )}
-      {options.map((o) => (
-        <option key={o.value} value={o.value} style={{ background: '#181818', color: '#fff' }}>
-          {o.label}
-        </option>
-      ))}
-    </select>
-  )
-}
-
 // ─── Main page component ──────────────────────────────────────────────────────
 
 export function ArtistManagementPage() {
   // ── Filters state ──────────────────────────────────────
-  const [search, setSearch]       = useState('')
-  const [genre, setGenre]         = useState('')
-  const [status, setStatus]       = useState<ArtistStatus | ''>('')
-  const [sort, setSort]           = useState('createdAt_desc')
+  const [keyword, setKeyword]       = useState('')
   const [page, setPage]           = useState(1)
 
   // ── Delete & Modal dialog state ────────────────────────────────
@@ -234,17 +108,10 @@ export function ArtistManagementPage() {
   const [isModalOpen, setIsModalOpen]   = useState(false)
   const [editTarget, setEditTarget]     = useState<Artist | null>(null)
 
-  // ── Derived query params ───────────────────────────────
-  const [sortBy, sortOrder] = sort.split('_') as [ArtistQueryParams['sortBy'], ArtistQueryParams['sortOrder']]
-
   const queryParams: ArtistQueryParams = {
-    search,
-    genre: genre === 'All Genres' ? '' : genre,
-    status,
-    sortBy,
-    sortOrder,
+    keyword,
     page,
-    pageSize: PAGE_SIZE,
+    limit: PAGE_SIZE,
   }
 
   // ── Data ───────────────────────────────────────────────
@@ -256,33 +123,30 @@ export function ArtistManagementPage() {
 
   // ── Handlers ───────────────────────────────────────────
   const handleSearchChange = useCallback((v: string) => {
-    setSearch(v)
+    setKeyword(v)
     setPage(1)
   }, [])
 
   const handleReset = () => {
-    setSearch('')
-    setGenre('')
-    setStatus('')
-    setSort('createdAt_desc')
+    setKeyword('')
     setPage(1)
   }
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return
-    await deleteArtist(deleteTarget.id)
+    await deleteArtist(deleteTarget._id)
     setDeleteTarget(null)
   }
 
-  const handleModalSubmit = async (data: CreateArtistInput | UpdateArtistInput) => {
+  const handleModalSubmit = async (formData: CreateArtistInput | UpdateArtistInput) => {
     if (editTarget) {
-      await updateArtist(data as UpdateArtistInput)
+      await updateArtist(formData as UpdateArtistInput)
     } else {
-      await createArtist(data as CreateArtistInput)
+      await createArtist(formData as CreateArtistInput)
     }
   }
 
-  const hasFilters = !!search || !!genre || !!status || sort !== 'createdAt_desc'
+  const hasFilters = !!keyword
 
   // ── Table columns ──────────────────────────────────────
   const columns: Column<Artist>[] = [
@@ -296,30 +160,16 @@ export function ArtistManagementPage() {
             <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
               {row.stageName}
             </div>
-            <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>
-              {row.email}
-            </div>
           </div>
         </div>
       ),
     },
     {
-      key: 'genre',
-      header: 'Genre',
+      key: 'userId',
+      header: 'User ID',
       render: (row) => (
-        <span
-          style={{
-            display: 'inline-block',
-            padding: '3px 9px',
-            borderRadius: 7,
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            fontSize: 11,
-            fontWeight: 600,
-            color: '#888',
-          }}
-        >
-          {row.genre}
+        <span style={{ fontSize: 13, color: '#888', fontVariantNumeric: 'tabular-nums' }}>
+          {row.userId}
         </span>
       ),
     },
@@ -338,29 +188,16 @@ export function ArtistManagementPage() {
       ),
     },
     {
-      key: 'albums',
-      header: 'Albums',
+      key: 'socialLinks',
+      header: 'Social Links',
       align: 'center',
       render: (row) => (
-        <span style={{ fontSize: 13, color: '#666', fontVariantNumeric: 'tabular-nums' }}>
-          {row.albums}
-        </span>
+        <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+          {row.socialLinks?.facebook && <span style={{ color: '#1877F2', fontSize: 12 }}>FB</span>}
+          {row.socialLinks?.instagram && <span style={{ color: '#E4405F', fontSize: 12 }}>IG</span>}
+          {row.socialLinks?.youtube && <span style={{ color: '#FF0000', fontSize: 12 }}>YT</span>}
+        </div>
       ),
-    },
-    {
-      key: 'songs',
-      header: 'Songs',
-      align: 'center',
-      render: (row) => (
-        <span style={{ fontSize: 13, color: '#666', fontVariantNumeric: 'tabular-nums' }}>
-          {row.songs}
-        </span>
-      ),
-    },
-    {
-      key: 'status',
-      header: 'Status',
-      render: (row) => <StatusBadge status={row.status} />,
     },
     {
       key: 'createdAt',
@@ -505,40 +342,6 @@ export function ArtistManagementPage() {
           trendLabel="vs last month"
           delay={0.05}
         />
-        <StatCard
-          icon={<BadgeCheck size={18} />}
-          iconColor="#3DDC84"
-          label="Verified Artists"
-          value={stats?.verifiedArtists ?? '—'}
-          trend={5}
-          trendLabel="vs last month"
-          delay={0.1}
-        />
-        <StatCard
-          icon={<Calendar size={18} />}
-          iconColor="#F7B500"
-          label="New This Month"
-          value={stats?.newThisMonth ?? '—'}
-          trend={12}
-          trendLabel="vs previous month"
-          delay={0.15}
-        />
-        <StatCard
-          icon={<Users size={18} />}
-          iconColor="#A78BFA"
-          iconBg="rgba(167,139,250,0.08)"
-          label="Total Followers"
-          value={
-            stats
-              ? stats.totalFollowers >= 1_000_000
-                ? `${(stats.totalFollowers / 1_000_000).toFixed(1)}M`
-                : `${(stats.totalFollowers / 1_000).toFixed(0)}K`
-              : '—'
-          }
-          trend={3}
-          trendLabel="vs last month"
-          delay={0.2}
-        />
       </div>
 
       {/* ── Table card ────────────────────────────────── */}
@@ -565,33 +368,9 @@ export function ArtistManagementPage() {
           }}
         >
           <SearchBar
-            value={search}
+            value={keyword}
             onChange={handleSearchChange}
-            placeholder="Search by name, email, genre..."
-          />
-
-          <FilterSelect
-            value={genre}
-            onChange={(v) => { setGenre(v); setPage(1) }}
-            options={GENRES.filter((g) => g !== 'All Genres').map((g) => ({ label: g, value: g }))}
-            placeholder="All Genres"
-          />
-
-          <FilterSelect
-            value={status}
-            onChange={(v) => { setStatus(v as ArtistStatus | ''); setPage(1) }}
-            options={[
-              { label: 'Verified',  value: 'verified'  },
-              { label: 'Pending',   value: 'pending'   },
-              { label: 'Suspended', value: 'suspended' },
-            ]}
-            placeholder="All Status"
-          />
-
-          <FilterSelect
-            value={sort}
-            onChange={(v) => { setSort(v); setPage(1) }}
-            options={SORT_OPTIONS}
+            placeholder="Search by stage name..."
           />
 
           {hasFilters && (
@@ -647,7 +426,7 @@ export function ArtistManagementPage() {
           <DataTable
             columns={columns}
             data={data?.data ?? []}
-            keyExtractor={(row) => row.id}
+            keyExtractor={(row) => row._id}
             isLoading={isLoading}
             skeletonRows={PAGE_SIZE}
             emptyState={<ArtistEmptyState />}
@@ -661,7 +440,7 @@ export function ArtistManagementPage() {
               currentPage={data.page}
               totalPages={data.totalPages}
               totalItems={data.total}
-              pageSize={data.pageSize}
+              pageSize={PAGE_SIZE}
               onPageChange={setPage}
             />
           </div>
