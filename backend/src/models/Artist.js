@@ -6,11 +6,12 @@ const artistSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
+            unique: true,
         },
 
         stageName: {
             type: String,
-            required: true,
+            required: [true, "Stage name is required"],
             trim: true,
         },
 
@@ -32,21 +33,13 @@ const artistSchema = new mongoose.Schema(
         followers: {
             type: Number,
             default: 0,
+            min: 0,
         },
 
         socialLinks: {
-            facebook: {
-                type: String,
-                default: "",
-            },
-            instagram: {
-                type: String,
-                default: "",
-            },
-            youtube: {
-                type: String,
-                default: "",
-            },
+            type: Map,
+            of: String,
+            default: {},
         },
     },
     {

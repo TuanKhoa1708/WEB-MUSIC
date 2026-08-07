@@ -7,19 +7,20 @@ const historySchema = new mongoose.Schema(
             ref: "User",
             required: [true, "User is required"],
         },
+
         songId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Song",
             required: [true, "Song is required"],
         },
-        playedAt: {
+
+        listenedAt: {
             type: Date,
             default: Date.now,
         },
     },
     {
         timestamps: true,
-        collection: "history" // Ensure collection name is 'history' instead of 'histories'
     }
 );
 

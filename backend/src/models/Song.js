@@ -33,6 +33,7 @@ const songSchema = new mongoose.Schema(
         duration: {
             type: Number,
             required: true,
+            min: 0,
         },
 
         genre: {
