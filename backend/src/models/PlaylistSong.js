@@ -25,6 +25,8 @@ const playlistSongSchema = new mongoose.Schema(
 // Optional: ensure a song can only be added to a playlist once
 playlistSongSchema.index({ playlistId: 1, songId: 1 }, { unique: true });
 
-const PlaylistSong = mongoose.model("PlaylistSong", playlistSongSchema, "playlistSongs");
+const PlaylistSong =
+    mongoose.models.PlaylistSong ||
+    mongoose.model("PlaylistSong", playlistSongSchema, "playlistSongs");
 
 export default PlaylistSong;

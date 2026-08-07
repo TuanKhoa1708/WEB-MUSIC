@@ -1,23 +1,23 @@
 import mongoose from "mongoose";
 
-const albumSchema = new mongoose.Schema(
+const playlistSongSchema = new mongoose.Schema(
     {
-        title: {
-            type: String,
-            required: [true, "Album title is required"],
-            trim: true,
-        },
-        artistId: {
+        playlistId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Artist",
-            required: [true, "Artist is required"],
+            ref: "Playlist",
+            required: [true, "Playlist is required"],
         },
-        coverUrl: {
-            type: String,
-            default: "",
+
+        songId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Song",
+            required: [true, "Song is required"],
         },
-        releaseYear: {
+
+        order: {
             type: Number,
+            required: true,
+            min: 0,
         },
     },
     {
@@ -25,6 +25,15 @@ const albumSchema = new mongoose.Schema(
     }
 );
 
-const Album = mongoose.model("Album", albumSchema);
+playlistSongSchema.index(
+    { playlistId: 1, songId: 1 },
+    { unique: true }
+);
 
-export default Album;
+const PlaylistSong = mongoose.model(
+    "PlaylistSong",
+    playlistSongSchema,
+    "playlistSongs"
+);
+
+export default PlaylistSong;

@@ -7,14 +7,11 @@ const favoriteSchema = new mongoose.Schema(
             ref: "User",
             required: [true, "User is required"],
         },
+
         songId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Song",
             required: [true, "Song is required"],
-        },
-        addedAt: {
-            type: Date,
-            default: Date.now,
         },
     },
     {
@@ -23,7 +20,10 @@ const favoriteSchema = new mongoose.Schema(
 );
 
 // A user can only favorite a song once
-favoriteSchema.index({ userId: 1, songId: 1 }, { unique: true });
+favoriteSchema.index(
+    { userId: 1, songId: 1 },
+    { unique: true }
+);
 
 const Favorite = mongoose.model("Favorite", favoriteSchema);
 
