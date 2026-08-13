@@ -2,7 +2,6 @@
 
 export interface Artist {
   _id: string;
-  userId: string;
   stageName: string;
   bio?: string;
   avatarUrl?: string;
@@ -18,7 +17,6 @@ export interface Artist {
 }
 
 export type CreateArtistInput = {
-  userId: string;
   stageName: string;
   bio?: string;
   avatarUrl?: string;

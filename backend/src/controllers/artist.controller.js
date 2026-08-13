@@ -7,7 +7,6 @@ import User from "../models/User.js";
 export const createArtist = async (req, res) => {
     try {
         const {
-            userId,
             stageName,
             bio,
             avatarUrl,
@@ -16,35 +15,14 @@ export const createArtist = async (req, res) => {
             socialLinks,
         } = req.body;
 
-        if (!userId || !stageName) {
+        if (!stageName) {
             return res.status(400).json({
                 success: false,
-                message: "userId and stageName are required",
-            });
-        }
-
-        // Kiểm tra User tồn tại
-        const user = await User.findById(userId);
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-
-        // Kiểm tra user đã có Artist profile chưa
-        const existingArtist = await Artist.findOne({ userId });
-
-        if (existingArtist) {
-            return res.status(409).json({
-                success: false,
-                message: "This user already has an artist profile",
+                message: "stageName is required",
             });
         }
 
         const artist = await Artist.create({
-            userId,
             stageName,
             bio: bio || "",
             avatarUrl: avatarUrl || "",
@@ -92,7 +70,6 @@ export const getArtists = async (req, res) => {
         const total = await Artist.countDocuments(query);
 
         const artists = await Artist.find(query)
-            .populate("userId", "fullName username email avatarUrl")
             .skip((pageNumber - 1) * limitNumber)
             .limit(limitNumber)
             .sort({
@@ -120,11 +97,7 @@ export const getArtists = async (req, res) => {
 // ===========================
 export const getArtistById = async (req, res) => {
     try {
-        const artist = await Artist.findById(req.params.id)
-            .populate(
-                "userId",
-                "fullName username email avatarUrl role"
-            );
+        const artist = await Artist.findById(req.params.id);
 
         if (!artist) {
             return res.status(404).json({

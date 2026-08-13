@@ -240,3 +240,10 @@ body {
   background-color: #3FD6FF;
   border-color: #3FD6FF;
 }
+
+/* Spinner rotation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
