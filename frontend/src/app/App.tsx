@@ -11,6 +11,7 @@ import { AdminLayout } from '@/layouts/AdminLayout'
 // Admin pages
 import { ArtistManagementPage } from '@/pages/admin/ArtistManagement'
 import { AdminDashboardPage } from '@/pages/admin/Dashboard'
+import { SongManagementPage } from '@/pages/admin/SongManagement'
 
 // Other pages
 import { UnauthorizedPage } from '@/pages/Unauthorized'
@@ -79,6 +80,7 @@ function AnimatedRoutes() {
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
               <Route path="/admin/artists" element={<ArtistManagementPage />} />
+              <Route path="/admin/songs" element={<SongManagementPage />} />
             </Route>
           </Route>
 

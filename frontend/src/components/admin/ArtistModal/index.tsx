@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Artist, CreateArtistInput, UpdateArtistInput } from '@/types/artist.types'
 
 const schema = z.object({
-  userId: z.string().min(1, 'User ID is required'),
   stageName: z.string().min(1, 'Stage name is required').max(100),
   bio: z.string().optional(),
   avatarUrl: z.string().optional(),
@@ -35,7 +34,6 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { 
-      userId: '', 
       stageName: '', 
       bio: '', 
       avatarUrl: '', 
@@ -50,7 +48,6 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
     if (isOpen) {
       reset(artist
         ? { 
-            userId: artist.userId,
             stageName: artist.stageName, 
             bio: artist.bio || '', 
             avatarUrl: artist.avatarUrl || '',
@@ -62,7 +59,6 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
             }
           }
         : { 
-            userId: '', 
             stageName: '', 
             bio: '', 
             avatarUrl: '', 
@@ -202,18 +198,6 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
 
                 {/* Fields */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-                  {/* User ID */}
-                  <FieldWrapper label="User ID" icon={<Key size={13} />} error={errors.userId?.message}>
-                    <input
-                      {...register('userId')}
-                      type="text"
-                      placeholder="MongoDB User ObjectId"
-                      style={inputStyle(!!errors.userId)}
-                      onFocus={e => { e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)' }}
-                      onBlur={e => { e.currentTarget.style.borderColor = errors.userId ? 'rgba(255,91,91,0.5)' : 'rgba(255,255,255,0.07)'; e.currentTarget.style.boxShadow = 'none' }}
-                    />
-                  </FieldWrapper>
 
                   {/* Stage Name */}
                   <FieldWrapper label="Stage Name" icon={<User size={13} />} error={errors.stageName?.message}>

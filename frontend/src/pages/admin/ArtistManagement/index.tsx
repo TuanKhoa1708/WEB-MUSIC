@@ -164,15 +164,7 @@ export function ArtistManagementPage() {
         </div>
       ),
     },
-    {
-      key: 'userId',
-      header: 'User ID',
-      render: (row) => (
-        <span style={{ fontSize: 13, color: '#888', fontVariantNumeric: 'tabular-nums' }}>
-          {row.userId}
-        </span>
-      ),
-    },
+
     {
       key: 'followers',
       header: 'Followers',

@@ -2,12 +2,6 @@ import mongoose from "mongoose";
 
 const artistSchema = new mongoose.Schema(
     {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-            unique: true,
-        },
 
         stageName: {
             type: String,
