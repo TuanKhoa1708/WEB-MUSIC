@@ -425,10 +425,10 @@ export function SongDetailModal({ song, isOpen, onClose, onEdit }: SongDetailMod
                   }
                 />
               )}
-              {song.lyrics && (
+              {song.description && (
                 <DetailRow
                   icon={<AlignLeft size={13} />}
-                  label="Lyrics"
+                  label="Description"
                   value={
                     <pre
                       style={{
@@ -443,7 +443,7 @@ export function SongDetailModal({ song, isOpen, onClose, onEdit }: SongDetailMod
                         margin: 0,
                       }}
                     >
-                      {song.lyrics}
+                      {song.description}
                     </pre>
                   }
                 />
