@@ -1,0 +1,30 @@
+import axiosInstance from '@/api/axios'
+import type {
+  User,
+  UserQueryParams,
+  PaginatedUsers,
+  ToggleStatusResponse,
+} from '@/types/user.types'
+
+const BASE = '/users'
+
+// ─── GET /users ───────────────────────────────────────────────────────────────
+// Supports: page, limit, keyword, role, isActive
+// Admin-only — axiosInstance automatically attaches Bearer token
+export async function getUsersApi(params?: UserQueryParams): Promise<PaginatedUsers> {
+  const { data } = await axiosInstance.get<PaginatedUsers>(BASE, { params })
+  return data
+}
+
+// ─── GET /users/:id ───────────────────────────────────────────────────────────
+export async function getUserByIdApi(id: string): Promise<{ success: boolean; data: User }> {
+  const { data } = await axiosInstance.get<{ success: boolean; data: User }>(`${BASE}/${id}`)
+  return data
+}
+
+// ─── PATCH /users/:id/status ──────────────────────────────────────────────────
+// Toggle isActive (deactivate / reactivate) — no hard delete
+export async function toggleUserStatusApi(id: string): Promise<ToggleStatusResponse> {
+  const { data } = await axiosInstance.patch<ToggleStatusResponse>(`${BASE}/${id}/status`)
+  return data
+}

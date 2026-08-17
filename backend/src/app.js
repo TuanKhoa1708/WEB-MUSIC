@@ -9,10 +9,15 @@ import playlistRoutes from "./routes/playlist.routes.js";
 import playlistSongRoutes from "./routes/playlistSong.routes.js";
 import favoriteRoutes from "./routes/favorite.routes.js";
 import historyRoutes from "./routes/history.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
+import userRoutes from "./routes/user.routes.js";
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the uploads directory
+app.use('/uploads', express.static('uploads'));
 
 app.get("/", (req, res) => {
     res.json({
@@ -43,4 +48,11 @@ app.use("/api/history", historyRoutes);
 
 // Song Routes
 app.use("/api/songs", songRoutes);
+
+// Upload Routes
+app.use("/api/upload", uploadRoutes);
+
+// User Management Routes (Admin only)
+app.use("/api/users", userRoutes);
+
 export default app;

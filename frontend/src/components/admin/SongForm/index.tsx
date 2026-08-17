@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import type { Song, CreateSongInput, UpdateSongInput } from '@/types/song.types'
 import { useArtistOptions, useAlbumOptions } from '@/hooks/admin/useSongs'
+import { uploadFilesApi } from '@/api/song.api'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -301,21 +302,18 @@ interface FormValues {
   albumId: string
   audioUrl: string
   coverUrl: string
-  durationStr: string    // "m:ss" or plain seconds string in UI
   genre: string
-  lyrics: string
+  description: string
+  duration: number
 }
 
 type FormErrors = Partial<Record<keyof FormValues, string>>
 
-function validate(vals: FormValues): FormErrors {
+function validate(vals: FormValues, isEdit: boolean, audioFile: File | null): FormErrors {
   const errors: FormErrors = {}
   if (!vals.title.trim()) errors.title = 'Song title is required'
   if (!vals.artistId) errors.artistId = 'Artist is required'
-  if (!vals.audioUrl.trim()) errors.audioUrl = 'Audio URL is required'
-  const dur = parseDurationInput(vals.durationStr)
-  if (!vals.durationStr.trim() || isNaN(dur) || dur <= 0)
-    errors.durationStr = 'Duration is required (e.g. 3:45)'
+  if (!isEdit && !audioFile) errors.audioUrl = 'Audio file is required'
   return errors
 }
 
@@ -332,14 +330,20 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
     albumId: '',
     audioUrl: '',
     coverUrl: '',
-    durationStr: '',
     genre: '',
-    lyrics: '',
+    description: '',
+    duration: 0,
   }
 
   const [form, setForm] = useState<FormValues>(emptyForm)
   const [errors, setErrors] = useState<FormErrors>({})
   const [submitted, setSubmitted] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+
+  const [audioFile, setAudioFile] = useState<File | null>(null)
+  const [coverFile, setCoverFile] = useState<File | null>(null)
+  const [audioPreviewUrl, setAudioPreviewUrl] = useState<string>('')
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string>('')
 
   // Reset/prefill form when song or open state changes
   useEffect(() => {
@@ -359,53 +363,132 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
           albumId: albumId || '',
           audioUrl: song.audioUrl || '',
           coverUrl: song.coverUrl || '',
-          durationStr: song.duration ? formatDuration(song.duration) : '',
           genre: song.genre || '',
-          lyrics: song.lyrics || '',
+          description: song.description || '',
+          duration: song.duration || 0,
         })
+        setAudioPreviewUrl(song.audioUrl || '')
+        setCoverPreviewUrl(song.coverUrl || '')
+        setAudioFile(null)
+        setCoverFile(null)
       } else {
         setForm(emptyForm)
+        setAudioPreviewUrl('')
+        setCoverPreviewUrl('')
+        setAudioFile(null)
+        setCoverFile(null)
       }
       setErrors({})
       setSubmitted(false)
+      setIsUploading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, song])
+
+  // Auto-fetch duration when audio file or url changes
+  useEffect(() => {
+    if (!audioPreviewUrl) return
+    
+    // Skip if editing and URL hasn't changed to avoid overriding
+    if (isEdit && song && song.audioUrl === audioPreviewUrl && song.duration > 0 && !audioFile) {
+      return
+    }
+
+    try {
+      const audio = new Audio(audioPreviewUrl)
+      
+      const handleLoadedMetadata = () => {
+        if (audio.duration && !isNaN(audio.duration) && audio.duration !== Infinity) {
+          setForm(prev => ({ ...prev, duration: Math.round(audio.duration) }))
+        }
+      }
+      
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+      
+      return () => {
+        audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+        audio.removeAttribute('src')
+      }
+    } catch (err) {
+      // Ignore audio load errors
+    }
+  }, [audioPreviewUrl, isEdit, song, audioFile])
 
   const handleChange = (field: keyof FormValues, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (submitted) {
       const updated = { ...form, [field]: value }
-      setErrors(validate(updated))
+      setErrors(validate(updated, isEdit, audioFile))
+    }
+  }
+
+  const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setAudioFile(file)
+      const url = URL.createObjectURL(file)
+      setAudioPreviewUrl(url)
+      if (submitted) {
+        setErrors(validate(form, isEdit, file))
+      }
+    }
+  }
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setCoverFile(file)
+      const url = URL.createObjectURL(file)
+      setCoverPreviewUrl(url)
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
-    const errs = validate(form)
+    const errs = validate(form, isEdit, audioFile)
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       return
     }
 
-    const duration = parseDurationInput(form.durationStr)
+    setIsUploading(true)
+    try {
+      let finalAudioUrl = form.audioUrl
+      let finalCoverUrl = form.coverUrl
 
-    const payload: CreateSongInput = {
-      title: form.title.trim(),
-      artistId: form.artistId,
-      albumId: form.albumId || null,
-      audioUrl: form.audioUrl.trim(),
-      coverUrl: form.coverUrl.trim() || undefined,
-      duration,
-      genre: form.genre || undefined,
-      lyrics: form.lyrics.trim() || undefined,
-    }
+      if (audioFile || coverFile) {
+        const formData = new FormData()
+        if (audioFile) formData.append('audio', audioFile)
+        if (coverFile) formData.append('cover', coverFile)
 
-    if (isEdit && song) {
-      await onSubmit({ ...payload, _id: song._id } as UpdateSongInput)
-    } else {
-      await onSubmit(payload)
+        const uploadRes = await uploadFilesApi(formData)
+        if (uploadRes.success) {
+          if (uploadRes.data.audioUrl) finalAudioUrl = uploadRes.data.audioUrl
+          if (uploadRes.data.coverUrl) finalCoverUrl = uploadRes.data.coverUrl
+        }
+      }
+
+      const payload: CreateSongInput = {
+        title: form.title.trim(),
+        artistId: form.artistId,
+        albumId: form.albumId || null,
+        audioUrl: finalAudioUrl,
+        coverUrl: finalCoverUrl || undefined,
+        duration: form.duration,
+        genre: form.genre || undefined,
+        description: form.description.trim() || undefined,
+      }
+
+      if (isEdit && song) {
+        await onSubmit({ ...payload, _id: song._id } as UpdateSongInput)
+      } else {
+        await onSubmit(payload)
+      }
+    } catch (error) {
+      console.error('Submit error', error)
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -589,44 +672,70 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                   </Field>
                 </div>
 
-                {/* Audio URL */}
-                <Field label="Audio URL" required error={errors.audioUrl}>
+                {/* Audio Upload */}
+                <Field label="Audio File" required error={errors.audioUrl}>
                   <StyledInput
-                    id="song-audio-url"
-                    icon={<Link2 size={14} />}
-                    placeholder="https://cdn.example.com/track.mp3"
-                    value={form.audioUrl}
-                    onChange={(e) => handleChange('audioUrl', e.target.value)}
+                    id="song-audio-file"
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleAudioFileChange}
                     error={!!errors.audioUrl}
-                    type="url"
+                    style={{ paddingTop: 10 }}
                   />
                 </Field>
 
-                {/* Cover URL */}
-                <Field label="Cover Image URL">
+                {/* Audio preview */}
+                {audioPreviewUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: 10,
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      marginTop: -4
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <p style={{ fontSize: 12, color: '#aaa', fontWeight: 600 }}>Audio preview</p>
+                      {form.duration > 0 && (
+                         <span style={{ fontSize: 11, color: '#3FD6FF', fontWeight: 600 }}>
+                           {Math.floor(form.duration / 60)}:{(form.duration % 60).toString().padStart(2, '0')}
+                         </span>
+                      )}
+                    </div>
+                    <audio
+                      controls
+                      key={audioPreviewUrl}
+                      style={{
+                        width: '100%',
+                        height: 36,
+                        borderRadius: 8,
+                        outline: 'none',
+                        filter: 'invert(1) hue-rotate(180deg)',
+                        opacity: 0.8,
+                      }}
+                    >
+                      <source src={audioPreviewUrl} />
+                      Your browser does not support audio playback.
+                    </audio>
+                  </motion.div>
+                )}
+
+                {/* Cover Upload */}
+                <Field label="Cover Image">
                   <StyledInput
-                    id="song-cover-url"
-                    icon={<ImageIcon size={14} />}
-                    placeholder="https://cdn.example.com/cover.jpg"
-                    value={form.coverUrl}
-                    onChange={(e) => handleChange('coverUrl', e.target.value)}
-                    type="url"
+                    id="song-cover-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCoverFileChange}
+                    style={{ paddingTop: 10 }}
                   />
                 </Field>
 
-                {/* Duration + Genre row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                  <Field label="Duration" required error={errors.durationStr}>
-                    <StyledInput
-                      id="song-duration"
-                      icon={<Clock size={14} />}
-                      placeholder="3:45"
-                      value={form.durationStr}
-                      onChange={(e) => handleChange('durationStr', e.target.value)}
-                      error={!!errors.durationStr}
-                    />
-                  </Field>
-
+                {/* Genre row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>
                   <Field label="Genre">
                     <StyledSelect
                       id="song-genre"
@@ -644,20 +753,20 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                   </Field>
                 </div>
 
-                {/* Lyrics */}
-                <Field label="Lyrics">
+                {/* Description */}
+                <Field label="Description">
                   <StyledTextarea
-                    id="song-lyrics"
+                    id="song-description"
                     icon={<AlignLeft size={14} />}
-                    placeholder="Paste song lyrics here (optional)"
-                    value={form.lyrics}
-                    onChange={(e) => handleChange('lyrics', e.target.value)}
+                    placeholder="Enter song description here (optional)"
+                    value={form.description}
+                    onChange={(e) => handleChange('description', e.target.value)}
                     rows={4}
                   />
                 </Field>
 
                 {/* Cover preview */}
-                {form.coverUrl && (
+                {coverPreviewUrl && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -672,7 +781,7 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                     }}
                   >
                     <img
-                      src={form.coverUrl}
+                      src={coverPreviewUrl}
                       alt="Cover preview"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none'
@@ -686,7 +795,7 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                         flexShrink: 0,
                       }}
                     />
-                    <div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: 12, color: '#aaa', fontWeight: 600 }}>
                         Cover preview
                       </p>
@@ -695,13 +804,12 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                           fontSize: 11,
                           color: '#444',
                           marginTop: 2,
-                          maxWidth: 320,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
                         }}
                       >
-                        {form.coverUrl}
+                        {coverFile ? coverFile.name : form.coverUrl}
                       </p>
                     </div>
                   </motion.div>
@@ -743,28 +851,25 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                 </motion.button>
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: isLoading ? 1 : 1.02 }}
-                  whileTap={{ scale: isLoading ? 1 : 0.97 }}
+                  whileHover={{ scale: isUploading || isLoading ? 1 : 1.02 }}
+                  whileTap={{ scale: isUploading || isLoading ? 1 : 0.97 }}
+                  disabled={isUploading || isLoading}
                   id={isEdit ? 'btn-update-song' : 'btn-create-song'}
-                  disabled={isLoading}
                   style={{
                     height: 40,
                     paddingLeft: 22,
                     paddingRight: 22,
                     borderRadius: 10,
                     border: 'none',
-                    background: isLoading
-                      ? 'rgba(63,214,255,0.3)'
-                      : 'linear-gradient(135deg, #3FD6FF, #2094ff)',
-                    color: '#000',
+                    background: (isUploading || isLoading) ? '#555' : 'linear-gradient(135deg, #3FD6FF, #2094ff)',
+                    color: (isUploading || isLoading) ? '#ccc' : '#000',
                     fontSize: 13,
                     fontWeight: 700,
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    gap: 8,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                    boxShadow: isLoading ? 'none' : '0 4px 16px rgba(63,214,255,0.25)',
+                    boxShadow: (isUploading || isLoading) ? 'none' : '0 4px 16px rgba(63,214,255,0.25)',
                     transition: 'all 0.2s',
                   }}
                 >

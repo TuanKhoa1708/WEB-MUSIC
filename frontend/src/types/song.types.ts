@@ -10,7 +10,7 @@ export interface Song {
   coverUrl?: string
   duration: number        // seconds (Number in schema)
   genre?: string
-  lyrics?: string
+  description?: string
   playCount: number
   createdAt: string
   updatedAt: string
@@ -35,9 +35,9 @@ export interface CreateSongInput {
   albumId?: string | null
   audioUrl: string
   coverUrl?: string
-  duration: number
+  duration?: number
   genre?: string
-  lyrics?: string
+  description?: string
 }
 
 export type UpdateSongInput = Partial<CreateSongInput> & { _id: string }

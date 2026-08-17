@@ -13,13 +13,13 @@ export const createSong = async (req, res) => {
             coverUrl,
             duration,
             genre,
-            lyrics,
+            description,
         } = req.body;
 
-        if (!title || !artistId || !audioUrl || duration === undefined) {
+        if (!title || !artistId || !audioUrl) {
             return res.status(400).json({
                 success: false,
-                message: "title, artistId, audioUrl and duration are required",
+                message: "title, artistId and audioUrl are required",
             });
         }
 
@@ -51,7 +51,7 @@ export const createSong = async (req, res) => {
             coverUrl: coverUrl || "",
             duration,
             genre: genre || "",
-            lyrics: lyrics || "",
+            description: description || "",
         });
 
         const result = await Song.findById(song._id)

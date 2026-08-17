@@ -32,7 +32,7 @@ const songSchema = new mongoose.Schema(
 
         duration: {
             type: Number,
-            required: true,
+            default: 0,
             min: 0,
         },
 
@@ -41,7 +41,7 @@ const songSchema = new mongoose.Schema(
             default: "",
         },
 
-        lyrics: {
+        description: {
             type: String,
             default: "",
         },

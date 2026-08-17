@@ -49,3 +49,14 @@ export async function updateSongApi(id: string, payload: Partial<UpdateSongInput
 export async function deleteSongApi(id: string): Promise<void> {
   await axiosInstance.delete(`${BASE}/${id}`)
 }
+
+// ─── POST /upload ─────────────────────────────────────────────────────────────
+// Upload audio and/or cover files using multipart/form-data
+export async function uploadFilesApi(formData: FormData): Promise<{ success: boolean; data: { audioUrl?: string; coverUrl?: string } }> {
+  const { data } = await axiosInstance.post<{ success: boolean; data: { audioUrl?: string; coverUrl?: string } }>('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return data
+}

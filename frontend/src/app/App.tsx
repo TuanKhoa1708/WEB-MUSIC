@@ -12,9 +12,15 @@ import { AdminLayout } from '@/layouts/AdminLayout'
 import { ArtistManagementPage } from '@/pages/admin/ArtistManagement'
 import { AdminDashboardPage } from '@/pages/admin/Dashboard'
 import { SongManagementPage } from '@/pages/admin/SongManagement'
+import { ListenerManagementPage } from '@/pages/admin/ListenerManagement'
 
 // Other pages
 import { UnauthorizedPage } from '@/pages/Unauthorized'
+
+// Artist pages
+import { ArtistRoute } from '@/routes/ArtistRoute'
+import { ArtistLayout } from '@/layouts/ArtistLayout'
+import { AlbumManagementPage } from '@/pages/artist/AlbumManagement'
 
 // ─── Placeholder home page ────────────────────────────────────────────────────
 function HomePage() {
@@ -80,7 +86,17 @@ function AnimatedRoutes() {
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
               <Route path="/admin/artists" element={<ArtistManagementPage />} />
+              <Route path="/admin/listeners" element={<ListenerManagementPage />} />
               <Route path="/admin/songs" element={<SongManagementPage />} />
+            </Route>
+          </Route>
+
+          {/* Protected artist routes */}
+          <Route element={<ArtistRoute />}>
+            <Route element={<ArtistLayout />}>
+              <Route path="/artist/albums" element={<AlbumManagementPage />} />
+              <Route path="/artist/analytics" element={<HomePage />} />
+              <Route path="/artist/settings" element={<HomePage />} />
             </Route>
           </Route>
 
