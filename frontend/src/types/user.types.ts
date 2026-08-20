@@ -43,3 +43,11 @@ export interface ToggleStatusResponse {
   message: string
   data: User
 }
+
+// ─── Self-service profile update ──────────────────────────────────────────────
+
+export interface UpdateMeInput {
+  fullName?: string
+  username?: string
+  avatarUrl?: string
+}

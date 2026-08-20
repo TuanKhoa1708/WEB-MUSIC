@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Disc3, User, Calendar, Image as ImageIcon, AlertCircle } from 'lucide-react'
+import { X, Disc3, User, Calendar, AlertCircle } from 'lucide-react'
 import type { Album, CreateAlbumInput, UpdateAlbumInput } from '@/types/album.types'
 import { useArtistOptions } from '@/hooks/artist/useAlbums'
 import { uploadFilesApi } from '@/api/song.api' // Reuse the same upload endpoint

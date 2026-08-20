@@ -2,8 +2,9 @@ import {
   getUsersApi,
   getUserByIdApi,
   toggleUserStatusApi,
+  updateMeApi,
 } from '@/api/user.api'
-import type { User, UserQueryParams, PaginatedUsers } from '@/types/user.types'
+import type { User, UserQueryParams, PaginatedUsers, UpdateMeInput } from '@/types/user.types'
 
 // ─── List users (paginated) ───────────────────────────────────────────────────
 
@@ -22,5 +23,12 @@ export async function getUserByIdService(id: string): Promise<User> {
 
 export async function toggleUserStatusService(id: string): Promise<User> {
   const res = await toggleUserStatusApi(id)
+  return res.data
+}
+
+// ─── Update my own profile ────────────────────────────────────────────────────
+
+export async function updateMeService(input: UpdateMeInput): Promise<User> {
+  const res = await updateMeApi(input)
   return res.data
 }

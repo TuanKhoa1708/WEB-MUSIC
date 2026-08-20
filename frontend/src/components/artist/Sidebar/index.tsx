@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
+  LayoutDashboard,
+  Music,
   Disc3,
-  BarChart3,
-  Settings,
+  ListMusic,
+  UserCircle2,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -12,7 +14,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
-// ─── Nav item definition ──────────────────────────────────────────────────────
+// ─── Nav section definition ───────────────────────────────────────────────────
 
 interface NavItem {
   label: string
@@ -20,10 +22,32 @@ interface NavItem {
   to: string
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'My Albums',     icon: <Disc3 size={18} />,     to: '/artist/albums' },
-  { label: 'Analytics',     icon: <BarChart3 size={18} />, to: '/artist/analytics' },
-  { label: 'Settings',      icon: <Settings size={18} />,  to: '/artist/settings' },
+interface NavSection {
+  sectionLabel: string
+  items: NavItem[]
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    sectionLabel: 'MAIN',
+    items: [
+      { label: 'Dashboard', icon: <LayoutDashboard size={18} />, to: '/artist/dashboard' },
+    ],
+  },
+  {
+    sectionLabel: 'CONTENT',
+    items: [
+      { label: 'Songs',     icon: <Music size={18} />,     to: '/artist/songs'    },
+      { label: 'Albums',    icon: <Disc3 size={18} />,     to: '/artist/albums'   },
+      { label: 'Playlists', icon: <ListMusic size={18} />, to: '/artist/playlists' },
+    ],
+  },
+  {
+    sectionLabel: 'PROFILE',
+    items: [
+      { label: 'My Profile', icon: <UserCircle2 size={18} />, to: '/artist/profile' },
+    ],
+  },
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -107,21 +131,51 @@ export function ArtistSidebar() {
         </AnimatePresence>
       </div>
 
-      {/* ── Nav items ─────────────────────────────────────────────── */}
+      {/* ── Nav sections ──────────────────────────────────────────── */}
       <nav
         style={{
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
-          padding: '12px 0',
+          padding: '8px 0',
         }}
       >
-        {NAV_ITEMS.map((item) => (
-          <SidebarNavItem key={item.to} item={item} collapsed={collapsed} />
+        {NAV_SECTIONS.map((section) => (
+          <div key={section.sectionLabel}>
+            {/* Section label */}
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#333',
+                    letterSpacing: '0.08em',
+                    paddingLeft: 22,
+                    paddingTop: 16,
+                    paddingBottom: 4,
+                    userSelect: 'none',
+                  }}
+                >
+                  {section.sectionLabel}
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {collapsed && <div style={{ height: 12 }} />}
+
+            {/* Items */}
+            {section.items.map((item) => (
+              <SidebarNavItem key={item.to} item={item} collapsed={collapsed} />
+            ))}
+          </div>
         ))}
       </nav>
 
-      {/* ── Collapse toggle ───────────────────────────────────────── */}
+      {/* ── Bottom actions ────────────────────────────────────────── */}
       <div
         style={{
           padding: '12px',
@@ -131,6 +185,7 @@ export function ArtistSidebar() {
           gap: 4,
         }}
       >
+        {/* Logout */}
         <button
           onClick={handleLogout}
           title="Logout"
@@ -171,6 +226,7 @@ export function ArtistSidebar() {
           </AnimatePresence>
         </button>
 
+        {/* Collapse button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           title={collapsed ? 'Expand' : 'Collapse'}
@@ -253,6 +309,7 @@ function SidebarNavItem({ item, collapsed }: { item: NavItem; collapsed: boolean
             }
           }}
         >
+          {/* Active indicator */}
           {isActive && (
             <motion.div
               layoutId="artist-sidebar-active"

@@ -10,17 +10,23 @@ import { AdminLayout } from '@/layouts/AdminLayout'
 
 // Admin pages
 import { ArtistManagementPage } from '@/pages/admin/ArtistManagement'
+import { ArtistRequestsPage } from '@/pages/admin/ArtistRequests'
 import { AdminDashboardPage } from '@/pages/admin/Dashboard'
 import { SongManagementPage } from '@/pages/admin/SongManagement'
 import { ListenerManagementPage } from '@/pages/admin/ListenerManagement'
 
-// Other pages
 import { UnauthorizedPage } from '@/pages/Unauthorized'
+import { BecomeArtistPage } from '@/pages/user/BecomeArtist'
 
 // Artist pages
 import { ArtistRoute } from '@/routes/ArtistRoute'
 import { ArtistLayout } from '@/layouts/ArtistLayout'
 import { AlbumManagementPage } from '@/pages/artist/AlbumManagement'
+import { ArtistDashboardPage } from '@/pages/artist/Dashboard'
+import { ArtistSongManagementPage } from '@/pages/artist/SongManagement'
+import { ArtistPlaylistsPage } from '@/pages/artist/Playlists'
+import { PlaylistDetailPage } from '@/pages/artist/PlaylistDetail'
+import { ArtistProfilePage } from '@/pages/artist/Profile'
 
 // ─── Placeholder home page ────────────────────────────────────────────────────
 function HomePage() {
@@ -38,7 +44,23 @@ function HomePage() {
         letterSpacing: '-0.02em',
       }}
     >
-      🎵 Welcome to Pulse — Home
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+        <div>🎵 Welcome to Pulse — Home</div>
+        <a 
+          href="/become-artist"
+          style={{
+            background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
+            color: '#000',
+            padding: '12px 24px',
+            borderRadius: 12,
+            textDecoration: 'none',
+            fontSize: '15px',
+            fontWeight: 700
+          }}
+        >
+          Apply to become an Artist
+        </a>
+      </div>
     </div>
   )
 }
@@ -79,24 +101,30 @@ function AnimatedRoutes() {
           {/* Protected user routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<HomePage />} />
+            <Route path="/become-artist" element={<BecomeArtistPage />} />
           </Route>
 
           {/* Protected admin routes */}
           <Route element={<AdminRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+              <Route path="/admin/artist-requests" element={<ArtistRequestsPage />} />
               <Route path="/admin/artists" element={<ArtistManagementPage />} />
               <Route path="/admin/listeners" element={<ListenerManagementPage />} />
               <Route path="/admin/songs" element={<SongManagementPage />} />
+              <Route path="/admin/albums" element={<AlbumManagementPage />} />
             </Route>
           </Route>
 
           {/* Protected artist routes */}
           <Route element={<ArtistRoute />}>
             <Route element={<ArtistLayout />}>
+              <Route path="/artist/dashboard" element={<ArtistDashboardPage />} />
+              <Route path="/artist/songs" element={<ArtistSongManagementPage />} />
               <Route path="/artist/albums" element={<AlbumManagementPage />} />
-              <Route path="/artist/analytics" element={<HomePage />} />
-              <Route path="/artist/settings" element={<HomePage />} />
+              <Route path="/artist/playlists" element={<ArtistPlaylistsPage />} />
+              <Route path="/artist/playlists/:id" element={<PlaylistDetailPage />} />
+              <Route path="/artist/profile" element={<ArtistProfilePage />} />
             </Route>
           </Route>
 

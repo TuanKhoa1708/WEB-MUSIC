@@ -11,7 +11,6 @@ import {
   Clock,
   Tag,
   User,
-  Disc3,
   Filter,
   ChevronDown,
 } from 'lucide-react'
@@ -22,7 +21,6 @@ import {
   useCreateSong,
   useUpdateSong,
   useArtistOptions,
-  useAlbumOptions,
 } from '@/hooks/admin/useSongs'
 import { StatCard } from '@/components/admin/StatCard'
 import { DataTable } from '@/components/admin/DataTable'
@@ -180,13 +178,6 @@ function ActionBtn({
 }
 
 // ─── Filter bar ───────────────────────────────────────────────────────────────
-
-interface FilterBarProps {
-  artistId: string
-  genre: string
-  onArtistChange: (v: string) => void
-  onGenreChange: (v: string) => void
-}
 
 const GENRES = [
   'Pop', 'Rock', 'Hip-Hop', 'R&B', 'Jazz', 'Classical',

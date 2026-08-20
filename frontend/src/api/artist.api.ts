@@ -4,6 +4,8 @@ import type {
   ArtistStats,
   ArtistQueryParams,
   PaginatedArtists,
+  CreateArtistInput,
+  UpdateArtistInput,
 } from '@/types/artist.types'
 
 const BASE = '/artists'

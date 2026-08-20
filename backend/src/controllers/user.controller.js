@@ -1,5 +1,41 @@
 import User from "../models/User.js";
 
+// ─── PUT /api/users/me ────────────────────────────────────────────────────────
+// Any authenticated user: update their own fullName, username, avatarUrl.
+export const updateMe = async (req, res) => {
+    try {
+        const { fullName, username, avatarUrl } = req.body;
+
+        // Check username uniqueness (if changing)
+        if (username && username !== req.user.username) {
+            const taken = await User.findOne({ username });
+            if (taken) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Username already taken.",
+                });
+            }
+        }
+
+        const updated = await User.findByIdAndUpdate(
+            req.user._id,
+            { fullName, username, avatarUrl },
+            { new: true, runValidators: true }
+        ).select("-password");
+
+        return res.json({
+            success: true,
+            message: "Profile updated successfully.",
+            data: updated,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 // ─── GET /api/users ───────────────────────────────────────────────────────────
 // Admin-only: list users with pagination, search, role filter, isActive filter.
 // Password is NEVER returned.

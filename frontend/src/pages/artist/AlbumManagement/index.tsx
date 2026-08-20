@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Disc3,
@@ -10,7 +10,6 @@ import {
 } from 'lucide-react'
 import { 
   useAlbums, 
-  useAlbumStats, 
   useDeleteAlbum,
   useCreateAlbum,
   useUpdateAlbum
@@ -68,13 +67,16 @@ function AlbumCard({
   onEdit: (a: Album) => void
   onDelete: (a: Album) => void
 }) {
-  const artistName = typeof album.artistId === 'object' ? album.artistId?.stageName : 'Unknown Artist'
+  const artistName = (typeof album.artistId === 'object' && album.artistId) 
+    ? album.artistId.stageName || 'Unknown Artist' 
+    : 'Unknown Artist'
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
+      className="group"
       style={{
         background: '#121212',
         borderRadius: 16,
@@ -83,7 +85,6 @@ function AlbumCard({
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        group: 'album-card',
       }}
     >
       {/* Aspect Ratio Box for Cover */}

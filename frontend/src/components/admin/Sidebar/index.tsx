@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  Inbox
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -28,6 +29,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard',          icon: <LayoutDashboard size={18} />,  to: '/admin/dashboard'   },
+  { label: 'Artist Requests',    icon: <Inbox size={18} />,            to: '/admin/artist-requests' },
   { label: 'Artist Management',  icon: <Mic2 size={18} />,             to: '/admin/artists'     },
   { label: 'Listener Management',icon: <Users size={18} />,            to: '/admin/listeners'   },
   { label: 'Song Management',    icon: <Music size={18} />,            to: '/admin/songs'       },

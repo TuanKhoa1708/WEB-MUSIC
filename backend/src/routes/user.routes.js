@@ -3,6 +3,7 @@ import {
     getUsers,
     getUserById,
     toggleUserStatus,
+    updateMe,
 } from "../controllers/user.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import { authorize } from "../middleware/role.middleware.js";
@@ -30,5 +31,8 @@ router.patch(
     authorize("admin"),
     toggleUserStatus
 );
+
+// Self-service: any authenticated user can update their own profile
+router.put("/me", protect, updateMe);
 
 export default router;
