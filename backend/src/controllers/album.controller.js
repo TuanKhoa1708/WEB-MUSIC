@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Album from "../models/Album.js";
 
 // ===========================
@@ -13,12 +14,23 @@ export const createAlbum = async (req, res) => {
             data: album,
         });
     } catch (error) {
+        if (error.name === "ValidationError") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid album data.",
+                errors: Object.values(error.errors).map(
+                    (err) => err.message
+                ),
+            });
+        }
+
         return res.status(500).json({
             success: false,
             message: error.message,
         });
     }
 };
+
 
 // ===========================
 // GET ALL ALBUMS
@@ -31,11 +43,35 @@ export const getAlbums = async (req, res) => {
             keyword = "",
         } = req.query;
 
+        const pageNumber = Number(page);
+        const pageSize = Number(limit);
+
+        if (
+            !Number.isInteger(pageNumber) ||
+            pageNumber < 1
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Page must be a positive integer.",
+            });
+        }
+
+        if (
+            !Number.isInteger(pageSize) ||
+            pageSize < 1 ||
+            pageSize > 100
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Limit must be an integer between 1 and 100.",
+            });
+        }
+
         const query = {};
 
-        if (keyword) {
+        if (keyword.trim()) {
             query.title = {
-                $regex: keyword,
+                $regex: keyword.trim(),
                 $options: "i",
             };
         }
@@ -44,15 +80,15 @@ export const getAlbums = async (req, res) => {
 
         const albums = await Album.find(query)
             .populate("artistId", "stageName")
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit))
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
             .sort({ createdAt: -1 });
 
         return res.json({
             success: true,
             total,
-            page: Number(page),
-            totalPages: Math.ceil(total / Number(limit)),
+            page: pageNumber,
+            totalPages: Math.ceil(total / pageSize),
             data: albums,
         });
     } catch (error) {
@@ -63,18 +99,27 @@ export const getAlbums = async (req, res) => {
     }
 };
 
+
 // ===========================
 // GET ALBUM DETAIL
 // ===========================
 export const getAlbumById = async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid album ID.",
+            });
+        }
+
         const album = await Album.findById(req.params.id)
-            .populate("artistId", "stageName");
+            .populate("artistId", "stageName")
+            .populate("songs");
 
         if (!album) {
             return res.status(404).json({
                 success: false,
-                message: "Album not found",
+                message: "Album not found.",
             });
         }
 
@@ -90,11 +135,19 @@ export const getAlbumById = async (req, res) => {
     }
 };
 
+
 // ===========================
 // UPDATE ALBUM
 // ===========================
 export const updateAlbum = async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid album ID.",
+            });
+        }
+
         const album = await Album.findByIdAndUpdate(
             req.params.id,
             req.body,
@@ -107,40 +160,58 @@ export const updateAlbum = async (req, res) => {
         if (!album) {
             return res.status(404).json({
                 success: false,
-                message: "Album not found",
+                message: "Album not found.",
             });
         }
 
         return res.json({
             success: true,
-            message: "Album updated successfully",
+            message: "Album updated successfully.",
             data: album,
         });
     } catch (error) {
+        if (error.name === "ValidationError") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid album data.",
+                errors: Object.values(error.errors).map(
+                    (err) => err.message
+                ),
+            });
+        }
+
         return res.status(500).json({
             success: false,
             message: error.message,
         });
     }
 };
+
 
 // ===========================
 // DELETE ALBUM
 // ===========================
 export const deleteAlbum = async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid album ID.",
+            });
+        }
+
         const album = await Album.findByIdAndDelete(req.params.id);
 
         if (!album) {
             return res.status(404).json({
                 success: false,
-                message: "Album not found",
+                message: "Album not found.",
             });
         }
 
         return res.json({
             success: true,
-            message: "Album deleted successfully",
+            message: "Album deleted successfully.",
         });
     } catch (error) {
         return res.status(500).json({
@@ -149,6 +220,7 @@ export const deleteAlbum = async (req, res) => {
         });
     }
 };
+
 
 // ===========================
 // ALBUM STATS

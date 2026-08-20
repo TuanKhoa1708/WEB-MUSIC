@@ -1,23 +1,36 @@
 import mongoose from "mongoose";
 
-const playlistSongSchema = new mongoose.Schema(
+const currentYear = new Date().getFullYear();
+
+const albumSchema = new mongoose.Schema(
     {
-        playlistId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Playlist",
-            required: [true, "Playlist is required"],
+        title: {
+            type: String,
+            required: [true, "Album title is required"],
+            trim: true,
+            minlength: [1, "Album title cannot be empty"],
+            maxlength: [200, "Album title cannot exceed 200 characters"],
         },
 
-        songId: {
+        artistId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Song",
-            required: [true, "Song is required"],
+            ref: "Artist",
+            required: [true, "Artist is required"],
         },
 
-        order: {
+        coverUrl: {
+            type: String,
+            default: "",
+            trim: true,
+        },
+
+        releaseYear: {
             type: Number,
-            required: true,
-            min: 0,
+            min: [1900, "Release year must be 1900 or later"],
+            max: [
+                currentYear,
+                `Release year cannot be greater than ${currentYear}`,
+            ],
         },
     },
     {
@@ -25,15 +38,23 @@ const playlistSongSchema = new mongoose.Schema(
     }
 );
 
-playlistSongSchema.index(
-    { playlistId: 1, songId: 1 },
-    { unique: true }
-);
+// ===========================
+// ALBUM -> SONGS RELATIONSHIP
+// ===========================
+albumSchema.virtual("songs", {
+    ref: "Song",
+    localField: "_id",
+    foreignField: "albumId",
+});
 
-const PlaylistSong = mongoose.model(
-    "PlaylistSong",
-    playlistSongSchema,
-    "playlistSongs"
-);
+albumSchema.set("toJSON", {
+    virtuals: true,
+});
 
-export default PlaylistSong;
+albumSchema.set("toObject", {
+    virtuals: true,
+});
+
+const Album = mongoose.model("Album", albumSchema);
+
+export default Album;
