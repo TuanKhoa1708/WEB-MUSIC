@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Save, Loader2, User, Key, FileText, Image, Link } from 'lucide-react'
+import { X, Save, Loader2, User, FileText, Image, Link } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'

@@ -11,6 +11,8 @@ import favoriteRoutes from "./routes/favorite.routes.js";
 import historyRoutes from "./routes/history.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import artistRequestRoutes from "./routes/artistRequest.routes.js";
+
 const app = express();
 
 app.use(cors());
@@ -54,5 +56,8 @@ app.use("/api/upload", uploadRoutes);
 
 // User Management Routes (Admin only)
 app.use("/api/users", userRoutes);
+
+// Artist Requests Routes
+app.use("/api/artist-requests", artistRequestRoutes);
 
 export default app;

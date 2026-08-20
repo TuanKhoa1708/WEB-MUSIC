@@ -7,7 +7,6 @@ import {
   Edit2,
   Trash2,
   Radio,
-  Image as ImageIcon,
 } from 'lucide-react'
 import { 
   useArtists, 

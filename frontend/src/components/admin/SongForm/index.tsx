@@ -5,10 +5,7 @@ import {
   Music,
   User,
   Disc3,
-  Clock,
   Tag,
-  Link2,
-  Image as ImageIcon,
   AlignLeft,
   AlertCircle,
   Check,
@@ -16,23 +13,6 @@ import {
 import type { Song, CreateSongInput, UpdateSongInput } from '@/types/song.types'
 import { useArtistOptions, useAlbumOptions } from '@/hooks/admin/useSongs'
 import { uploadFilesApi } from '@/api/song.api'
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = Math.floor(seconds % 60)
-  return `${m}:${s.toString().padStart(2, '0')}`
-}
-
-function parseDurationInput(val: string): number {
-  // Accept "3:45" or plain seconds "225"
-  if (val.includes(':')) {
-    const [m, s] = val.split(':').map(Number)
-    return (m || 0) * 60 + (s || 0)
-  }
-  return Number(val) || 0
-}
 
 // ─── Field wrapper ────────────────────────────────────────────────────────────
 

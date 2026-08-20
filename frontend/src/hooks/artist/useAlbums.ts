@@ -8,7 +8,7 @@ import {
   deleteAlbumService,
 } from '@/services/album.service'
 import { getArtistsService } from '@/services/artist.service'
-import type { AlbumQueryParams, CreateAlbumInput, UpdateAlbumInput } from '@/types/album.types'
+import type { AlbumQueryParams } from '@/types/album.types'
 
 export const ALBUM_KEYS = {
   all: ['albums'] as const,

@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { ArtistSidebar } from '@/components/artist/Sidebar'
-// Reusing AdminHeader for now as it provides a generic header with user info
-import { AdminHeader } from '@/components/admin/Header'
+import { ArtistHeader } from '@/components/artist/ArtistHeader'
 
 export function ArtistLayout() {
   return (
@@ -24,7 +23,7 @@ export function ArtistLayout() {
           overflowX: 'hidden',
         }}
       >
-        <AdminHeader />
+        <ArtistHeader />
 
         <main
           style={{

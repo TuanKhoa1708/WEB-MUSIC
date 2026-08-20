@@ -4,6 +4,7 @@ import type {
   UserQueryParams,
   PaginatedUsers,
   ToggleStatusResponse,
+  UpdateMeInput,
 } from '@/types/user.types'
 
 const BASE = '/users'
@@ -28,3 +29,11 @@ export async function toggleUserStatusApi(id: string): Promise<ToggleStatusRespo
   const { data } = await axiosInstance.patch<ToggleStatusResponse>(`${BASE}/${id}/status`)
   return data
 }
+
+// ─── PUT /users/me ────────────────────────────────────────────────────────────
+// Any authenticated user: update their own fullName, username, avatarUrl.
+export async function updateMeApi(input: UpdateMeInput): Promise<{ success: boolean; message: string; data: User }> {
+  const { data } = await axiosInstance.put<{ success: boolean; message: string; data: User }>(`${BASE}/me`, input)
+  return data
+}
+

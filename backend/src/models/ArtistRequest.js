@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const artistSchema = new mongoose.Schema(
+const artistRequestSchema = new mongoose.Schema(
     {
         userId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -12,39 +12,30 @@ const artistSchema = new mongoose.Schema(
             required: [true, "Stage name is required"],
             trim: true,
         },
-
         bio: {
             type: String,
             default: "",
         },
-
-        avatarUrl: {
-            type: String,
-            default: "",
-        },
-
-        coverImage: {
-            type: String,
-            default: "",
-        },
-
-        followers: {
-            type: Number,
-            default: 0,
-            min: 0,
-        },
-
         socialLinks: {
             type: Map,
             of: String,
             default: {},
         },
+        status: {
+            type: String,
+            enum: ["pending", "approved", "rejected"],
+            default: "pending",
+        },
+        adminMessage: {
+            type: String,
+            default: "", // Reason for rejection or other notes
+        }
     },
     {
         timestamps: true,
     }
 );
 
-const Artist = mongoose.model("Artist", artistSchema);
+const ArtistRequest = mongoose.model("ArtistRequest", artistRequestSchema);
 
-export default Artist;
+export default ArtistRequest;
