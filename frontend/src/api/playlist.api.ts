@@ -15,7 +15,13 @@ export async function getPlaylistsApi(params?: PlaylistQueryParams): Promise<Pag
   const { data } = await axiosInstance.get<PaginatedPlaylists>(BASE, { params })
   return data
 }
-
+// ─── GET /playlists/artist/:artistId ──────────────────────────────────────────
+export async function getPlaylistsByArtistApi(artistId: string): Promise<Playlist[]> {
+  const { data } = await axiosInstance.get<{ success: boolean; data: Playlist[] }>(
+    `${BASE}/artist/${artistId}`,
+  )
+  return data.data
+}
 // ─── GET /playlists/stats ─────────────────────────────────────────────────────
 export async function getPlaylistStatsApi(): Promise<PlaylistStats> {
   const { data } = await axiosInstance.get<{ success: boolean; data: PlaylistStats }>(`${BASE}/stats`)

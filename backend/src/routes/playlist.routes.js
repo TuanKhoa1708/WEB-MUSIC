@@ -7,6 +7,7 @@ import {
     updatePlaylist,
     deletePlaylist,
     getPlaylistStats,
+    getPlaylistsByArtist,
 } from "../controllers/playlist.controller.js";
 
 const router = express.Router();
@@ -18,6 +19,8 @@ router.get("/stats", getPlaylistStats);
 router.post("/", createPlaylist);
 
 router.get("/", getPlaylists);
+
+router.get("/artist/:artistId", getPlaylistsByArtist);
 
 router.get("/:id", getPlaylistById);
 

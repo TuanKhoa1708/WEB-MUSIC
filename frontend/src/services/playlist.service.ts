@@ -1,5 +1,6 @@
 import {
   getPlaylistsApi,
+  getPlaylistsByArtistApi,
   getPlaylistStatsApi,
   getPlaylistByIdApi,
   createPlaylistApi,
@@ -17,6 +18,10 @@ import type {
 
 export async function getPlaylistsService(params?: PlaylistQueryParams): Promise<PaginatedPlaylists> {
   return getPlaylistsApi(params)
+}
+
+export async function getPlaylistsByArtistService(artistId: string): Promise<Playlist[]> {
+  return getPlaylistsByArtistApi(artistId)
 }
 
 export async function getPlaylistStatsService(): Promise<PlaylistStats> {

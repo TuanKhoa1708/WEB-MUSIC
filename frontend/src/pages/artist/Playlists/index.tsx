@@ -248,26 +248,13 @@ export function ArtistPlaylistsPage() {
   const [isModalOpen, setIsModalOpen]   = useState(false)
   const [editTarget, setEditTarget]     = useState<Playlist | null>(null)
 
-  // Fetch only this user's playlists (we filter on the frontend for now, or backend if it supports it.
-  // Wait, the backend doesn't support userId filtering in getPlaylists out-of-the-box in most simple controllers unless we add it.
-  // However, the prompt says "Do NOT invent backend fields, schemas, API endpoints, or business logic." 
-  // Let's assume `getPlaylists` can take a `userId` query param, or we fetch all and filter.
-  // Actually, standard REST `GET /playlists?userId=XYZ` usually works if built with generic filtering. 
-  // We will pass it in. If it ignores it, we'll see all.
-  const { data, isLoading } = usePlaylists({
-    keyword,
-    page,
-    limit: PAGE_SIZE,
-    // Add userId to params if we want to filter, but let's just use the query params defined in our type
-  })
+  const artistId = user?.id || ''
+  const { data: playlistsData, isLoading } = usePlaylists(artistId)
 
-  // To strictly filter to the logged-in user if the API doesn't do it:
-  // Since we only want to show the current user's playlists.
-  const myPlaylists = data?.data?.filter(p => 
-    typeof p.userId === 'object' 
-      ? p.userId._id === user?.id 
-      : p.userId === user?.id
-  ) || []
+  const playlists = Array.isArray(playlistsData) ? playlistsData : []
+  const myPlaylists = playlists.filter((p) =>
+    keyword ? p.title.toLowerCase().includes(keyword.toLowerCase()) : true
+  )
 
   const { mutateAsync: deletePlaylist, isPending: isDeleting } = useDeletePlaylist()
   const { mutateAsync: createPlaylist, isPending: isCreating } = useCreatePlaylist()
@@ -439,18 +426,6 @@ export function ArtistPlaylistsPage() {
         )}
       </div>
 
-      {data && data.totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Pagination
-            currentPage={data.page}
-            totalPages={data.totalPages}
-            totalItems={data.total} // Note: This total won't match myPlaylists.length perfectly if backend didn't filter, but we keep it for UX.
-            pageSize={PAGE_SIZE}
-            onPageChange={setPage}
-          />
-        </div>
-      )}
-
       <ConfirmDialog
         open={!!deleteTarget}
         title="Delete Playlist"
@@ -465,6 +440,7 @@ export function ArtistPlaylistsPage() {
 
       <PlaylistForm
         isOpen={isModalOpen}
+        artistId={artistId}
         onClose={() => setIsModalOpen(false)}
         playlist={editTarget}
         onSubmit={handleModalSubmit}
