@@ -11,10 +11,10 @@ const playlistSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
-        userId: {
+        artistId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: [true, "User is required"],
+            ref: "Artist",
+            required: [true, "Artist is required"],
         },
         coverUrl: {
             type: String,

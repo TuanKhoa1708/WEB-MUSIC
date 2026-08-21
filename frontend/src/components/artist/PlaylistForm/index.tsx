@@ -8,13 +8,14 @@ import { useAuth } from '@/contexts/AuthContext'
 
 interface PlaylistFormProps {
   isOpen: boolean
+  artistId?: string
   onClose: () => void
   playlist: Playlist | null
   onSubmit: (data: CreatePlaylistInput | UpdatePlaylistInput) => Promise<void>
   isLoading: boolean
 }
 
-export function PlaylistForm({ isOpen, onClose, playlist, onSubmit, isLoading }: PlaylistFormProps) {
+export function PlaylistForm({ isOpen, artistId, onClose, playlist, onSubmit, isLoading }: PlaylistFormProps) {
   const { user } = useAuth()
   const [formData, setFormData] = useState({
     title: '',
@@ -91,7 +92,7 @@ export function PlaylistForm({ isOpen, onClose, playlist, onSubmit, isLoading }:
     } else {
       await onSubmit({
         ...formData,
-        userId: user?.id || '',
+        artistId: artistId || user?.id || '',
       })
     }
   }

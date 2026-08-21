@@ -5,13 +5,18 @@ export interface Playlist {
   _id: string
   title: string
   description?: string
-  userId: UserRef | string
+  artistId: ArtistRef | string
   coverUrl?: string
   isPublic: boolean
   createdAt: string
   updatedAt: string
 }
 
+export interface ArtistRef {
+  _id: string
+  stageName: string
+  avatarUrl?: string
+}
 export interface UserRef {
   _id: string
   fullName: string
@@ -42,16 +47,15 @@ export interface SongPopulated {
 }
 
 // ─── Create / Update ──────────────────────────────────────────────────────────
-
 export interface CreatePlaylistInput {
   title: string
   description?: string
-  userId: string
+  artistId: string
   coverUrl?: string
   isPublic?: boolean
 }
-
-export type UpdatePlaylistInput = Partial<Omit<CreatePlaylistInput, 'userId'>> & { _id: string }
+export type UpdatePlaylistInput =
+  Partial<Omit<CreatePlaylistInput, 'artistId'>> & { _id: string }
 
 // ─── PlaylistSong CRUD ────────────────────────────────────────────────────────
 
