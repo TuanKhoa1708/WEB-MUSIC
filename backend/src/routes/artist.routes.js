@@ -7,14 +7,25 @@ import {
     updateArtist,
     deleteArtist,
     getArtistStats,
+    getArtistDashboardStats,
 } from "../controllers/artist.controller.js";
 
 const router = express.Router();
 
-// Statistics
+// ===========================
+// STATISTICS
+// ===========================
+
+// Global artist statistics
 router.get("/stats", getArtistStats);
 
+// Artist dashboard statistics
+router.get("/:id/dashboard-stats", getArtistDashboardStats);
+
+// ===========================
 // CRUD
+// ===========================
+
 router.post("/", createArtist);
 
 router.get("/", getArtists);
