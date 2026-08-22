@@ -7,6 +7,7 @@ import {
   updatePlaylistApi,
   deletePlaylistApi,
 } from '@/api/playlist.api'
+
 import type {
   Playlist,
   PlaylistStats,
@@ -16,30 +17,70 @@ import type {
   UpdatePlaylistInput,
 } from '@/types/playlist.types'
 
-export async function getPlaylistsService(params?: PlaylistQueryParams): Promise<PaginatedPlaylists> {
+// ===========================
+// GET ALL
+// ===========================
+
+export function getPlaylistsService(
+  params?: PlaylistQueryParams
+): Promise<PaginatedPlaylists> {
   return getPlaylistsApi(params)
 }
 
-export async function getPlaylistsByArtistService(artistId: string): Promise<Playlist[]> {
+// ===========================
+// GET BY ARTIST
+// ===========================
+
+export function getPlaylistsByArtistService(
+  artistId: string
+): Promise<Playlist[]> {
   return getPlaylistsByArtistApi(artistId)
 }
 
-export async function getPlaylistStatsService(): Promise<PlaylistStats> {
+// ===========================
+// GET STATS
+// ===========================
+
+export function getPlaylistStatsService(): Promise<PlaylistStats> {
   return getPlaylistStatsApi()
 }
 
-export async function getPlaylistByIdService(id: string): Promise<Playlist> {
+// ===========================
+// GET DETAIL
+// ===========================
+
+export function getPlaylistByIdService(
+  id: string
+): Promise<Playlist> {
   return getPlaylistByIdApi(id)
 }
 
-export async function createPlaylistService(data: CreatePlaylistInput): Promise<Playlist> {
+// ===========================
+// CREATE
+// ===========================
+
+export function createPlaylistService(
+  data: CreatePlaylistInput
+): Promise<Playlist> {
   return createPlaylistApi(data)
 }
 
-export async function updatePlaylistService(data: UpdatePlaylistInput): Promise<Playlist> {
+// ===========================
+// UPDATE
+// ===========================
+
+export function updatePlaylistService(
+  data: UpdatePlaylistInput
+): Promise<Playlist> {
   return updatePlaylistApi(data)
 }
 
-export async function deletePlaylistService(id: string): Promise<void> {
+// ===========================
+// DELETE
+// ===========================
+
+export function deletePlaylistService(
+  id: string
+): Promise<void> {
   return deletePlaylistApi(id)
 }

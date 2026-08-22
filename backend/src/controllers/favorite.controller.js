@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Favorite from "../models/Favorite.js";
 
 // ===========================
@@ -5,7 +6,33 @@ import Favorite from "../models/Favorite.js";
 // ===========================
 export const addFavorite = async (req, res) => {
     try {
-        const favorite = await Favorite.create(req.body);
+        const { songId } = req.body;
+
+        // ===========================
+        // VALIDATE SONG ID
+        // ===========================
+        if (
+            !songId ||
+            !mongoose.Types.ObjectId.isValid(songId)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Valid song ID is required",
+            });
+        }
+
+        // ===========================
+        // GET CURRENT USER
+        // ===========================
+        const userId = req.user._id;
+
+        // ===========================
+        // CREATE FAVORITE
+        // ===========================
+        const favorite = await Favorite.create({
+            userId,
+            songId,
+        });
 
         return res.status(201).json({
             success: true,
@@ -13,7 +40,7 @@ export const addFavorite = async (req, res) => {
             data: favorite,
         });
     } catch (error) {
-        // User đã favorite bài này
+        // Duplicate favorite
         if (error.code === 11000) {
             return res.status(409).json({
                 success: false,
@@ -29,21 +56,16 @@ export const addFavorite = async (req, res) => {
 };
 
 // ===========================
-// GET USER FAVORITES
+// GET CURRENT USER FAVORITES
 // ===========================
 export const getFavorites = async (req, res) => {
     try {
-        const { userId } = req.query;
+        const userId = req.user._id;
 
-        const query = {};
-
-        if (userId) {
-            query.userId = userId;
-        }
-
-        const favorites = await Favorite.find(query)
+        const favorites = await Favorite.find({
+            userId,
+        })
             .populate("songId")
-            .populate("userId", "fullName username")
             .sort({ createdAt: -1 });
 
         return res.json({
@@ -63,7 +85,22 @@ export const getFavorites = async (req, res) => {
 // ===========================
 export const checkFavorite = async (req, res) => {
     try {
-        const { userId, songId } = req.query;
+        const { songId } = req.query;
+
+        // ===========================
+        // VALIDATE SONG ID
+        // ===========================
+        if (
+            !songId ||
+            !mongoose.Types.ObjectId.isValid(songId)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Valid song ID is required",
+            });
+        }
+
+        const userId = req.user._id;
 
         const favorite = await Favorite.findOne({
             userId,
@@ -88,7 +125,27 @@ export const checkFavorite = async (req, res) => {
 // ===========================
 export const removeFavorite = async (req, res) => {
     try {
-        const favorite = await Favorite.findByIdAndDelete(req.params.id);
+        const { id } = req.params;
+
+        // ===========================
+        // VALIDATE FAVORITE ID
+        // ===========================
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid favorite ID",
+            });
+        }
+
+        const userId = req.user._id;
+
+        // ===========================
+        // DELETE CURRENT USER FAVORITE
+        // ===========================
+        const favorite = await Favorite.findOneAndDelete({
+            _id: id,
+            userId,
+        });
 
         if (!favorite) {
             return res.status(404).json({

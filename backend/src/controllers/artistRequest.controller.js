@@ -8,8 +8,9 @@ import User from "../models/User.js";
 export const applyToBecomeArtist = async (req, res) => {
     try {
         const { stageName, bio, socialLinks } = req.body;
-        const userId = req.user.userId; // assuming auth middleware sets req.user.userId
+        const userId = req.user._id;
 
+        // ...
         // Check if user is already an artist
         const user = await User.findById(userId);
         if (user.role === "artist") {
@@ -42,10 +43,13 @@ export const applyToBecomeArtist = async (req, res) => {
 // @access  Private
 export const getMyRequest = async (req, res) => {
     try {
-        const userId = req.user.userId;
-        // Sort by createdAt desc to get the latest request
-        const request = await ArtistRequest.findOne({ userId }).sort({ createdAt: -1 });
-        
+        const userId = req.user._id;
+
+        const request = await ArtistRequest.findOne({ userId })
+            .sort({ createdAt: -1 });
+
+        // ...
+
         if (!request) {
             return res.status(404).json({ message: "No request found" });
         }
@@ -63,7 +67,7 @@ export const getArtistRequests = async (req, res) => {
     try {
         const { status } = req.query;
         let query = {};
-        
+
         if (status) {
             query.status = status;
         }
@@ -71,7 +75,7 @@ export const getArtistRequests = async (req, res) => {
         const requests = await ArtistRequest.find(query)
             .populate("userId", "fullName email avatarUrl")
             .sort({ createdAt: -1 });
-            
+
         res.json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });

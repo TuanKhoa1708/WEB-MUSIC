@@ -1,5 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
+
 import toast from 'react-hot-toast'
+
 import {
   getPlaylistsService,
   getPlaylistsByArtistService,
@@ -9,112 +15,202 @@ import {
   updatePlaylistService,
   deletePlaylistService,
 } from '@/services/playlist.service'
+
 import type {
   PlaylistQueryParams,
   CreatePlaylistInput,
   UpdatePlaylistInput,
 } from '@/types/playlist.types'
 
-// ─── Query keys ───────────────────────────────────────────────────────────────
+// ===========================
+// QUERY KEYS
+// ===========================
 
 export const PLAYLIST_KEYS = {
   all: ['playlists'] as const,
-  list: (params: PlaylistQueryParams) => ['playlists', 'list', params] as const,
-  byArtist: (artistId: string) => ['playlists', 'artist', artistId] as const,
-  detail: (id: string) => ['playlists', 'detail', id] as const,
-  stats: ['playlists', 'stats'] as const,
+
+  lists: () =>
+    [...PLAYLIST_KEYS.all, 'list'] as const,
+
+  list: (params: PlaylistQueryParams) =>
+    [...PLAYLIST_KEYS.lists(), params] as const,
+
+  byArtist: (artistId: string) =>
+    [...PLAYLIST_KEYS.all, 'artist', artistId] as const,
+
+  details: () =>
+    [...PLAYLIST_KEYS.all, 'detail'] as const,
+
+  detail: (id: string) =>
+    [...PLAYLIST_KEYS.details(), id] as const,
+
+  stats: () =>
+    [...PLAYLIST_KEYS.all, 'stats'] as const,
 }
 
-// ─── List ─────────────────────────────────────────────────────────────────────
+// ===========================
+// GET ALL PLAYLISTS
+// ===========================
 
-export function usePlaylists(artistId?: string | PlaylistQueryParams) {
-  const isArtistId = typeof artistId === 'string'
+export function usePlaylists(
+  params: PlaylistQueryParams = {}
+) {
   return useQuery({
-    queryKey: isArtistId
-      ? PLAYLIST_KEYS.byArtist(artistId)
-      : PLAYLIST_KEYS.list((artistId as PlaylistQueryParams) || {}),
-    queryFn: () => {
-      if (isArtistId) {
-        return getPlaylistsByArtistService(artistId)
-      }
-      return getPlaylistsService(artistId as PlaylistQueryParams)
-    },
-    placeholderData: (prev) => prev,
-    enabled: isArtistId ? !!artistId : true,
+    queryKey: PLAYLIST_KEYS.list(params),
+    queryFn: () =>
+      getPlaylistsService(params),
+    placeholderData: (previousData) =>
+      previousData,
   })
 }
 
-export function usePlaylistsByArtist(artistId: string) {
+// ===========================
+// GET PLAYLISTS BY ARTIST
+// ===========================
+
+export function usePlaylistsByArtist(
+  artistId: string
+) {
   return useQuery({
-    queryKey: PLAYLIST_KEYS.byArtist(artistId),
-    queryFn: () => getPlaylistsByArtistService(artistId),
-    enabled: !!artistId,
+    queryKey:
+      PLAYLIST_KEYS.byArtist(artistId),
+
+    queryFn: () =>
+      getPlaylistsByArtistService(
+        artistId
+      ),
+
+    enabled: Boolean(artistId),
   })
 }
 
-// ─── Stats ────────────────────────────────────────────────────────────────────
+// ===========================
+// GET PLAYLIST STATS
+// ===========================
 
 export function usePlaylistStats() {
   return useQuery({
-    queryKey: PLAYLIST_KEYS.stats,
+    queryKey: PLAYLIST_KEYS.stats(),
     queryFn: getPlaylistStatsService,
   })
 }
 
-// ─── Single ───────────────────────────────────────────────────────────────────
+// ===========================
+// GET PLAYLIST DETAIL
+// ===========================
 
-export function usePlaylistById(id: string) {
+export function usePlaylistById(
+  id: string
+) {
   return useQuery({
-    queryKey: PLAYLIST_KEYS.detail(id),
-    queryFn: () => getPlaylistByIdService(id),
-    enabled: !!id,
+    queryKey:
+      PLAYLIST_KEYS.detail(id),
+
+    queryFn: () =>
+      getPlaylistByIdService(id),
+
+    enabled: Boolean(id),
   })
 }
 
-// ─── Create ───────────────────────────────────────────────────────────────────
+// ===========================
+// CREATE
+// ===========================
 
 export function useCreatePlaylist() {
-  const queryClient = useQueryClient()
+  const queryClient =
+    useQueryClient()
+
   return useMutation({
-    mutationFn: (data: CreatePlaylistInput) => createPlaylistService(data),
+    mutationFn: (
+      data: CreatePlaylistInput
+    ) =>
+      createPlaylistService(data),
+
     onSuccess: () => {
-      toast.success('Playlist created successfully')
-      queryClient.invalidateQueries({ queryKey: PLAYLIST_KEYS.all })
+      toast.success(
+        'Playlist created successfully'
+      )
+
+      queryClient.invalidateQueries({
+        queryKey:
+          PLAYLIST_KEYS.all,
+      })
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to create playlist')
+
+    onError: (error: Error) => {
+      toast.error(
+        error.message ||
+        'Failed to create playlist'
+      )
     },
   })
 }
 
-// ─── Update ───────────────────────────────────────────────────────────────────
+// ===========================
+// UPDATE
+// ===========================
 
 export function useUpdatePlaylist() {
-  const queryClient = useQueryClient()
+  const queryClient =
+    useQueryClient()
+
   return useMutation({
-    mutationFn: (data: UpdatePlaylistInput) => updatePlaylistService(data),
+    mutationFn: (
+      data: UpdatePlaylistInput
+    ) =>
+      updatePlaylistService(data),
+
     onSuccess: () => {
-      toast.success('Playlist updated successfully')
-      queryClient.invalidateQueries({ queryKey: PLAYLIST_KEYS.all })
+      toast.success(
+        'Playlist updated successfully'
+      )
+
+      queryClient.invalidateQueries({
+        queryKey:
+          PLAYLIST_KEYS.all,
+      })
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to update playlist')
+
+    onError: (error: Error) => {
+      toast.error(
+        error.message ||
+        'Failed to update playlist'
+      )
     },
   })
 }
 
-// ─── Delete ───────────────────────────────────────────────────────────────────
+// ===========================
+// DELETE
+// ===========================
 
 export function useDeletePlaylist() {
-  const queryClient = useQueryClient()
+  const queryClient =
+    useQueryClient()
+
   return useMutation({
-    mutationFn: (id: string) => deletePlaylistService(id),
+    mutationFn: (
+      id: string
+    ) =>
+      deletePlaylistService(id),
+
     onSuccess: () => {
-      toast.success('Playlist deleted successfully')
-      queryClient.invalidateQueries({ queryKey: PLAYLIST_KEYS.all })
+      toast.success(
+        'Playlist deleted successfully'
+      )
+
+      queryClient.invalidateQueries({
+        queryKey:
+          PLAYLIST_KEYS.all,
+      })
     },
-    onError: (err: Error) => {
-      toast.error(err.message ?? 'Failed to delete playlist')
+
+    onError: (error: Error) => {
+      toast.error(
+        error.message ||
+        'Failed to delete playlist'
+      )
     },
   })
 }
