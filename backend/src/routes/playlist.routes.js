@@ -1,4 +1,6 @@
 import express from "express";
+import { protect } from "../middleware/auth.middleware.js";
+import { authorize } from "../middleware/role.middleware.js";
 
 import {
     createPlaylist,
@@ -12,20 +14,48 @@ import {
 
 const router = express.Router();
 
-// Statistics
+// ===========================
+// STATISTICS
+// ===========================
+
 router.get("/stats", getPlaylistStats);
 
+// ===========================
+// PLAYLISTS BY ARTIST
+// ===========================
+
+router.get(
+    "/artist/:artistId",
+    getPlaylistsByArtist
+);
+
+// ===========================
 // CRUD
-router.post("/", createPlaylist);
+// ===========================
+
+router.post(
+    "/",
+    protect,
+    authorize("artist", "admin"),
+    createPlaylist
+);
 
 router.get("/", getPlaylists);
 
-router.get("/artist/:artistId", getPlaylistsByArtist);
-
 router.get("/:id", getPlaylistById);
 
-router.put("/:id", updatePlaylist);
+router.put(
+    "/:id",
+    protect,
+    authorize("artist", "admin"),
+    updatePlaylist
+);
 
-router.delete("/:id", deletePlaylist);
+router.delete(
+    "/:id",
+    protect,
+    authorize("artist", "admin"),
+    deletePlaylist
+);
 
 export default router;
