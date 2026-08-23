@@ -16,6 +16,7 @@ import type {
 export async function loginService(data: LoginRequest): Promise<AuthUser> {
   const response = await loginApi(data)
   setToken(response.accessToken, response.refreshToken)
+  import('@/utils/token').then(m => m.setUserInfo(response.user))
   return response.user
 }
 

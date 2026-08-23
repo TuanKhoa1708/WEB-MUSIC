@@ -16,7 +16,7 @@ import {
   Clock3,
   UserCircle2,
 } from 'lucide-react'
-import { useListeners, useToggleListenerStatus, useListenerStats } from '@/hooks/admin/useListeners'
+import { useUsers, useToggleUserStatus } from '@/hooks/admin/useUsers'
 import { StatCard } from '@/components/admin/StatCard'
 import { DataTable } from '@/components/admin/DataTable'
 import type { Column } from '@/components/admin/DataTable'
@@ -577,13 +577,12 @@ export function ListenerManagementPage() {
   }
 
   // ── Data ──────────────────────────────────────────────────
-  const { data, isLoading, isError, error } = useListeners(queryParams)
-  const { mutateAsync: toggleStatus, isPending: isToggling } = useToggleListenerStatus()
-  const { data: statsData, isLoading: isLoadingStats } = useListenerStats()
+  const { data, isLoading, isError, error } = useUsers(queryParams)
+  const { mutateAsync: toggleStatus, isPending: isToggling } = useToggleUserStatus()
 
   const handleToggleConfirm = async () => {
     if (!toggleTarget) return
-    await toggleStatus({ id: toggleTarget._id, isActive: !toggleTarget.isActive })
+    await toggleStatus(toggleTarget._id)
     setToggleTarget(null)
   }
 
@@ -768,14 +767,14 @@ export function ListenerManagementPage() {
           icon={<Users size={18} />}
           iconColor="#3FD6FF"
           label="Total Listeners"
-          value={isLoadingStats ? '—' : (statsData?.totalListeners ?? '—')}
+          value={isLoading ? '—' : (data?.total ?? '—')}
           delay={0.05}
         />
         <StatCard
           icon={<CheckCircle2 size={18} />}
           iconColor="#3DDC84"
           label="Active Listeners"
-          value={isLoadingStats ? '—' : (statsData?.activeListeners ?? '—')}
+          value={isLoading ? '—' : (data?.data.filter((u) => u.isActive).length ?? '—')}
           delay={0.1}
         />
         <StatCard

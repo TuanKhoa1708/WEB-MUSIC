@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Inbox, Check, X } from 'lucide-react';
+import { Inbox, Check, X, Eye } from 'lucide-react';
 import { useAdminArtistRequests, useApproveArtistRequest, useRejectArtistRequest } from '@/hooks/useArtistRequests';
 import { DataTable } from '@/components/admin/DataTable';
 import type { Column } from '@/components/admin/DataTable';
@@ -172,6 +172,7 @@ export function ArtistRequestsPage() {
         description={`Are you sure you want to approve ${approveTarget?.stageName}? This will grant them artist privileges.`}
         confirmLabel="Approve"
         cancelLabel="Cancel"
+        variant="primary"
         isLoading={isApproving}
         onConfirm={handleApproveConfirm}
         onCancel={() => setApproveTarget(null)}

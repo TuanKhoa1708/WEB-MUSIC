@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import History from "../models/History.js";
 
 // ===========================
@@ -5,7 +6,34 @@ import History from "../models/History.js";
 // ===========================
 export const addHistory = async (req, res) => {
     try {
-        const history = await History.create(req.body);
+        const { songId } = req.body;
+
+        // ===========================
+        // VALIDATE SONG ID
+        // ===========================
+        if (
+            !songId ||
+            !mongoose.Types.ObjectId.isValid(songId)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Valid song ID is required",
+            });
+        }
+
+        // ===========================
+        // GET CURRENT USER
+        // ===========================
+        const userId = req.user._id;
+
+        // ===========================
+        // CREATE HISTORY
+        // ===========================
+        const history = await History.create({
+            userId,
+            songId,
+            playedAt: new Date(),
+        });
 
         return res.status(201).json({
             success: true,
@@ -21,37 +49,69 @@ export const addHistory = async (req, res) => {
 };
 
 // ===========================
-// GET HISTORY
+// GET CURRENT USER HISTORY
 // ===========================
 export const getHistory = async (req, res) => {
     try {
         const {
-            userId,
             page = 1,
             limit = 10,
         } = req.query;
 
-        const query = {};
+        // ===========================
+        // VALIDATE PAGINATION
+        // ===========================
+        const pageNumber = Number(page);
+        const limitNumber = Number(limit);
 
-        if (userId) {
-            query.userId = userId;
+        if (
+            !Number.isInteger(pageNumber) ||
+            pageNumber < 1
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Page must be a positive integer",
+            });
         }
+
+        if (
+            !Number.isInteger(limitNumber) ||
+            limitNumber < 1 ||
+            limitNumber > 100
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Limit must be an integer between 1 and 100",
+            });
+        }
+
+        // ===========================
+        // GET CURRENT USER
+        // ===========================
+        const userId = req.user._id;
+
+        const query = {
+            userId,
+        };
 
         const total = await History.countDocuments(query);
 
         const history = await History.find(query)
             .populate("songId")
-            .populate("userId", "fullName username")
             .sort({ playedAt: -1 })
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit));
+            .skip(
+                (pageNumber - 1) * limitNumber
+            )
+            .limit(limitNumber);
 
         return res.json({
             success: true,
             total,
-            page: Number(page),
-            limit: Number(limit),
-            totalPages: Math.ceil(total / Number(limit)),
+            page: pageNumber,
+            limit: limitNumber,
+            totalPages: Math.ceil(
+                total / limitNumber
+            ),
             data: history,
         });
     } catch (error) {
@@ -67,9 +127,31 @@ export const getHistory = async (req, res) => {
 // ===========================
 export const getHistoryById = async (req, res) => {
     try {
-        const history = await History.findById(req.params.id)
-            .populate("songId")
-            .populate("userId", "fullName username");
+        const { id } = req.params;
+
+        // ===========================
+        // VALIDATE HISTORY ID
+        // ===========================
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid history ID",
+            });
+        }
+
+        // ===========================
+        // GET CURRENT USER
+        // ===========================
+        const userId = req.user._id;
+
+        // ===========================
+        // FIND HISTORY
+        // ===========================
+        const history = await History.findOne({
+            _id: id,
+            userId,
+        })
+            .populate("songId");
 
         if (!history) {
             return res.status(404).json({
@@ -95,7 +177,30 @@ export const getHistoryById = async (req, res) => {
 // ===========================
 export const deleteHistory = async (req, res) => {
     try {
-        const history = await History.findByIdAndDelete(req.params.id);
+        const { id } = req.params;
+
+        // ===========================
+        // VALIDATE HISTORY ID
+        // ===========================
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid history ID",
+            });
+        }
+
+        // ===========================
+        // GET CURRENT USER
+        // ===========================
+        const userId = req.user._id;
+
+        // ===========================
+        // DELETE OWN HISTORY
+        // ===========================
+        const history = await History.findOneAndDelete({
+            _id: id,
+            userId,
+        });
 
         if (!history) {
             return res.status(404).json({
@@ -117,19 +222,18 @@ export const deleteHistory = async (req, res) => {
 };
 
 // ===========================
-// CLEAR USER HISTORY
+// CLEAR CURRENT USER HISTORY
 // ===========================
 export const clearHistory = async (req, res) => {
     try {
-        const { userId } = req.query;
+        // ===========================
+        // GET CURRENT USER
+        // ===========================
+        const userId = req.user._id;
 
-        if (!userId) {
-            return res.status(400).json({
-                success: false,
-                message: "userId is required",
-            });
-        }
-
+        // ===========================
+        // DELETE ALL USER HISTORY
+        // ===========================
         const result = await History.deleteMany({
             userId,
         });

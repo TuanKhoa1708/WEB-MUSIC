@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play, Pause, SkipBack, SkipForward,
@@ -7,6 +7,8 @@ import {
 } from 'lucide-react'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
 import { useFavoriteContext } from '@/contexts/FavoriteContext'
+import { useAuth } from '@/contexts/AuthContext'
+import { addHistoryApi } from '@/api/history.api'
 import type { Song } from '@/types/song.types'
 import { QueuePanel } from '@/components/listener/QueuePanel'
 
@@ -35,7 +37,14 @@ export function GlobalMusicPlayer() {
     toggleRepeat, toggleShuffle, toggleQueue,
   } = useMusicPlayer()
   const { isFavorite, toggleFavorite } = useFavoriteContext()
+  const { user } = useAuth()
   const progressRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (currentSong && user?.id) {
+      addHistoryApi(user.id, currentSong._id).catch(console.error)
+    }
+  }, [currentSong?._id, user?.id])
 
   if (!currentSong) return null
 

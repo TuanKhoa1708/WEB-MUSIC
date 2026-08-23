@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   ListMusic,
-  Plus,
-  Edit2,
   Trash2,
   Search,
 } from 'lucide-react'
@@ -11,14 +9,10 @@ import { Link } from 'react-router-dom'
 import { 
   usePlaylists, 
   useDeletePlaylist,
-  useCreatePlaylist,
-  useUpdatePlaylist
 } from '@/hooks/artist/usePlaylists'
-import { useAuth } from '@/contexts/AuthContext'
 import { Pagination } from '@/components/admin/Pagination'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
-import { PlaylistForm } from '@/components/artist/PlaylistForm'
-import type { Playlist, CreatePlaylistInput, UpdatePlaylistInput } from '@/types/playlist.types'
+import type { Playlist } from '@/types/playlist.types'
 
 const PAGE_SIZE = 12
 
@@ -49,7 +43,7 @@ function PlaylistEmptyState({ isSearch }: { isSearch?: boolean }) {
       <p style={{ fontSize: 14, color: '#888', maxWidth: 300, margin: '0 auto' }}>
         {isSearch 
           ? 'Try adjusting your search keywords.' 
-          : 'Create your first playlist to organize your favorite tracks.'}
+          : 'No playlists have been created on the platform yet.'}
       </p>
     </div>
   )
@@ -59,13 +53,15 @@ function PlaylistEmptyState({ isSearch }: { isSearch?: boolean }) {
 
 function PlaylistCard({
   playlist,
-  onEdit,
   onDelete,
 }: {
   playlist: Playlist
-  onEdit: (p: Playlist) => void
   onDelete: (p: Playlist) => void
 }) {
+  const artistName = (typeof playlist.artistId === 'object' && playlist.artistId) 
+    ? playlist.artistId.stageName || 'Unknown Artist' 
+    : 'Unknown Artist'
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -82,143 +78,118 @@ function PlaylistCard({
         position: 'relative',
       }}
     >
-      <Link to={`/artist/playlists/${playlist._id}`} style={{ textDecoration: 'none', display: 'block' }}>
-        <div style={{ width: '100%', paddingTop: '100%', position: 'relative', background: '#1a1a1a' }}>
-          {playlist.coverUrl ? (
-            <img
-              src={playlist.coverUrl}
-              alt={playlist.title}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#333',
-              }}
-            >
-              <ListMusic size={48} />
-            </div>
-          )}
-
-          {/* Visibility badge */}
+      <div style={{ width: '100%', paddingTop: '100%', position: 'relative', background: '#1a1a1a' }}>
+        {playlist.coverUrl ? (
+          <img
+            src={playlist.coverUrl}
+            alt={playlist.title}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        ) : (
           <div
             style={{
               position: 'absolute',
-              top: 12,
-              left: 12,
-              padding: '4px 8px',
-              borderRadius: 6,
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#333',
+            }}
+          >
+            <ListMusic size={48} />
+          </div>
+        )}
+
+        {/* Visibility badge */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 12,
+            left: 12,
+            padding: '4px 8px',
+            borderRadius: 6,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            fontSize: 10,
+            fontWeight: 700,
+            color: playlist.isPublic ? '#3DDC84' : '#FF5B5B',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          {playlist.isPublic ? 'Public' : 'Private'}
+        </div>
+
+        {/* Hover Actions */}
+        <div 
+          className="playlist-actions"
+          style={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            display: 'flex',
+            gap: 6,
+            opacity: 0,
+            transition: 'opacity 0.2s',
+            zIndex: 2,
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLDivElement).style.opacity = '1'
+          }}
+        >
+          <button
+            onClick={(e) => { e.preventDefault(); onDelete(playlist); }}
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 8,
               background: 'rgba(0,0,0,0.6)',
               backdropFilter: 'blur(4px)',
               border: '1px solid rgba(255,255,255,0.1)',
-              fontSize: 10,
-              fontWeight: 700,
-              color: playlist.isPublic ? '#3DDC84' : '#FF5B5B',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'background 0.2s',
             }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,91,91,0.8)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
           >
-            {playlist.isPublic ? 'Public' : 'Private'}
-          </div>
+            <Trash2 size={14} />
+          </button>
         </div>
-      </Link>
-
-      {/* Hover Actions (Clicking these should not trigger the link) */}
-      <div 
-        className="playlist-actions"
-        style={{
-          position: 'absolute',
-          top: 12,
-          right: 12,
-          display: 'flex',
-          gap: 6,
-          opacity: 0,
-          transition: 'opacity 0.2s',
-          zIndex: 2,
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLDivElement).style.opacity = '1'
-        }}
-      >
-        <button
-          onClick={(e) => { e.preventDefault(); onEdit(playlist); }}
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 8,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(247,181,0,0.8)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
-        >
-          <Edit2 size={14} />
-        </button>
-        <button
-          onClick={(e) => { e.preventDefault(); onDelete(playlist); }}
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 8,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,91,91,0.8)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
-        >
-          <Trash2 size={14} />
-        </button>
       </div>
 
       <style>{`.group:hover .playlist-actions { opacity: 0.9 !important; }`}</style>
 
       <div style={{ padding: '16px' }}>
-        <Link to={`/artist/playlists/${playlist._id}`} style={{ textDecoration: 'none' }}>
-          <h3
-            style={{
-              fontSize: 15,
-              fontWeight: 700,
-              color: '#fff',
-              margin: '0 0 4px 0',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              letterSpacing: '-0.01em',
-            }}
-            title={playlist.title}
-          >
-            {playlist.title}
-          </h3>
-        </Link>
+        <h3
+          style={{
+            fontSize: 15,
+            fontWeight: 700,
+            color: '#fff',
+            margin: '0 0 4px 0',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            letterSpacing: '-0.01em',
+          }}
+          title={playlist.title}
+        >
+          {playlist.title}
+        </h3>
         <p
           style={{
             fontSize: 13,
@@ -229,7 +200,7 @@ function PlaylistCard({
             textOverflow: 'ellipsis',
           }}
         >
-          {playlist.description || 'No description'}
+          {artistName}
         </p>
       </div>
     </motion.div>
@@ -238,27 +209,20 @@ function PlaylistCard({
 
 // ─── Main page component ──────────────────────────────────────────────────────
 
-export function ArtistPlaylistsPage() {
-  const { user } = useAuth()
+export function PlaylistManagementPage() {
   const [keyword, setKeyword] = useState('')
   const [searchInput, setSearchInput] = useState('')
   const [page, setPage] = useState(1)
 
   const [deleteTarget, setDeleteTarget] = useState<Playlist | null>(null)
-  const [isModalOpen, setIsModalOpen]   = useState(false)
-  const [editTarget, setEditTarget]     = useState<Playlist | null>(null)
 
-  const artistId = user?.id || ''
-  const { data: playlistsData, isLoading } = usePlaylists({ artistId })
-
-  const playlists = Array.isArray(playlistsData?.data) ? playlistsData.data : []
-  const myPlaylists = playlists.filter((p) =>
-    keyword ? p.title.toLowerCase().includes(keyword.toLowerCase()) : true
-  )
+  // Fetch all playlists (admin view)
+  const { data: playlistsData, isLoading } = usePlaylists({ keyword, page, limit: PAGE_SIZE })
+  const playlists = playlistsData?.data || []
+  const totalPages = playlistsData?.totalPages || 1
+  const totalItems = playlistsData?.total || 0
 
   const { mutateAsync: deletePlaylist, isPending: isDeleting } = useDeletePlaylist()
-  const { mutateAsync: createPlaylist, isPending: isCreating } = useCreatePlaylist()
-  const { mutateAsync: updatePlaylist, isPending: isUpdating } = useUpdatePlaylist()
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -272,18 +236,8 @@ export function ArtistPlaylistsPage() {
     setDeleteTarget(null)
   }
 
-  const handleModalSubmit = async (formData: CreatePlaylistInput | UpdatePlaylistInput) => {
-    if (editTarget) {
-      await updatePlaylist(formData as UpdatePlaylistInput)
-    } else {
-      await createPlaylist(formData as CreatePlaylistInput)
-    }
-    setIsModalOpen(false)
-  }
-
   return (
     <div style={{ padding: '32px 40px', minHeight: '100%' }}>
-
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -324,10 +278,10 @@ export function ArtistPlaylistsPage() {
                 lineHeight: 1.1,
               }}
             >
-              My Playlists
+              Playlist Management
             </h1>
             <p style={{ fontSize: 14, color: '#666', marginTop: 4 }}>
-              Curate and manage your custom collections
+              Monitor and manage all playlists on the platform
             </p>
           </div>
         </div>
@@ -354,35 +308,6 @@ export function ArtistPlaylistsPage() {
               }}
             />
           </form>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => {
-              setEditTarget(null)
-              setIsModalOpen(true)
-            }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              height: 40,
-              paddingLeft: 20,
-              paddingRight: 20,
-              borderRadius: 12,
-              border: 'none',
-              background: 'linear-gradient(135deg, #F7B500, #ffc933)',
-              color: '#000',
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(247,181,0,0.3)',
-              flexShrink: 0,
-            }}
-          >
-            <Plus size={18} strokeWidth={2.5} />
-            Create Playlist
-          </motion.button>
         </div>
       </motion.div>
 
@@ -409,15 +334,11 @@ export function ArtistPlaylistsPage() {
               </div>
             </div>
           ))
-        ) : myPlaylists.length > 0 ? (
-          myPlaylists.map((playlist) => (
+        ) : playlists.length > 0 ? (
+          playlists.map((playlist) => (
             <PlaylistCard
               key={playlist._id}
               playlist={playlist}
-              onEdit={(p) => {
-                setEditTarget(p)
-                setIsModalOpen(true)
-              }}
               onDelete={setDeleteTarget}
             />
           ))
@@ -425,6 +346,18 @@ export function ArtistPlaylistsPage() {
           <PlaylistEmptyState isSearch={!!keyword} />
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            pageSize={PAGE_SIZE}
+            onPageChange={setPage}
+          />
+        </div>
+      )}
 
       <ConfirmDialog
         open={!!deleteTarget}
@@ -436,15 +369,6 @@ export function ArtistPlaylistsPage() {
         isLoading={isDeleting}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
-      />
-
-      <PlaylistForm
-        isOpen={isModalOpen}
-        artistId={artistId}
-        onClose={() => setIsModalOpen(false)}
-        playlist={editTarget}
-        onSubmit={handleModalSubmit}
-        isLoading={isCreating || isUpdating}
       />
     </div>
   )

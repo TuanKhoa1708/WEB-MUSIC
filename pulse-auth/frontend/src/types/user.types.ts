@@ -51,9 +51,3 @@ export interface UpdateMeInput {
   username?: string
   avatarUrl?: string
 }
-
-export interface ListenerStats {
-  totalListeners: number
-  activeListeners: number
-  verifiedListeners: number
-}

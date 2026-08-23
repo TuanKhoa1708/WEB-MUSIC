@@ -12,7 +12,7 @@ function getRoleRedirect(role: string): string {
     case ROLES.ARTIST:
       return '/artist/dashboard'
     default:
-      return '/listener/home'
+      return '/home'
   }
 }
 
