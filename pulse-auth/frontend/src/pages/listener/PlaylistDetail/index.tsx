@@ -1,9 +1,7 @@
-import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Play, Shuffle, ListMusic, Pencil, Trash2, Check, X } from 'lucide-react'
-import { usePlaylistDetail, usePlaylistSongs, useUpdatePlaylist, useDeletePlaylist, useRemoveSongFromPlaylist } from '@/hooks/listener/usePlaylists'
+import { ArrowLeft, Play, Shuffle, ListMusic } from 'lucide-react'
+import { usePlaylistDetail, usePlaylistSongs } from '@/hooks/listener/usePlaylists'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
-import { useAuth } from '@/contexts/AuthContext'
 import { SongRow } from '@/components/listener/SongRow'
 import { SkeletonRow } from '@/components/listener/SkeletonCard'
 import { EmptyState } from '@/components/listener/EmptyState'
@@ -13,44 +11,16 @@ import type { PlaylistSong } from '@/types/playlist.types'
 export function PlaylistDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { user } = useAuth()
   const { playSong } = useMusicPlayer()
-
-  const [editing, setEditing] = useState(false)
-  const [editTitle, setEditTitle] = useState('')
 
   const { data: playlist, isLoading: playlistLoading } = usePlaylistDetail(id!)
   const { data: playlistSongs, isLoading: songsLoading } = usePlaylistSongs(id!)
-  const updatePlaylist = useUpdatePlaylist()
-  const deletePlaylist = useDeletePlaylist()
-  const removeSong = useRemoveSongFromPlaylist()
 
   const songs: Song[] = (playlistSongs ?? [])
     .map((ps: PlaylistSong) => (typeof ps.songId === 'object' ? ps.songId as unknown as Song : null))
     .filter(Boolean) as Song[]
 
-  const isOwner = () => {
-    if (!user || !playlist) return false
-    const uid = typeof playlist.userId === 'object' ? (playlist.userId as any)._id : playlist.userId
-    return uid === user.id
-  }
 
-  const handleDelete = async () => {
-    if (!confirm('Delete this playlist?')) return
-    await deletePlaylist.mutateAsync(id!)
-    navigate('/listener/library')
-  }
-
-  const handleSaveTitle = async () => {
-    if (!editTitle.trim() || !id) return
-    await updatePlaylist.mutateAsync({ _id: id, title: editTitle.trim() })
-    setEditing(false)
-  }
-
-  const startEdit = () => {
-    setEditTitle(playlist?.title ?? '')
-    setEditing(true)
-  }
 
   if (playlistLoading) {
     return (
@@ -95,32 +65,9 @@ export function PlaylistDetailPage() {
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 6px' }}>Playlist</p>
 
-          {/* Editable title */}
-          {editing ? (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
-              <input
-                autoFocus
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleSaveTitle() }}
-                style={{
-                  background: '#1a1a1a', border: '1px solid rgba(63,214,255,0.3)',
-                  borderRadius: 8, color: '#fff', fontSize: 28, fontWeight: 900,
-                  padding: '4px 10px', outline: 'none', letterSpacing: '-0.03em',
-                }}
-              />
-              <button onClick={handleSaveTitle} style={{ background: 'rgba(63,214,255,0.1)', border: 'none', borderRadius: 8, color: '#3FD6FF', cursor: 'pointer', padding: '6px 10px' }}>
-                <Check size={16} />
-              </button>
-              <button onClick={() => setEditing(false)} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4 }}>
-                <X size={16} />
-              </button>
-            </div>
-          ) : (
-            <h1 style={{ fontSize: 34, fontWeight: 900, color: '#fff', margin: '0 0 8px', letterSpacing: '-0.04em' }}>
-              {playlist.title}
-            </h1>
-          )}
+          <h1 style={{ fontSize: 34, fontWeight: 900, color: '#fff', margin: '0 0 8px', letterSpacing: '-0.04em' }}>
+            {playlist.title}
+          </h1>
 
           <p style={{ fontSize: 13, color: '#555', margin: '0 0 16px' }}>
             {songs.length} songs
@@ -156,22 +103,7 @@ export function PlaylistDetailPage() {
                 </button>
               </>
             )}
-            {isOwner() && (
-              <>
-                <button
-                  onClick={startEdit}
-                  style={{ background: 'none', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, color: '#888', cursor: 'pointer', padding: '7px 12px', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
-                >
-                  <Pencil size={13} /> Edit
-                </button>
-                <button
-                  onClick={handleDelete}
-                  style={{ background: 'none', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, color: '#ef4444', cursor: 'pointer', padding: '7px 12px', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
-                >
-                  <Trash2 size={13} /> Delete
-                </button>
-              </>
-            )}
+
           </div>
         </div>
       </div>
@@ -191,17 +123,7 @@ export function PlaylistDetailPage() {
             return (
               <div key={ps._id} style={{ display: 'grid', gridTemplateColumns: '1fr 32px', alignItems: 'center' }}>
                 <SongRow song={song} index={i} queue={songs} />
-                {isOwner() && (
-                  <button
-                    onClick={() => removeSong.mutate({ playlistSongId: ps._id, playlistId: id! })}
-                    style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center', marginRight: 12 }}
-                    title="Remove"
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = '#444')}
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                )}
+
               </div>
             )
           })}

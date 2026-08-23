@@ -7,10 +7,15 @@ import { useAuth } from '@/contexts/AuthContext'
  * - Otherwise: redirects to the login page ("/").
  */
 export function ProtectedRoute() {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, user, loading } = useAuth()
 
   // While checking token presence, render nothing to avoid flicker.
   if (loading) return null
+
+  // If there's a token but the user object is missing (e.g. lost state), force them to log in again
+  if (isAuthenticated && !user) {
+    return <Navigate to="/" replace />
+  }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />
 }

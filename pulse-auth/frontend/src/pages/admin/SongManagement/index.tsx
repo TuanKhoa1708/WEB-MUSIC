@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Music,
@@ -265,6 +266,9 @@ function FilterSelect({
 // ─── Main page component ──────────────────────────────────────────────────────
 
 export function SongManagementPage() {
+  const location = useLocation()
+  const isAdmin = location.pathname.startsWith('/admin')
+
   // ── Filter state ───────────────────────────────────────
   const [keyword, setKeyword]   = useState('')
   const [artistId, setArtistId] = useState('')
@@ -486,15 +490,17 @@ export function SongManagementPage() {
               setIsDetailOpen(true)
             }}
           />
-          <ActionBtn
-            icon={<Edit2 size={13} />}
-            title="Edit"
-            color="#F7B500"
-            onClick={() => {
-              setEditTarget(row)
-              setIsFormOpen(true)
-            }}
-          />
+          {!isAdmin && (
+            <ActionBtn
+              icon={<Edit2 size={13} />}
+              title="Edit"
+              color="#F7B500"
+              onClick={() => {
+                setEditTarget(row)
+                setIsFormOpen(true)
+              }}
+            />
+          )}
           <ActionBtn
             icon={<Trash2 size={13} />}
             title="Delete"
@@ -559,37 +565,39 @@ export function SongManagementPage() {
         </div>
 
         {/* Add Song button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => {
-            setEditTarget(null)
-            setIsFormOpen(true)
-          }}
-          id="btn-add-song"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            height: 42,
-            paddingLeft: 18,
-            paddingRight: 18,
-            borderRadius: 11,
-            border: 'none',
-            background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
-            color: '#000',
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
-            flexShrink: 0,
-            letterSpacing: '-0.01em',
-            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-          }}
-        >
-          <Plus size={16} strokeWidth={2.5} />
-          Add Song
-        </motion.button>
+        {!isAdmin && (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => {
+              setEditTarget(null)
+              setIsFormOpen(true)
+            }}
+            id="btn-add-song"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              height: 42,
+              paddingLeft: 18,
+              paddingRight: 18,
+              borderRadius: 11,
+              border: 'none',
+              background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
+              color: '#000',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
+              flexShrink: 0,
+              letterSpacing: '-0.01em',
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+            }}
+          >
+            <Plus size={16} strokeWidth={2.5} />
+            Add Song
+          </motion.button>
+        )}
       </motion.div>
 
       {/* ── Stat cards ─────────────────────────────────── */}
@@ -796,10 +804,10 @@ export function SongManagementPage() {
           setIsDetailOpen(false)
           setDetailSong(null)
         }}
-        onEdit={(s) => {
+        onEdit={!isAdmin ? (s) => {
           setEditTarget(s)
           setIsFormOpen(true)
-        }}
+        } : undefined}
       />
     </div>
   )

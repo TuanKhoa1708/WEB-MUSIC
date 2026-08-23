@@ -7,19 +7,25 @@ const playlistSchema = new mongoose.Schema(
             required: [true, "Playlist title is required"],
             trim: true,
         },
+
         description: {
             type: String,
             default: "",
+            trim: true,
         },
-        userId: {
+
+        artistId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: [true, "User is required"],
+            ref: "Artist",
+            required: [true, "Artist is required"],
         },
+
         coverUrl: {
             type: String,
             default: "",
+            trim: true,
         },
+
         isPublic: {
             type: Boolean,
             default: false,

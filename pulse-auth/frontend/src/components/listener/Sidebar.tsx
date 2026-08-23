@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Disc3,
   Plus,
+  Mic2,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -31,6 +32,10 @@ const libraryNav: NavItem[] = [
   { to: '/listener/library', icon: <Library size={18} />, label: 'Library' },
   { to: '/listener/favorites', icon: <Heart size={18} />, label: 'Favorites' },
   { to: '/listener/history', icon: <Clock size={18} />, label: 'Recently Played' },
+]
+
+const accountNav: NavItem[] = [
+  { to: '/become-artist', icon: <Mic2 size={18} />, label: 'Become Artist' },
 ]
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
@@ -135,52 +140,37 @@ export function ListenerSidebar() {
           ))}
         </NavSection>
 
-        {/* Create Playlist shortcut */}
-        {!collapsed && (
-          <div style={{ marginTop: 8, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <button
-              onClick={() => navigate('/listener/library')}
-              style={{
-                ...NAV_LINK_BASE,
-                width: '100%',
-                color: '#3FD6FF',
-                border: '1px dashed rgba(63,214,255,0.3)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(63,214,255,0.06)'
-                e.currentTarget.style.color = '#3FD6FF'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = '#3FD6FF'
-              }}
-            >
-              <Plus size={16} />
-              New Playlist
-            </button>
-          </div>
+        {/* Account Settings */}
+        {user?.role === 'user' && (
+          <NavSection label="Account" collapsed={collapsed}>
+            {accountNav.map((item) => (
+              <SidebarLink key={item.to} item={item} collapsed={collapsed} />
+            ))}
+          </NavSection>
         )}
       </div>
 
       {/* User info at bottom */}
       {!collapsed && user && (
         <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #3FD6FF22, #2094ff22)',
-              border: '1px solid rgba(63,214,255,0.2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 13, fontWeight: 700, color: '#3FD6FF', flexShrink: 0,
-            }}>
-              {user.fullName?.[0]?.toUpperCase() || '?'}
-            </div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user.fullName}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: '50%',
+                background: 'linear-gradient(135deg, #3FD6FF22, #2094ff22)',
+                border: '1px solid rgba(63,214,255,0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 13, fontWeight: 700, color: '#3FD6FF', flexShrink: 0,
+              }}>
+                {user.fullName?.[0]?.toUpperCase() || '?'}
               </div>
-              <div style={{ fontSize: 11, color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user.role}
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {user.fullName}
+                </div>
+                <div style={{ fontSize: 11, color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {user.role}
+                </div>
               </div>
             </div>
           </div>

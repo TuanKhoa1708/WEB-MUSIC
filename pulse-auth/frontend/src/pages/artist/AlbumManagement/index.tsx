@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Disc3,
@@ -62,10 +63,12 @@ function AlbumCard({
   album,
   onEdit,
   onDelete,
+  isAdmin,
 }: {
   album: Album
   onEdit: (a: Album) => void
   onDelete: (a: Album) => void
+  isAdmin: boolean
 }) {
   const artistName = (typeof album.artistId === 'object' && album.artistId) 
     ? album.artistId.stageName || 'Unknown Artist' 
@@ -132,27 +135,29 @@ function AlbumCard({
             opacity: 0.9,
           }}
         >
-          <button
-            onClick={() => onEdit(album)}
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: 'rgba(0,0,0,0.6)',
-              backdropFilter: 'blur(4px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'background 0.2s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(63,214,255,0.8)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
-          >
-            <Edit2 size={14} />
-          </button>
+          {!isAdmin && (
+            <button
+              onClick={() => onEdit(album)}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: 'rgba(0,0,0,0.6)',
+                backdropFilter: 'blur(4px)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(63,214,255,0.8)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+            >
+              <Edit2 size={14} />
+            </button>
+          )}
           <button
             onClick={() => onDelete(album)}
             style={{
@@ -213,6 +218,9 @@ function AlbumCard({
 // ─── Main page component ──────────────────────────────────────────────────────
 
 export function AlbumManagementPage() {
+  const location = useLocation()
+  const isAdmin = location.pathname.startsWith('/admin')
+
   // ── Filters state ──────────────────────────────────────
   const [keyword, setKeyword] = useState('')
   const [searchInput, setSearchInput] = useState('') // Local state for input before debouncing
@@ -335,34 +343,36 @@ export function AlbumManagementPage() {
           </form>
 
           {/* Add Album button */}
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              height: 40,
-              paddingLeft: 20,
-              paddingRight: 20,
-              borderRadius: 12,
-              border: 'none',
-              background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
-              color: '#000',
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
-              flexShrink: 0,
-            }}
-            onClick={() => {
-              setEditTarget(null)
-              setIsModalOpen(true)
-            }}
-          >
-            <Plus size={18} strokeWidth={2.5} />
-            Create Album
-          </motion.button>
+          {!isAdmin && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                height: 40,
+                paddingLeft: 20,
+                paddingRight: 20,
+                borderRadius: 12,
+                border: 'none',
+                background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
+                color: '#000',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
+                flexShrink: 0,
+              }}
+              onClick={() => {
+                setEditTarget(null)
+                setIsModalOpen(true)
+              }}
+            >
+              <Plus size={18} strokeWidth={2.5} />
+              Create Album
+            </motion.button>
+          )}
         </div>
       </motion.div>
 
@@ -396,6 +406,7 @@ export function AlbumManagementPage() {
             <AlbumCard
               key={album._id}
               album={album}
+              isAdmin={isAdmin}
               onEdit={(a) => {
                 setEditTarget(a)
                 setIsModalOpen(true)

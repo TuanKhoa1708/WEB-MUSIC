@@ -7,6 +7,7 @@ const artistSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+
         stageName: {
             type: String,
             required: [true, "Stage name is required"],
@@ -16,16 +17,19 @@ const artistSchema = new mongoose.Schema(
         bio: {
             type: String,
             default: "",
+            trim: true,
         },
 
         avatarUrl: {
             type: String,
             default: "",
+            trim: true,
         },
 
         coverImage: {
             type: String,
             default: "",
+            trim: true,
         },
 
         followers: {

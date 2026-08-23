@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { loginService, logoutService } from '@/services/auth.service'
-import { getToken, removeToken } from '@/utils/token'
+import { getToken, removeToken, getUserInfo } from '@/utils/token'
 import type { AuthContextValue, AuthUser, LoginRequest } from '@/types/auth'
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -26,7 +26,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
       return
     }
-    // If you later add a /auth/me endpoint, call it here to hydrate user.
+    // Restore user from local storage
+    const savedUser = getUserInfo()
+    if (savedUser) {
+      setUser(savedUser)
+    }
     setLoading(false)
   }, [])
 

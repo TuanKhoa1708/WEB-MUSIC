@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Transition } from 'framer-motion'
 
@@ -14,6 +14,7 @@ import { ArtistRequestsPage } from '@/pages/admin/ArtistRequests'
 import { AdminDashboardPage } from '@/pages/admin/Dashboard'
 import { SongManagementPage } from '@/pages/admin/SongManagement'
 import { ListenerManagementPage } from '@/pages/admin/ListenerManagement'
+import { PlaylistManagementPage } from '@/pages/admin/PlaylistManagement'
 
 import { UnauthorizedPage } from '@/pages/Unauthorized'
 import { BecomeArtistPage } from '@/pages/user/BecomeArtist'
@@ -25,19 +26,19 @@ import { AlbumManagementPage } from '@/pages/artist/AlbumManagement'
 import { ArtistDashboardPage } from '@/pages/artist/Dashboard'
 import { ArtistSongManagementPage } from '@/pages/artist/SongManagement'
 import { ArtistPlaylistsPage } from '@/pages/artist/Playlists'
-import { PlaylistDetailPage as ArtistPlaylistDetailPage } from '@/pages/artist/PlaylistDetail'
+import { PlaylistDetailPage } from '@/pages/artist/PlaylistDetail'
 import { ArtistProfilePage } from '@/pages/artist/Profile'
 
 // Listener pages
 import { ListenerLayout } from '@/layouts/ListenerLayout'
-import { HomePage } from '@/pages/listener/Home'
+import { HomePage as ListenerHomePage } from '@/pages/listener/Home'
 import { SearchPage } from '@/pages/listener/Search'
 import { LibraryPage } from '@/pages/listener/Library'
 import { FavoriteSongsPage } from '@/pages/listener/FavoriteSongs'
-import { AlbumDetailPage } from '@/pages/listener/AlbumDetail'
-import { ArtistDetailPage } from '@/pages/listener/ArtistDetail'
-import { PlaylistDetailPage as ListenerPlaylistDetailPage } from '@/pages/listener/PlaylistDetail'
 import { RecentlyPlayedPage } from '@/pages/listener/RecentlyPlayed'
+import { ArtistDetailPage } from '@/pages/listener/ArtistDetail'
+import { AlbumDetailPage } from '@/pages/listener/AlbumDetail'
+import { PlaylistDetailPage as ListenerPlaylistDetailPage } from '@/pages/listener/PlaylistDetail'
 
 // ─── Page transition config ───────────────────────────────────────────────────
 
@@ -72,26 +73,22 @@ function AnimatedRoutes() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-          {/* Legacy redirect */}
-          <Route path="/home" element={<Navigate to="/listener/home" replace />} />
-
           {/* Protected user routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/become-artist" element={<BecomeArtistPage />} />
-
-            {/* Listener / User routes */}
             <Route element={<ListenerLayout />}>
-              <Route path="/listener/home" element={<HomePage />} />
+              <Route path="/home" element={<ListenerHomePage />} />
+              <Route path="/listener/home" element={<ListenerHomePage />} />
               <Route path="/listener/search" element={<SearchPage />} />
               <Route path="/listener/library" element={<LibraryPage />} />
               <Route path="/listener/favorites" element={<FavoriteSongsPage />} />
               <Route path="/listener/history" element={<RecentlyPlayedPage />} />
-              <Route path="/listener/albums/:id" element={<AlbumDetailPage />} />
               <Route path="/listener/artists/:id" element={<ArtistDetailPage />} />
+              <Route path="/listener/albums/:id" element={<AlbumDetailPage />} />
               <Route path="/listener/playlists/:id" element={<ListenerPlaylistDetailPage />} />
-              {/* Default listener redirect */}
-              <Route path="/listener" element={<Navigate to="/listener/home" replace />} />
             </Route>
+
+            {/* Standalone pages without ListenerLayout */}
+            <Route path="/become-artist" element={<BecomeArtistPage />} />
           </Route>
 
           {/* Protected admin routes */}
@@ -103,6 +100,7 @@ function AnimatedRoutes() {
               <Route path="/admin/listeners" element={<ListenerManagementPage />} />
               <Route path="/admin/songs" element={<SongManagementPage />} />
               <Route path="/admin/albums" element={<AlbumManagementPage />} />
+              <Route path="/admin/playlists" element={<PlaylistManagementPage />} />
             </Route>
           </Route>
 
@@ -113,7 +111,7 @@ function AnimatedRoutes() {
               <Route path="/artist/songs" element={<ArtistSongManagementPage />} />
               <Route path="/artist/albums" element={<AlbumManagementPage />} />
               <Route path="/artist/playlists" element={<ArtistPlaylistsPage />} />
-              <Route path="/artist/playlists/:id" element={<ArtistPlaylistDetailPage />} />
+              <Route path="/artist/playlists/:id" element={<PlaylistDetailPage />} />
               <Route path="/artist/profile" element={<ArtistProfilePage />} />
             </Route>
           </Route>

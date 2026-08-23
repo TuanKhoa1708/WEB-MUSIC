@@ -202,7 +202,7 @@ export function PlaylistDetailPage() {
           </p>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 13, color: '#888', fontWeight: 500 }}>
-            <span style={{ color: '#fff', fontWeight: 600 }}>{typeof playlist.userId === 'object' ? playlist.userId.username : 'You'}</span>
+            <span style={{ color: '#fff', fontWeight: 600 }}>{typeof playlist.artistId === 'object' ? playlist.artistId.stageName : 'Artist'}</span>
             <span>•</span>
             <span>{playlistSongs.length} songs</span>
             <span>•</span>

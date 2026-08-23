@@ -22,10 +22,22 @@ export function getRefreshToken(): string | null {
   return localStorage.getItem(REFRESH_TOKEN_KEY)
 }
 
-/** Remove both tokens from storage (called on logout or 401). */
+/** Remove both tokens and user info from storage (called on logout or 401). */
 export function removeToken(): void {
   localStorage.removeItem(ACCESS_TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
+  localStorage.removeItem('pulse_user')
+}
+
+/** Store user info */
+export function setUserInfo(user: any): void {
+  localStorage.setItem('pulse_user', JSON.stringify(user))
+}
+
+/** Retrieve user info */
+export function getUserInfo(): any | null {
+  const data = localStorage.getItem('pulse_user')
+  return data ? JSON.parse(data) : null
 }
 
 /** Returns true when an access token is present in storage. */

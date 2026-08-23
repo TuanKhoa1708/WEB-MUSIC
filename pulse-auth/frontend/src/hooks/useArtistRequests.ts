@@ -37,10 +37,10 @@ export function useAdminArtistRequests(status?: string) {
   return useQuery({
     queryKey: ['artist-requests', 'admin', status],
     queryFn: async () => {
-      const { data } = await axiosInstance.get<{ success: boolean; data: ArtistRequest[] }>('/artist-requests', {
+      const { data } = await axiosInstance.get<ArtistRequest[]>('/artist-requests', {
         params: { status }
       });
-      return data.data;
+      return data;
     },
   });
 }

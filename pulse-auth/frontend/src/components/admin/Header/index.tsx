@@ -12,8 +12,6 @@ const BREADCRUMB_MAP: Record<string, string[]> = {
   '/admin/songs':      ['Admin', 'Song Management'],
   '/admin/albums':     ['Admin', 'Album Management'],
   '/admin/playlists':  ['Admin', 'Playlist Management'],
-  '/admin/genres':     ['Admin', 'Genre Management'],
-  '/admin/analytics':  ['Admin', 'Analytics'],
   '/admin/settings':   ['Admin', 'Settings'],
 }
 

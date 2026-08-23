@@ -35,8 +35,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Song Management',    icon: <Music size={18} />,            to: '/admin/songs'       },
   { label: 'Album Management',   icon: <Disc3 size={18} />,            to: '/admin/albums'      },
   { label: 'Playlist Management',icon: <ListMusic size={18} />,        to: '/admin/playlists'   },
-  { label: 'Genre Management',   icon: <Tag size={18} />,              to: '/admin/genres'      },
-  { label: 'Analytics',          icon: <BarChart3 size={18} />,        to: '/admin/analytics'   },
   { label: 'Settings',           icon: <Settings size={18} />,         to: '/admin/settings'    },
 ]
 
