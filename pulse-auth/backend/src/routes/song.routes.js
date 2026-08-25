@@ -7,6 +7,7 @@ import {
     updateSong,
     deleteSong,
     getSongStats,
+    getRecommendations, // <-- Đã thêm import
 } from "../controllers/song.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
@@ -21,6 +22,11 @@ router.get(
     authorize("artist", "admin"),
     getSongStats
 );
+
+// ===========================
+// AI RECOMMENDATIONS (AS-132)
+// ===========================
+router.get("/recommendations", protect, getRecommendations); // <-- Đã thêm route gợi ý nhạc
 
 // CRUD
 router.post(

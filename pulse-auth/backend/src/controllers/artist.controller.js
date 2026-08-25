@@ -406,3 +406,66 @@ export const getArtistDashboardStats = async (req, res) => {
         });
     }
 };
+// ===========================
+// ARTIST PREMIUM REVENUE & STATISTICS (AS-133 & AS-134)
+// ===========================
+export const getArtistRevenue = async (req, res) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid artist ID",
+            });
+        }
+
+        const artist = await Artist.findById(req.params.id);
+
+        if (!artist) {
+            return res.status(404).json({
+                success: false,
+                message: "Artist not found",
+            });
+        }
+
+        // Lấy tất cả bài hát của nghệ sĩ để tính tổng lượt nghe
+        const songStats = await Song.aggregate([
+            {
+                $match: {
+                    artistId: artist._id,
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalPlays: { $sum: "$playCount" },
+                    totalSongs: { $sum: 1 },
+                },
+            },
+        ]);
+
+        const totalPlays = songStats[0]?.totalPlays || 0;
+        const totalSongs = songStats[0]?.totalSongs || 0;
+
+        // Quy đổi doanh thu Premium: Ví dụ mỗi lượt nghe tương ứng với 0.05 đơn vị tiền tệ (có thể điều chỉnh)
+        const RATE_PER_PLAY = 0.05;
+        const estimatedRevenue = totalPlays * RATE_PER_PLAY;
+
+        return res.json({
+            success: true,
+            data: {
+                artistId: artist._id,
+                stageName: artist.stageName,
+                totalSongs,
+                totalPlays,
+                ratePerPlay: RATE_PER_PLAY,
+                estimatedRevenue: Number(estimatedRevenue.toFixed(2)), // Làm tròn 2 chữ số thập phân
+                currency: "USD",
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};

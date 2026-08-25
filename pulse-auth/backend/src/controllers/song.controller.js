@@ -1,6 +1,7 @@
 import Song from "../models/Song.js";
 import Artist from "../models/Artist.js";
 import Album from "../models/Album.js";
+import History from "../models/History.js";
 
 // CREATE SONG
 export const createSong = async (req, res) => {
@@ -236,6 +237,83 @@ export const getSongStats = async (req, res) => {
                 totalSongs,
                 totalPlays: totalPlays[0]?.total || 0,
             },
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+// GET AI MUSIC RECOMMENDATIONS
+
+
+export const getRecommendations = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // 1. Lấy 10 lịch sử nghe gần nhất của user để phân tích sở thích
+        const userHistory = await History.find({ userId })
+            .populate("songId")
+            .sort({ playedAt: -1 })
+            .limit(10);
+
+        // Nếu user chưa nghe bài nào, trả về các bài hát thịnh hành (playCount cao)
+        if (!userHistory || userHistory.length === 0) {
+            const trendingSongs = await Song.find()
+                .sort({ playCount: -1 })
+                .limit(10)
+                .populate("artistId", "stageName")
+                .populate("albumId", "title");
+
+            return res.json({
+                success: true,
+                message: "Recommended based on trending",
+                data: trendingSongs,
+            });
+        }
+
+        // 2. Thu thập danh sách các thể loại và ID bài hát đã nghe để loại trừ
+        const genres = [];
+        const listenedSongIds = [];
+
+        userHistory.forEach((item) => {
+            if (item.songId) {
+                listenedSongIds.push(item.songId._id);
+                if (item.songId.genre) {
+                    genres.push(item.songId.genre);
+                }
+            }
+        });
+
+        // 3. Tìm các bài hát cùng thể loại mà user chưa nghe gần đây
+        const recommendations = await Song.find({
+            _id: { $nin: listenedSongIds },
+            genre: { $in: genres },
+        })
+            .sort({ playCount: -1, createdAt: -1 })
+            .limit(10)
+            .populate("artistId", "stageName")
+            .populate("albumId", "title");
+
+        // Nếu số lượng gợi ý ít, bù thêm bằng các bài hát hot khác
+        let finalRecommendations = recommendations;
+        if (finalRecommendations.length < 5) {
+            const extraSongs = await Song.find({
+                _id: { $nin: [...listenedSongIds, ...recommendations.map(s => s._id)] }
+            })
+                .sort({ playCount: -1 })
+                .limit(10 - finalRecommendations.length)
+                .populate("artistId", "stageName")
+                .populate("albumId", "title");
+
+            finalRecommendations = [...finalRecommendations, ...extraSongs];
+        }
+
+        return res.json({
+            success: true,
+            message: "AI recommendations generated successfully",
+            data: finalRecommendations,
         });
     } catch (error) {
         return res.status(500).json({
