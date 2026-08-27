@@ -14,6 +14,8 @@ import userRoutes from "./routes/user.routes.js";
 import artistRequestRoutes from "./routes/artistRequest.routes.js";
 import listenerRoutes from "./routes/listener.routes.js";
 import searchRoutes from "./routes/search.routes.js";
+import premiumRoutes from "./routes/premium.routes.js"; // <-- 1. Import route Premium    
+
 const app = express();
 
 app.use(cors());
@@ -63,6 +65,11 @@ app.use("/api/artist-requests", artistRequestRoutes);
 
 // Listener Routes
 app.use("/api/listeners", listenerRoutes);
+
 // Search Routes
 app.use("/api/search", searchRoutes);
+
+// Premium Routes
+app.use("/api/premium", premiumRoutes); // <-- 2. Khai báo endpoint cho Premium
+
 export default app;
