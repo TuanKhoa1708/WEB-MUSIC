@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import History from "../models/History.js";
+import Song from "../models/Song.js";
 
 // ===========================
 // ADD TO HISTORY
@@ -33,6 +34,13 @@ export const addHistory = async (req, res) => {
             userId,
             songId,
             playedAt: new Date(),
+        });
+
+        // ===========================
+        // UPDATE PLAY COUNT FOR AI & STATS
+        // ===========================
+        await Song.findByIdAndUpdate(songId, {
+            $inc: { playCount: 1 }
         });
 
         return res.status(201).json({
