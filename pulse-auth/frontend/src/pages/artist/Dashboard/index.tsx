@@ -2,16 +2,14 @@ import { motion } from 'framer-motion'
 import { LayoutDashboard, Music, Disc3, ListMusic } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { StatCard } from '@/components/admin/StatCard'
-import { useSongStats } from '@/hooks/artist/useSongs'
-import { useAlbumStats } from '@/hooks/artist/useAlbums'
-import { usePlaylistStats } from '@/hooks/artist/usePlaylists'
+import { DollarSign, Headphones } from 'lucide-react'
+import { useArtistDashboardStats, useArtistRevenue } from '@/hooks/artist/useArtists'
 import { Link } from 'react-router-dom'
 
 export function ArtistDashboardPage() {
   const { user } = useAuth()
-  const { data: songStats } = useSongStats()
-  const { data: albumStats } = useAlbumStats()
-  const { data: playlistStats } = usePlaylistStats()
+  const { data: dashboardStats } = useArtistDashboardStats()
+  const { data: revenueStats } = useArtistRevenue()
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -77,29 +75,38 @@ export function ArtistDashboardPage() {
         <StatCard
           icon={<Music size={20} />}
           iconColor="#3FD6FF"
-          label="Total Platform Songs"
-          value={songStats?.totalSongs ?? '—'}
-          trend={8}
+          label="My Total Songs"
+          value={dashboardStats?.statistics.totalSongs ?? '—'}
+          trend={0}
           trendLabel="vs last month"
           delay={0.05}
         />
         <StatCard
           icon={<Disc3 size={20} />}
           iconColor="#A78BFA"
-          label="Total Platform Albums"
-          value={albumStats?.totalAlbums ?? '—'}
-          trend={12}
+          label="My Total Albums"
+          value={dashboardStats?.statistics.totalAlbums ?? '—'}
+          trend={0}
           trendLabel="vs last month"
           delay={0.1}
         />
         <StatCard
-          icon={<ListMusic size={20} />}
+          icon={<Headphones size={20} />}
           iconColor="#F7B500"
-          label="Total Platform Playlists"
-          value={playlistStats?.totalPlaylists ?? '—'}
-          trend={5}
+          label="Total Plays"
+          value={dashboardStats?.statistics.totalPlays ?? '—'}
+          trend={0}
           trendLabel="vs last month"
           delay={0.15}
+        />
+        <StatCard
+          icon={<DollarSign size={20} />}
+          iconColor="#4CAF50"
+          label="Estimated Revenue (USD)"
+          value={revenueStats?.estimatedRevenue !== undefined ? `$${revenueStats.estimatedRevenue.toFixed(2)}` : '—'}
+          trend={0}
+          trendLabel="vs last month"
+          delay={0.2}
         />
       </div>
 

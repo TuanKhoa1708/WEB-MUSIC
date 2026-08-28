@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { loginService, logoutService } from '@/services/auth.service'
-import { getToken, removeToken, getUserInfo } from '@/utils/token'
+import { getToken, removeToken, getUserInfo, setUserInfo } from '@/utils/token'
 import type { AuthContextValue, AuthUser, LoginRequest } from '@/types/auth'
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -46,15 +46,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }, [])
 
-  const value: AuthContextValue = {
+  const AuthContextV: AuthContextValue = {
     user,
     isAuthenticated: !!getToken(),
+    isPremium: user?.isPremium === true,
     loading,
     login,
     logout,
+    refreshUser: (updatedUser: Partial<AuthUser>) => {
+      setUser((prev) => {
+        if (!prev) return prev
+        const merged = { ...prev, ...updatedUser }
+        setUserInfo(merged)
+        return merged
+      })
+    },
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={AuthContextV}>{children}</AuthContext.Provider>
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────

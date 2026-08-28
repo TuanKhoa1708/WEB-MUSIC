@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Search, X, LogOut, Settings } from 'lucide-react'
+import { Search, X, LogOut, Settings, Crown } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
+import { PremiumBadge } from '@/components/premium/PremiumBadge'
 
 export function ListenerHeader() {
   const { user, logout } = useAuth()
@@ -131,15 +132,18 @@ export function ListenerHeader() {
           >
             <div style={{
               width: 28, height: 28, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
+              background: user.isPremium
+                ? 'linear-gradient(135deg, #FFB900, #FF8C00)'
+                : 'linear-gradient(135deg, #3FD6FF, #2094ff)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 12, fontWeight: 700, color: '#000',
             }}>
-              {user.fullName?.[0]?.toUpperCase() || '?'}
+              {user.isPremium ? <Crown size={13} /> : (user.fullName?.[0]?.toUpperCase() || '?')}
             </div>
             <span style={{ fontSize: 13, fontWeight: 600, color: '#ddd' }}>
               {user.fullName?.split(' ')[0]}
             </span>
+            <PremiumBadge isPremium={user.isPremium === true} compact />
           </button>
 
           <AnimatePresence>
@@ -165,6 +169,9 @@ export function ListenerHeader() {
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{user.fullName}</div>
                   <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{user.email}</div>
+                  <div style={{ marginTop: 6 }}>
+                    <PremiumBadge isPremium={user.isPremium === true} />
+                  </div>
                 </div>
                 <div style={{ padding: '6px' }}>
                   {user.role === 'artist' && (
@@ -179,6 +186,22 @@ export function ListenerHeader() {
                       icon={<Settings size={14} />}
                       label="Admin Panel"
                       onClick={() => { navigate('/admin/dashboard'); setShowUserMenu(false) }}
+                    />
+                  )}
+                  {!user.isPremium && user.role === 'user' && (
+                    <MenuBtn
+                      icon={<Crown size={14} />}
+                      label="Upgrade to Premium"
+                      premium
+                      onClick={() => { navigate('/listener/premium'); setShowUserMenu(false) }}
+                    />
+                  )}
+                  {user.isPremium && (
+                    <MenuBtn
+                      icon={<Crown size={14} />}
+                      label="My Subscription"
+                      premium
+                      onClick={() => { navigate('/listener/premium'); setShowUserMenu(false) }}
                     />
                   )}
                   <MenuBtn
@@ -197,7 +220,9 @@ export function ListenerHeader() {
   )
 }
 
-function MenuBtn({ icon, label, onClick, danger }: { icon: React.ReactNode; label: string; onClick: () => void; danger?: boolean }) {
+function MenuBtn({ icon, label, onClick, danger, premium }: { icon: React.ReactNode; label: string; onClick: () => void; danger?: boolean; premium?: boolean }) {
+  const color = danger ? '#ef4444' : premium ? '#FFB900' : '#ccc'
+  const hoverBg = danger ? 'rgba(239,68,68,0.08)' : premium ? 'rgba(255,185,0,0.08)' : 'rgba(255,255,255,0.06)'
   return (
     <button
       onClick={onClick}
@@ -210,13 +235,13 @@ function MenuBtn({ icon, label, onClick, danger }: { icon: React.ReactNode; labe
         background: 'none',
         border: 'none',
         borderRadius: 8,
-        color: danger ? '#ef4444' : '#ccc',
+        color,
         fontSize: 13,
         cursor: 'pointer',
         transition: 'background 0.15s',
         textAlign: 'left',
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = danger ? 'rgba(239,68,68,0.08)' : 'rgba(255,255,255,0.06)')}
+      onMouseEnter={(e) => (e.currentTarget.style.background = hoverBg)}
       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
     >
       {icon}

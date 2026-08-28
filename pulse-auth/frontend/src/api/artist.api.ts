@@ -6,6 +6,8 @@ import type {
   PaginatedArtists,
   CreateArtistInput,
   UpdateArtistInput,
+  ArtistRevenue,
+  ArtistDashboardStats,
 } from '@/types/artist.types'
 
 const BASE = '/artists'
@@ -58,4 +60,20 @@ export async function updateArtistApi(input: UpdateArtistInput): Promise<Artist>
  */
 export async function deleteArtistApi(id: string): Promise<void> {
   await axiosInstance.delete(`${BASE}/${id}`)
+}
+
+/**
+ * GET /artists/me/dashboard-stats
+ */
+export async function getArtistDashboardStatsApi(): Promise<ArtistDashboardStats> {
+  const { data } = await axiosInstance.get<{ success: boolean; data: ArtistDashboardStats }>(`${BASE}/me/dashboard-stats`)
+  return data.data
+}
+
+/**
+ * GET /artists/me/revenue
+ */
+export async function getArtistRevenueApi(): Promise<ArtistRevenue> {
+  const { data } = await axiosInstance.get<{ success: boolean; data: ArtistRevenue }>(`${BASE}/me/revenue`)
+  return data.data
 }

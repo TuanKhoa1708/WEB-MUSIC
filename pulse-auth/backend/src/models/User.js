@@ -53,7 +53,28 @@ const userSchema = new mongoose.Schema(
         lastLogin: {
             type: Date,
             default: null,
-        }
+        },
+
+        isPremium: {
+            type: Boolean,
+            default: false,
+        },
+
+        subscriptionPlan: {
+            type: String,
+            enum: ["free", "premium"],
+            default: "free",
+        },
+
+        subscriptionExpiresAt: {
+            type: Date,
+            default: null,
+        },
+
+        subscriptionStartedAt: {
+            type: Date,
+            default: null,
+        },
 
     },
     {
