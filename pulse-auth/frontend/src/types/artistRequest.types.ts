@@ -1,4 +1,4 @@
-import type { User } from './auth.types';
+import type { User } from './user.types';
 
 export interface ArtistRequest {
   _id: string;

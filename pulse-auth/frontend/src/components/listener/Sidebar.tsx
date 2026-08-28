@@ -13,9 +13,12 @@ import {
   Plus,
   Mic2,
   Crown,
+  Radio,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
+import { useIsPremium } from '@/hooks/listener/useSubscription'
+import { useListenRoom } from '@/contexts/ListenRoomContext'
 
 // ─── Nav item ─────────────────────────────────────────────────────────────────
 
@@ -63,6 +66,8 @@ export function ListenerSidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const { user } = useAuth()
   const navigate = useNavigate()
+  const isPremium = useIsPremium()
+  const { isInRoom } = useListenRoom()
 
   return (
     <motion.div
@@ -151,6 +156,42 @@ export function ListenerSidebar() {
             ))}
           </NavSection>
         )}
+
+        {/* Join Session */}
+        <NavSection label="Listen Together" collapsed={collapsed}>
+          <NavLink
+            to="/listener/room/join"
+            title={collapsed ? 'Join Session' : undefined}
+            style={({ isActive }) => ({
+              ...NAV_LINK_BASE,
+              display: 'flex',
+              justifyContent: collapsed ? 'center' : 'flex-start',
+              color: isInRoom ? '#3FD6FF' : isActive ? '#fff' : '#666',
+              background: isActive ? 'rgba(63,214,255,0.08)' : isInRoom ? 'rgba(63,214,255,0.05)' : 'transparent',
+              borderLeft: isActive && !collapsed ? '2px solid #3FD6FF' : '2px solid transparent',
+            })}
+            onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = 'rgba(63,214,255,0.08)'; el.style.color = '#3FD6FF' }}
+            onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = isInRoom ? 'rgba(63,214,255,0.05)' : 'transparent'; el.style.color = isInRoom ? '#3FD6FF' : '#666' }}
+          >
+            <span style={{ flexShrink: 0, position: 'relative' }}>
+              <Radio size={18} />
+              {isInRoom && (
+                <span style={{
+                  position: 'absolute', top: -2, right: -2,
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: '#4ade80',
+                  boxShadow: '0 0 6px rgba(74,222,128,0.7)',
+                }} />
+              )}
+            </span>
+            {!collapsed && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                Join Session
+                {!isPremium && <Crown size={11} color="#FFB900" />}
+              </span>
+            )}
+          </NavLink>
+        </NavSection>
       </div>
 
       {/* User info at bottom */}

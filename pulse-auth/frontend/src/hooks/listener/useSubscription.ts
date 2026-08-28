@@ -74,10 +74,20 @@ export function useDemoConfirmPayment() {
 /** Mutation to cancel subscription */
 export function useCancelSubscription() {
   const queryClient = useQueryClient()
+  const { refreshUser } = useAuth()
   return useMutation({
     mutationFn: cancelSubscriptionApi,
     onSuccess: () => {
+      // Invalidate the subscription query cache
       queryClient.invalidateQueries({ queryKey: SUBSCRIPTION_KEYS.me })
+      // Immediately update AuthContext so isPremium → false across the whole app
+      refreshUser({
+        isPremium: false,
+        subscriptionPlan: 'free',
+        subscriptionExpiresAt: null,
+        subscriptionStartedAt: null,
+      } as any)
     },
   })
 }
+

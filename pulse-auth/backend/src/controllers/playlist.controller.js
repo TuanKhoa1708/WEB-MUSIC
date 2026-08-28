@@ -178,21 +178,23 @@ export const getPlaylists = async (req, res) => {
         }
 
         // ===========================
-        // FILTER BY ARTIST
+        // FILTER BY ARTIST (Can be Artist._id or User._id)
         // ===========================
         if (artistId) {
-            if (
-                !mongoose.Types.ObjectId.isValid(
-                    artistId
-                )
-            ) {
+            if (!mongoose.Types.ObjectId.isValid(artistId)) {
                 return res.status(400).json({
                     success: false,
                     message: "Invalid artist ID",
                 });
             }
 
-            query.artistId = artistId;
+            // Check if artistId is actually a User ID
+            const possibleArtist = await Artist.findOne({ userId: artistId });
+            if (possibleArtist) {
+                query.artistId = possibleArtist._id;
+            } else {
+                query.artistId = artistId;
+            }
         }
 
         const total =
@@ -251,9 +253,15 @@ export const getPlaylistsByArtist =
                 });
             }
 
+            let queryArtistId = artistId;
+            const possibleArtist = await Artist.findOne({ userId: artistId });
+            if (possibleArtist) {
+                queryArtistId = possibleArtist._id;
+            }
+
             const playlists =
                 await Playlist.find({
-                    artistId,
+                    artistId: queryArtistId,
                 })
                     .populate(
                         "artistId",

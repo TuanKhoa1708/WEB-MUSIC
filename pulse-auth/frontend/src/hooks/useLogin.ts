@@ -27,7 +27,7 @@ export function useLogin() {
     onSuccess: (user) => {
       toast.success('Welcome back! 🎵')
       const redirect = user?.role ? getRoleRedirect(user.role) : '/home'
-      navigate(redirect)
+      navigate(redirect, { replace: true })
     },
     onError: (error: Error) => {
       toast.error(error.message ?? 'Login failed. Please try again.')
