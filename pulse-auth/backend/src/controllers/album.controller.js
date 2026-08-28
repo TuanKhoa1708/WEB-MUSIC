@@ -1,12 +1,24 @@
 import mongoose from "mongoose";
 import Album from "../models/Album.js";
+import Artist from "../models/Artist.js";
 
 // ===========================
 // CREATE ALBUM
 // ===========================
 export const createAlbum = async (req, res) => {
     try {
-        const album = await Album.create(req.body);
+        let currentArtistId = req.body.artistId;
+
+        if (req.user.role === "artist") {
+            const artist = await Artist.findOne({ userId: req.user._id });
+            if (!artist) {
+                return res.status(404).json({ success: false, message: "Artist profile not found" });
+            }
+            currentArtistId = artist._id;
+        }
+
+        const albumData = { ...req.body, artistId: currentArtistId };
+        const album = await Album.create(albumData);
 
         return res.status(201).json({
             success: true,
@@ -148,9 +160,17 @@ export const updateAlbum = async (req, res) => {
             });
         }
 
+        let updateData = { ...req.body };
+        if (req.user.role === "artist") {
+            const artist = await Artist.findOne({ userId: req.user._id });
+            if (artist) {
+                updateData.artistId = artist._id;
+            }
+        }
+
         const album = await Album.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             {
                 new: true,
                 runValidators: true,

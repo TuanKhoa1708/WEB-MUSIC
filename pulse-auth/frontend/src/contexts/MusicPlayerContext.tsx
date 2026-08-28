@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import type { Song } from '@/types/song.types'
+import { useAuth } from '@/contexts/AuthContext'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,6 +52,7 @@ const MusicPlayerContext = createContext<MusicPlayerContextValue | undefined>(un
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [currentSong, setCurrentSong] = useState<Song | null>(null)
   const [queue, setQueue] = useState<Song[]>([])
@@ -296,6 +298,13 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     setCurrentTime(0)
     setDuration(0)
   }, [])
+
+  // ── Auto-clear queue on logout ───────────────────────────────────────────────
+  useEffect(() => {
+    if (!isAuthenticated) {
+      clearQueue()
+    }
+  }, [isAuthenticated, clearQueue])
 
   const value: MusicPlayerContextValue = {
     currentSong,

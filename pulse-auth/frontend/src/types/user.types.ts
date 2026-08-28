@@ -25,6 +25,12 @@ export interface UserQueryParams {
   limit?: number
 }
 
+export interface ListenerStats {
+  totalListeners: number
+  activeListeners: number
+  verifiedListeners: number
+}
+
 // ─── Paginated response ───────────────────────────────────────────────────────
 
 export interface PaginatedUsers {

@@ -4,6 +4,7 @@ import { X, Disc3, User, Calendar, AlertCircle } from 'lucide-react'
 import type { Album, CreateAlbumInput, UpdateAlbumInput } from '@/types/album.types'
 import { useArtistOptions } from '@/hooks/artist/useAlbums'
 import { uploadFilesApi } from '@/api/song.api' // Reuse the same upload endpoint
+import { useAuth } from '@/contexts/AuthContext'
 
 // ─── Field wrapper ────────────────────────────────────────────────────────────
 
@@ -199,10 +200,10 @@ interface FormValues {
 
 type FormErrors = Partial<Record<keyof FormValues, string>>
 
-function validate(vals: FormValues): FormErrors {
+function validate(vals: FormValues, isAdmin: boolean): FormErrors {
   const errors: FormErrors = {}
   if (!vals.title.trim()) errors.title = 'Album title is required'
-  if (!vals.artistId) errors.artistId = 'Artist is required'
+  if (isAdmin && !vals.artistId) errors.artistId = 'Artist is required'
   if (vals.releaseYear && (vals.releaseYear < 1900 || vals.releaseYear > new Date().getFullYear() + 1)) {
     errors.releaseYear = 'Invalid release year'
   }
@@ -210,6 +211,8 @@ function validate(vals: FormValues): FormErrors {
 }
 
 export function AlbumForm({ isOpen, onClose, album, onSubmit, isLoading }: AlbumFormProps) {
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
   const { data: artists = [], isLoading: loadingArtists } = useArtistOptions()
 
   const isEdit = !!album
@@ -259,7 +262,7 @@ export function AlbumForm({ isOpen, onClose, album, onSubmit, isLoading }: Album
     setForm((prev) => ({ ...prev, [field]: value }))
     if (submitted) {
       const updated = { ...form, [field]: value }
-      setErrors(validate(updated))
+      setErrors(validate(updated, isAdmin))
     }
   }
 
@@ -275,7 +278,7 @@ export function AlbumForm({ isOpen, onClose, album, onSubmit, isLoading }: Album
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
-    const errs = validate(form)
+    const errs = validate(form, isAdmin)
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       return
@@ -435,25 +438,7 @@ export function AlbumForm({ isOpen, onClose, album, onSubmit, isLoading }: Album
             {/* Form */}
             <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
               
-              {/* WARNING FOR BACKEND BLOCKER */}
-              <div style={{
-                background: 'rgba(255,165,0,0.05)',
-                border: '1px solid rgba(255,165,0,0.2)',
-                borderRadius: 8,
-                padding: '12px',
-                marginBottom: '20px',
-                fontSize: 12,
-                color: '#ffb347',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 8
-              }}>
-                <AlertCircle size={14} style={{ marginTop: 2, flexShrink: 0 }} />
-                <div>
-                  <strong>Backend Limitation Notice</strong><br/>
-                  Because the backend does not link your User account to an Artist ID, you must manually select which Artist this album belongs to.
-                </div>
-              </div>
+
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                 {/* Title */}
@@ -468,26 +453,28 @@ export function AlbumForm({ isOpen, onClose, album, onSubmit, isLoading }: Album
                   />
                 </Field>
 
-                {/* Artist Selector */}
-                <Field label="Artist Profile" required error={errors.artistId}>
-                  <StyledSelect
-                    id="album-artist"
-                    icon={<User size={14} />}
-                    value={form.artistId}
-                    onChange={(e) => handleChange('artistId', e.target.value)}
-                    error={!!errors.artistId}
-                    disabled={loadingArtists}
-                  >
-                    <option value="">
-                      {loadingArtists ? 'Loading...' : 'Select your artist profile'}
-                    </option>
-                    {artists.map((a) => (
-                      <option key={a._id} value={a._id} style={{ background: '#1a1a1a' }}>
-                        {a.stageName}
+                {/* Artist Selector (Admins Only) */}
+                {isAdmin && (
+                  <Field label="Artist Profile" required error={errors.artistId}>
+                    <StyledSelect
+                      id="album-artist"
+                      icon={<User size={14} />}
+                      value={form.artistId}
+                      onChange={(e) => handleChange('artistId', e.target.value)}
+                      error={!!errors.artistId}
+                      disabled={loadingArtists}
+                    >
+                      <option value="">
+                        {loadingArtists ? 'Loading...' : 'Select your artist profile'}
                       </option>
-                    ))}
-                  </StyledSelect>
-                </Field>
+                      {artists.map((a) => (
+                        <option key={a._id} value={a._id} style={{ background: '#1a1a1a' }}>
+                          {a.stageName}
+                        </option>
+                      ))}
+                    </StyledSelect>
+                  </Field>
+                )}
 
                 {/* Release Year */}
                 <Field label="Release Year" error={errors.releaseYear}>

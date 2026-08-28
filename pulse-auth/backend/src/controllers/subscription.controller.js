@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Subscription from "../models/Subscription.js";
+import Notification from "../models/Notification.js";
 import crypto from "crypto";
 
 // ─── GET /api/subscriptions/packages ──────────────────────────────────────────
@@ -35,6 +36,27 @@ export const getMySubscription = async (req, res) => {
             user.isPremium = false;
             user.subscriptionPlan = "free";
             await user.save();
+        } else if (user.isPremium && !isExpired && user.subscriptionExpiresAt) {
+            // Check if expiring within 3 days
+            const threeDays = 3 * 24 * 60 * 60 * 1000;
+            const timeUntilExpiry = user.subscriptionExpiresAt - now;
+            if (timeUntilExpiry <= threeDays) {
+                // Check if we already warned them in the last 3 days
+                const recentWarning = await Notification.findOne({
+                    userId: user._id,
+                    type: "warning",
+                    createdAt: { $gte: new Date(now - threeDays) }
+                });
+
+                if (!recentWarning) {
+                    await Notification.create({
+                        userId: user._id,
+                        title: "Premium expiring soon",
+                        message: "Your Premium subscription will expire in less than 3 days. Please renew to keep enjoying ad-free music and high quality audio.",
+                        type: "warning"
+                    });
+                }
+            }
         }
 
         return res.json({
@@ -216,6 +238,13 @@ export const cancelSubscription = async (req, res) => {
         user.subscriptionStartedAt = null;
         await user.save();
 
+        await Notification.create({
+            userId: user._id,
+            title: "Premium Cancelled",
+            message: "Your Premium subscription has been successfully cancelled. You now have a Free account.",
+            type: "info"
+        });
+
         return res.json({
             success: true,
             message: "Subscription cancelled successfully.",
@@ -243,5 +272,12 @@ async function activatePremium(userId, plan) {
         subscriptionPlan: "premium",
         subscriptionStartedAt: now,
         subscriptionExpiresAt: expiresAt,
+    });
+
+    await Notification.create({
+        userId,
+        title: "Premium Activated 🎉",
+        message: `Your Premium subscription (${plan.name}) has been activated successfully! Enjoy your music universe.`,
+        type: "success"
     });
 }

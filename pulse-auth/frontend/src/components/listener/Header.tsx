@@ -4,6 +4,7 @@ import { Search, X, LogOut, Settings, Crown } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
+import { NotificationBell } from './NotificationBell'
 
 export function ListenerHeader() {
   const { user, logout } = useAuth()
@@ -22,7 +23,7 @@ export function ListenerHeader() {
     } else {
       if (searchQuery) setSearchQuery('')
     }
-  }, [location.pathname, location.search]) // Only sync when URL changes externally
+  }, [location.pathname, location.search])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
@@ -42,7 +43,6 @@ export function ListenerHeader() {
     }
   }
 
-  // Close menu on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -110,6 +110,13 @@ export function ListenerHeader() {
       </form>
 
       <div style={{ flex: 1 }} />
+
+      {/* Notifications */}
+      {user && (
+        <div style={{ marginRight: 8, display: 'flex', alignItems: 'center' }}>
+          <NotificationBell />
+        </div>
+      )}
 
       {/* User menu */}
       {user && (

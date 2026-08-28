@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { useSubscriptionPackages, useMySubscription, useCancelSubscription } from '@/hooks/listener/useSubscription'
 import { useAuth } from '@/contexts/AuthContext'
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import toast from 'react-hot-toast'
 
 // ─── Benefit definitions ───────────────────────────────────────────────────────
@@ -54,6 +55,7 @@ export function PremiumPage() {
   const { data: mySubscription, isLoading: subLoading } = useMySubscription()
   const cancelSub = useCancelSubscription()
   const [cancelling, setCancelling] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const plan = packages?.[0] // We display the first (and likely only) premium plan
 
@@ -62,12 +64,16 @@ export function PremiumPage() {
     navigate('/listener/premium/checkout', { state: { plan } })
   }
 
-  const handleCancel = async () => {
-    if (!window.confirm('Are you sure you want to cancel your Premium subscription?')) return
+  const handleCancel = () => {
+    setConfirmOpen(true)
+  }
+
+  const handleCancelConfirm = async () => {
     setCancelling(true)
     try {
       await cancelSub.mutateAsync()
-      toast.success('Subscription cancelled. You can still enjoy Premium until your billing period ends.')
+      setConfirmOpen(false)
+      toast.success('Subscription cancelled. You\'ve been downgraded to the Free plan.')
     } catch (err: any) {
       toast.error(err?.message || 'Failed to cancel subscription.')
     } finally {
@@ -84,6 +90,19 @@ export function PremiumPage() {
 
   return (
     <div style={{ minHeight: '100%', background: '#090909' }}>
+
+      {/* Cancel Subscription Confirm Dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Cancel Premium Subscription"
+        description={`Are you sure you want to cancel? You will immediately lose access to all Premium features including HD audio, unlimited skips, and full playlist access.`}
+        confirmLabel="Yes, Cancel Subscription"
+        cancelLabel="Keep Premium"
+        variant="danger"
+        isLoading={cancelling}
+        onConfirm={handleCancelConfirm}
+        onCancel={() => setConfirmOpen(false)}
+      />
       {/* ── Hero Section ───────────────────────────────────────────────────── */}
       <section style={{
         position: 'relative',
