@@ -12,8 +12,10 @@ import {
   Disc3,
   Plus,
   Mic2,
+  Crown,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { PremiumBadge } from '@/components/premium/PremiumBadge'
 
 // ─── Nav item ─────────────────────────────────────────────────────────────────
 
@@ -36,6 +38,7 @@ const libraryNav: NavItem[] = [
 
 const accountNav: NavItem[] = [
   { to: '/become-artist', icon: <Mic2 size={18} />, label: 'Become Artist' },
+  { to: '/listener/premium', icon: <Crown size={18} />, label: 'Go Premium' },
 ]
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
@@ -168,8 +171,8 @@ export function ListenerSidebar() {
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {user.fullName}
                 </div>
-                <div style={{ fontSize: 11, color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {user.role}
+                <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>
+                  <PremiumBadge isPremium={user?.isPremium === true} />
                 </div>
               </div>
             </div>

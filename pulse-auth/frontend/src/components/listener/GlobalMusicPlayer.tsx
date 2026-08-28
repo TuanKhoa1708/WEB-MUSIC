@@ -1,9 +1,9 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play, Pause, SkipBack, SkipForward,
   Volume2, VolumeX, Repeat, Repeat1, Shuffle,
-  ListMusic, Heart, Music2,
+  ListMusic, Heart, Music2, Lock,
 } from 'lucide-react'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
 import { useFavoriteContext } from '@/contexts/FavoriteContext'
@@ -11,6 +11,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { addHistoryApi } from '@/api/history.api'
 import type { Song } from '@/types/song.types'
 import { QueuePanel } from '@/components/listener/QueuePanel'
+import { useIsPremium } from '@/hooks/listener/useSubscription'
+import { PremiumUpgradeModal, usePremiumModal } from '@/components/premium/PremiumUpgradeModal'
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 
@@ -27,6 +29,10 @@ function getArtistName(song: Song): string {
   return 'Unknown Artist'
 }
 
+// ─── Skip limit for free users ───────────────────────────────────────────────
+const FREE_SKIP_LIMIT = 6 // per hour
+const SKIP_RESET_MS = 60 * 60 * 1000 // 1 hour
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function GlobalMusicPlayer() {
@@ -38,7 +44,33 @@ export function GlobalMusicPlayer() {
   } = useMusicPlayer()
   const { isFavorite, toggleFavorite } = useFavoriteContext()
   const { user } = useAuth()
+  const isPremium = useIsPremium()
+  const { isOpen: modalOpen, config: modalConfig, openModal, closeModal } = usePremiumModal()
   const progressRef = useRef<HTMLDivElement>(null)
+
+  // Skip tracking for free users
+  const [skipCount, setSkipCount] = useState(0)
+  const skipResetRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleNext = useCallback(() => {
+    if (isPremium) {
+      next()
+      return
+    }
+    if (skipCount >= FREE_SKIP_LIMIT) {
+      openModal('Unlimited Skips', `You've used your ${FREE_SKIP_LIMIT} free skips for this hour. Upgrade to Premium to skip freely.`)
+      return
+    }
+    setSkipCount((c) => c + 1)
+    // Reset counter after SKIP_RESET_MS
+    if (skipResetRef.current) clearTimeout(skipResetRef.current)
+    skipResetRef.current = setTimeout(() => setSkipCount(0), SKIP_RESET_MS)
+    next()
+  }, [isPremium, skipCount, next, openModal])
+
+  useEffect(() => () => {
+    if (skipResetRef.current) clearTimeout(skipResetRef.current)
+  }, [])
 
   useEffect(() => {
     if (currentSong && user?.id) {
@@ -68,6 +100,14 @@ export function GlobalMusicPlayer() {
 
   return (
     <>
+      {/* Premium upgrade modal */}
+      <PremiumUpgradeModal
+        isOpen={modalOpen}
+        onClose={closeModal}
+        feature={modalConfig.feature}
+        description={modalConfig.description}
+      />
+
       {/* Queue Panel */}
       <AnimatePresence>
         {isQueueOpen && <QueuePanel />}
@@ -191,7 +231,11 @@ export function GlobalMusicPlayer() {
             </button>
 
             {/* Next */}
-            <ControlBtn onClick={next} title="Next">
+            <ControlBtn
+              onClick={handleNext}
+              title={isPremium ? 'Next' : `Next (${Math.max(0, FREE_SKIP_LIMIT - skipCount)} skips left)`}
+              locked={!isPremium && skipCount >= FREE_SKIP_LIMIT}
+            >
               <SkipForward size={18} />
             </ControlBtn>
 
@@ -300,11 +344,12 @@ export function GlobalMusicPlayer() {
 
 // ─── Control button ────────────────────────────────────────────────────────────
 
-function ControlBtn({ children, onClick, active, title }: {
+function ControlBtn({ children, onClick, active, title, locked }: {
   children: React.ReactNode
   onClick: () => void
   active?: boolean
   title?: string
+  locked?: boolean
 }) {
   return (
     <button
@@ -313,22 +358,25 @@ function ControlBtn({ children, onClick, active, title }: {
       style={{
         background: 'none',
         border: 'none',
-        color: active ? '#3FD6FF' : '#777',
+        color: locked ? '#FFB900' : active ? '#3FD6FF' : '#777',
         cursor: 'pointer',
         padding: '6px 8px',
         borderRadius: 6,
         transition: 'color 0.2s, background 0.2s',
         display: 'flex',
         alignItems: 'center',
+        gap: 3,
+        position: 'relative',
       }}
       onMouseEnter={(e) => {
-        if (!active) e.currentTarget.style.color = '#fff'
+        if (!active && !locked) e.currentTarget.style.color = '#fff'
       }}
       onMouseLeave={(e) => {
-        if (!active) e.currentTarget.style.color = '#777'
+        if (!active && !locked) e.currentTarget.style.color = '#777'
       }}
     >
       {children}
+      {locked && <Lock size={9} style={{ marginLeft: 1, opacity: 0.8 }} />}
     </button>
   )
 }

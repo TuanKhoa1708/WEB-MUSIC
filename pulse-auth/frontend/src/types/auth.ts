@@ -21,6 +21,9 @@ export interface AuthUser {
   email: string
   role: string
   avatarUrl?: string
+  isPremium?: boolean
+  subscriptionPlan?: 'free' | 'premium'
+  subscriptionExpiresAt?: string | null
 }
 
 export interface LoginResponse {
@@ -47,7 +50,9 @@ export interface ApiErrorResponse {
 export interface AuthContextValue {
   user: AuthUser | null
   isAuthenticated: boolean
+  isPremium: boolean
   loading: boolean
   login: (data: LoginRequest) => Promise<AuthUser>
   logout: () => void
+  refreshUser: (updatedUser: Partial<AuthUser>) => void
 }

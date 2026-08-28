@@ -326,19 +326,9 @@ export const getArtistStats = async (req, res) => {
 export const getArtistDashboardStats = async (req, res) => {
     try {
         // ===========================
-        // VALIDATE ARTIST ID
+        // FIND ARTIST BY LOGGED IN USER
         // ===========================
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid artist ID",
-            });
-        }
-
-        // ===========================
-        // FIND ARTIST
-        // ===========================
-        const artist = await Artist.findById(req.params.id);
+        const artist = await Artist.findOne({ userId: req.user._id });
 
         if (!artist) {
             return res.status(404).json({
@@ -411,14 +401,10 @@ export const getArtistDashboardStats = async (req, res) => {
 // ===========================
 export const getArtistRevenue = async (req, res) => {
     try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid artist ID",
-            });
-        }
-
-        const artist = await Artist.findById(req.params.id);
+        // ===========================
+        // FIND ARTIST BY LOGGED IN USER
+        // ===========================
+        const artist = await Artist.findOne({ userId: req.user._id });
 
         if (!artist) {
             return res.status(404).json({

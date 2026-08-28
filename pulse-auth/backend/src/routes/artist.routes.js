@@ -13,6 +13,9 @@ import {
 
 const router = express.Router();
 
+import { protect } from "../middleware/auth.middleware.js";
+import { authorize } from "../middleware/role.middleware.js";
+
 // ===========================
 // STATISTICS & REVENUE (AS-133 & AS-134)
 // ===========================
@@ -20,13 +23,17 @@ const router = express.Router();
 router.get("/stats", getArtistStats);
 
 router.get(
-    "/:id/dashboard-stats",
+    "/me/dashboard-stats",
+    protect,
+    authorize("artist", "admin"),
     getArtistDashboardStats
 );
 
 // Route tính toán doanh thu Premium và thống kê doanh thu cho nghệ sĩ
 router.get(
-    "/:id/revenue",
+    "/me/revenue",
+    protect,
+    authorize("artist", "admin"),
     getArtistRevenue
 ); // <-- 2. Thêm route này vào đây
 

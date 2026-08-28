@@ -39,6 +39,10 @@ import { RecentlyPlayedPage } from '@/pages/listener/RecentlyPlayed'
 import { ArtistDetailPage } from '@/pages/listener/ArtistDetail'
 import { AlbumDetailPage } from '@/pages/listener/AlbumDetail'
 import { PlaylistDetailPage as ListenerPlaylistDetailPage } from '@/pages/listener/PlaylistDetail'
+import { PremiumPage } from '@/pages/listener/Premium'
+import { PremiumCheckoutPage } from '@/pages/listener/Premium/Checkout'
+import { MoMoPaymentPage } from '@/pages/listener/Premium/MoMoPayment'
+import { PaymentStatusPage } from '@/pages/listener/Premium/PaymentStatus'
 
 // ─── Page transition config ───────────────────────────────────────────────────
 
@@ -85,6 +89,12 @@ function AnimatedRoutes() {
               <Route path="/listener/artists/:id" element={<ArtistDetailPage />} />
               <Route path="/listener/albums/:id" element={<AlbumDetailPage />} />
               <Route path="/listener/playlists/:id" element={<ListenerPlaylistDetailPage />} />
+              <Route path="/listener/premium" element={<PremiumPage />} />
+              <Route path="/listener/premium/checkout" element={<PremiumCheckoutPage />} />
+              <Route path="/listener/premium/payment/momo" element={<MoMoPaymentPage />} />
+              <Route path="/listener/premium/success" element={<PaymentStatusPage status="success" />} />
+              <Route path="/listener/premium/failed" element={<PaymentStatusPage status="failed" />} />
+              <Route path="/listener/premium/cancelled" element={<PaymentStatusPage status="cancelled" />} />
             </Route>
 
             {/* Standalone pages without ListenerLayout */}

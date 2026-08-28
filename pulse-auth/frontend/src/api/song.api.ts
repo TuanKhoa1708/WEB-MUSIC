@@ -23,6 +23,13 @@ export async function getSongStatsApi(): Promise<{ success: boolean; data: SongS
   return data
 }
 
+// ─── GET /songs/recommendations ────────────────────────────────────────────────
+// Get AI recommended songs for current listener
+export async function getRecommendationsApi(): Promise<{ success: boolean; data: Song[] }> {
+  const { data } = await axiosInstance.get<{ success: boolean; data: Song[] }>(`${BASE}/recommendations`)
+  return data
+}
+
 // ─── GET /songs/:id ───────────────────────────────────────────────────────────
 export async function getSongByIdApi(id: string): Promise<{ success: boolean; data: Song }> {
   const { data } = await axiosInstance.get<{ success: boolean; data: Song }>(`${BASE}/${id}`)
