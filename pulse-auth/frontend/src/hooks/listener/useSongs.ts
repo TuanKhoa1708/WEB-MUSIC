@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getSongsApi } from '@/api/song.api'
+import { getSongsApi, getRecommendationsApi } from '@/api/song.api'
 import type { SongQueryParams } from '@/types/song.types'
 
 export const SONG_KEYS = {
@@ -13,5 +13,13 @@ export function useSongs(params: SongQueryParams = {}) {
     queryFn: () => getSongsApi(params),
     placeholderData: (prev) => prev,
     staleTime: 1000 * 60 * 2,
+  })
+}
+
+export function useRecommendations() {
+  return useQuery({
+    queryKey: ['songs', 'recommendations'],
+    queryFn: () => getRecommendationsApi(),
+    staleTime: 1000 * 60 * 5,
   })
 }

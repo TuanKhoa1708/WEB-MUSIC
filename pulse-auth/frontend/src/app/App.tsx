@@ -6,6 +6,7 @@ import LoginPage from '@/pages/auth/Login/Login'
 import SignupPage from '@/pages/auth/Signup/Signup'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
 import { AdminRoute } from '@/routes/AdminRoute'
+import { GuestRoute } from '@/routes/GuestRoute'
 import { AdminLayout } from '@/layouts/AdminLayout'
 
 // Admin pages
@@ -39,6 +40,12 @@ import { RecentlyPlayedPage } from '@/pages/listener/RecentlyPlayed'
 import { ArtistDetailPage } from '@/pages/listener/ArtistDetail'
 import { AlbumDetailPage } from '@/pages/listener/AlbumDetail'
 import { PlaylistDetailPage as ListenerPlaylistDetailPage } from '@/pages/listener/PlaylistDetail'
+import { PremiumPage } from '@/pages/listener/Premium'
+import { PremiumCheckoutPage } from '@/pages/listener/Premium/Checkout'
+import { MoMoPaymentPage } from '@/pages/listener/Premium/MoMoPayment'
+import { PaymentStatusPage } from '@/pages/listener/Premium/PaymentStatus'
+import { JoinListenRoomPage } from '@/pages/listener/ListenRoom'
+import { ListenRoomProvider } from '@/contexts/ListenRoomContext'
 
 // ─── Page transition config ───────────────────────────────────────────────────
 
@@ -68,9 +75,12 @@ function AnimatedRoutes() {
         style={{ width: '100%', height: '100%' }}
       >
         <Routes location={location}>
-          {/* Public routes */}
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+          {/* Public routes (Guests only) */}
+          <Route element={<GuestRoute />}>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+          </Route>
+          
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
           {/* Protected user routes */}
@@ -85,6 +95,13 @@ function AnimatedRoutes() {
               <Route path="/listener/artists/:id" element={<ArtistDetailPage />} />
               <Route path="/listener/albums/:id" element={<AlbumDetailPage />} />
               <Route path="/listener/playlists/:id" element={<ListenerPlaylistDetailPage />} />
+              <Route path="/listener/premium" element={<PremiumPage />} />
+              <Route path="/listener/premium/checkout" element={<PremiumCheckoutPage />} />
+              <Route path="/listener/premium/payment/momo" element={<MoMoPaymentPage />} />
+              <Route path="/listener/premium/success" element={<PaymentStatusPage status="success" />} />
+              <Route path="/listener/premium/failed" element={<PaymentStatusPage status="failed" />} />
+              <Route path="/listener/premium/cancelled" element={<PaymentStatusPage status="cancelled" />} />
+              <Route path="/listener/room/join" element={<JoinListenRoomPage />} />
             </Route>
 
             {/* Standalone pages without ListenerLayout */}

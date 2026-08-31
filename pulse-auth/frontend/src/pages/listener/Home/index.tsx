@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext'
-import { useSongs } from '@/hooks/listener/useSongs'
+import { useSongs, useRecommendations } from '@/hooks/listener/useSongs'
 import { useAlbumsList } from '@/hooks/listener/useAlbums'
 import { useArtistsList } from '@/hooks/listener/useArtists'
 import { useHistory } from '@/hooks/listener/useHistory'
@@ -30,6 +30,7 @@ export function HomePage() {
   const { user } = useAuth()
 
   // Data fetching
+  const { data: recommendations, isLoading: recsLoading } = useRecommendations()
   const { data: newSongs, isLoading: songsLoading } = useSongs({ limit: 6 })
   const { data: albums, isLoading: albumsLoading } = useAlbumsList({ limit: 6 })
   const { data: artists, isLoading: artistsLoading } = useArtistsList({ limit: 6 })
@@ -67,6 +68,28 @@ export function HomePage() {
               <QuickPlayCard key={`${song._id}-${i}`} song={song} queue={recentSongs} />
             ))}
           </div>
+        </section>
+      )}
+
+      {/* Recommended for You */}
+      {(recsLoading || (recommendations?.data?.length ?? 0) > 0) && (
+        <section style={{ marginBottom: 40 }}>
+          <SectionHeader
+            title="AI Recommended for You"
+            subtitle="Based on your listening history"
+            seeAllLink="/listener/search"
+          />
+          {recsLoading ? (
+            <div style={GRID_STYLE(6)}>
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+          ) : (
+            <div style={GRID_STYLE(6)}>
+              {recommendations!.data.slice(0, 6).map((song, i) => (
+                <SongCard key={song._id} song={song} queue={recommendations!.data} delay={i * 0.05} />
+              ))}
+            </div>
+          )}
         </section>
       )}
 

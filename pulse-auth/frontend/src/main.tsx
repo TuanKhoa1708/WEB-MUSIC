@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { MusicPlayerProvider } from '@/contexts/MusicPlayerContext'
 import { FavoriteProvider } from '@/contexts/FavoriteContext'
+import { ListenRoomProvider } from '@/contexts/ListenRoomContext'
 import './index.css'
 import App from './app/App.tsx'
 
@@ -26,7 +27,9 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <FavoriteProvider>
           <MusicPlayerProvider>
-            <App />
+            <ListenRoomProvider>
+              <App />
+            </ListenRoomProvider>
           </MusicPlayerProvider>
         </FavoriteProvider>
         <Toaster

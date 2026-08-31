@@ -102,15 +102,33 @@ export const getHistory = async (req, res) => {
             userId,
         };
 
-        const total = await History.countDocuments(query);
+        const aggregationPipeline = [
+            { $match: query },
+            { $sort: { playedAt: -1 } },
+            {
+                $group: {
+                    _id: "$songId",
+                    historyId: { $first: "$_id" },
+                    playedAt: { $first: "$playedAt" }
+                }
+            },
+            { $sort: { playedAt: -1 } }
+        ];
 
-        const history = await History.find(query)
+        const totalResult = await History.aggregate([...aggregationPipeline, { $count: "count" }]);
+        const total = totalResult.length > 0 ? totalResult[0].count : 0;
+
+        const historyItems = await History.aggregate([
+            ...aggregationPipeline,
+            { $skip: (pageNumber - 1) * limitNumber },
+            { $limit: limitNumber }
+        ]);
+
+        const historyIds = historyItems.map(item => item.historyId);
+
+        const history = await History.find({ _id: { $in: historyIds } })
             .populate("songId")
-            .sort({ playedAt: -1 })
-            .skip(
-                (pageNumber - 1) * limitNumber
-            )
-            .limit(limitNumber);
+            .sort({ playedAt: -1 });
 
         return res.json({
             success: true,

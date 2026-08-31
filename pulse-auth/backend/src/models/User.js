@@ -45,33 +45,8 @@ const userSchema = new mongoose.Schema(
         lastLogin: {
             type: Date,
             default: null,
-        },
+        }
 
-        // ===========================
-        // PREMIUM & LIMITS FEATURES
-        // ===========================
-        isPremium: {
-            type: Boolean,
-            default: false,
-        },
-        premiumPlan: {
-            type: String,
-            enum: ["none", "individual", "student"],
-            default: "none",
-        },
-        premiumExpiry: {
-            type: Date,
-            default: null,
-        },
-        dailySkips: {
-            type: Number,
-            default: 0,
-            max: 10, // Giới hạn 10 lần skip
-        },
-        lastSkipDate: {
-            type: Date,
-            default: null, // Dùng để check qua ngày mới thì reset dailySkips về 0
-        },
     },
     {
         timestamps: true,

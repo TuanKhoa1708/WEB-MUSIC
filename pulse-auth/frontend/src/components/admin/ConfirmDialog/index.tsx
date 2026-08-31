@@ -7,7 +7,7 @@ interface ConfirmDialogProps {
   description: string
   confirmLabel?: string
   cancelLabel?: string
-  variant?: 'danger' | 'warning'
+  variant?: 'danger' | 'warning' | 'primary'
   isLoading?: boolean
   onConfirm: () => void
   onCancel: () => void
@@ -24,7 +24,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const accentColor = variant === 'danger' ? '#FF5B5B' : '#F7B500'
+  const accentColor = variant === 'danger' ? '#FF5B5B' : variant === 'warning' ? '#F7B500' : '#3FD6FF'
 
   return (
     <AnimatePresence>

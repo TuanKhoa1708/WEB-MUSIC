@@ -50,3 +50,28 @@ export interface PaginatedArtists {
   page: number;
   totalPages: number;
 }
+
+export interface ArtistRevenue {
+  artistId: string;
+  stageName: string;
+  totalSongs: number;
+  totalPlays: number;
+  ratePerPlay: number;
+  estimatedRevenue: number;
+  currency: string;
+}
+
+export interface ArtistDashboardStats {
+  artist: {
+    id: string;
+    stageName: string;
+    avatarUrl: string;
+    coverImage: string;
+  };
+  statistics: {
+    totalSongs: number;
+    totalAlbums: number;
+    totalFollowers: number;
+    totalPlays: number;
+  };
+}

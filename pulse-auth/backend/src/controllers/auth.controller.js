@@ -52,6 +52,9 @@ export const register = async (req, res) => {
                 email: user.email,
                 avatarUrl: user.avatarUrl,
                 role: user.role,
+                isPremium: user.isPremium,
+                subscriptionPlan: user.subscriptionPlan,
+                subscriptionExpiresAt: user.subscriptionExpiresAt,
             },
         });
     } catch (error) {
@@ -104,6 +107,9 @@ export const login = async (req, res) => {
                 email: user.email,
                 avatarUrl: user.avatarUrl,
                 role: user.role,
+                isPremium: user.isPremium,
+                subscriptionPlan: user.subscriptionPlan,
+                subscriptionExpiresAt: user.subscriptionExpiresAt,
             },
         });
     } catch (error) {
