@@ -14,9 +14,6 @@ import userRoutes from "./routes/user.routes.js";
 import artistRequestRoutes from "./routes/artistRequest.routes.js";
 import listenerRoutes from "./routes/listener.routes.js";
 import searchRoutes from "./routes/search.routes.js";
-import subscriptionRoutes from "./routes/subscription.routes.js";
-import notificationRoutes from "./routes/notification.routes.js";
-import { seedDefaultPlan } from "./models/Subscription.js";
 const app = express();
 
 app.use(cors());
@@ -66,15 +63,7 @@ app.use("/api/artist-requests", artistRequestRoutes);
 
 // Listener Routes
 app.use("/api/listeners", listenerRoutes);
+
 // Search Routes
 app.use("/api/search", searchRoutes);
-// Subscription Routes
-app.use("/api/subscriptions", subscriptionRoutes);
-
-// Notification Routes
-app.use("/api/notifications", notificationRoutes);
-
-// Seed default subscription plan
-seedDefaultPlan().catch(console.error);
-
 export default app;

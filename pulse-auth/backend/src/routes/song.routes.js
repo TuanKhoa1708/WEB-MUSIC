@@ -7,7 +7,8 @@ import {
     updateSong,
     deleteSong,
     getSongStats,
-    getRecommendations, // <-- Đã thêm import
+    getRecommendations,
+    skipSong, // <-- Đã thêm import
 } from "../controllers/song.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
@@ -26,7 +27,12 @@ router.get(
 // ===========================
 // AI RECOMMENDATIONS (AS-132)
 // ===========================
-router.get("/recommendations", protect, getRecommendations); // <-- Đã thêm route gợi ý nhạc
+router.get("/recommendations", protect, getRecommendations);
+
+// ===========================
+// FREE TIER LIMITS
+// ===========================
+router.post("/skip", protect, skipSong); // <-- Đã thêm route giới hạn skip
 
 // CRUD
 router.post(
