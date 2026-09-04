@@ -14,23 +14,27 @@ import userRoutes from "./routes/user.routes.js";
 import artistRequestRoutes from "./routes/artistRequest.routes.js";
 import listenerRoutes from "./routes/listener.routes.js";
 import searchRoutes from "./routes/search.routes.js";
-import subscriptionRoutes from "./routes/subscription.routes.js";
-import notificationRoutes from "./routes/notification.routes.js";
-import { seedDefaultPlan } from "./models/Subscription.js";
 const app = express();
 
 const allowedOrigins = [
-    process.env.FRONTEND_URL,       // e.g. https://your-app.vercel.app
-    'http://localhost:5173',         // Vite dev server
+    'http://localhost:5173',
+    'http://localhost:4173',
     'http://localhost:3000',
+    process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, curl, Render health checks)
+        // Allow requests with no origin (e.g. mobile apps, Postman, curl)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
-        callback(new Error(`CORS: origin ${origin} not allowed`));
+        if (
+            allowedOrigins.includes(origin) ||
+            origin.endsWith('.vercel.app') ||
+            origin.endsWith('.onrender.com')
+        ) {
+            return callback(null, true);
+        }
+        return callback(new Error(`CORS blocked: ${origin}`));
     },
     credentials: true,
 }));
@@ -80,15 +84,7 @@ app.use("/api/artist-requests", artistRequestRoutes);
 
 // Listener Routes
 app.use("/api/listeners", listenerRoutes);
+
 // Search Routes
 app.use("/api/search", searchRoutes);
-// Subscription Routes
-app.use("/api/subscriptions", subscriptionRoutes);
-
-// Notification Routes
-app.use("/api/notifications", notificationRoutes);
-
-// Seed default subscription plan
-seedDefaultPlan().catch(console.error);
-
 export default app;
