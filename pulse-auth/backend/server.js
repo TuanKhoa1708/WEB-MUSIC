@@ -1,11 +1,9 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import app from "./src/app.js";
 import connectDB from "./src/config/db.js";
 import { initListenRoomSocket } from "./src/socket/listenRoom.socket.js";
-
-dotenv.config();
 console.log("MONGODB_URI =", process.env.MONGODB_URI);
 
 // Kết nối MongoDB
