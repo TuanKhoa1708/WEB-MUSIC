@@ -19,7 +19,8 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:4173',
-    process.env.FRONTEND_URL,           // e.g. https://web-music-xxx.vercel.app
+    'http://localhost:3000',
+    process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({

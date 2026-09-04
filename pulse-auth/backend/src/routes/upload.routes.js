@@ -1,76 +1,92 @@
 import express from 'express';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
-import { Readable } from 'stream';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
 
-// ─── Cloudinary config ───────────────────────────────────────────────────────
-cloudinary.config({
+// ─── Cloudinary Config ────────────────────────────────────────────────────────
+// If Cloudinary credentials are set → use cloud storage (production)
+// Otherwise → fall back to local disk storage (local dev)
+const useCloudinary =
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET;
+
+let upload;
+
+if (useCloudinary) {
+  cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
+    api_key:    process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+  });
 
-// ─── Multer - use memory storage, then upload stream to Cloudinary ───────────
-const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
-});
+  const storage = new CloudinaryStorage({
+    cloudinary,
+    params: async (req, file) => {
+      const isAudio = file.mimetype.startsWith('audio/');
+      return {
+        folder: isAudio ? 'pulse/audio' : 'pulse/covers',
+        resource_type: isAudio ? 'video' : 'image', // Cloudinary uses 'video' for audio files
+        // Keep original extension
+        format: path.extname(file.originalname).slice(1) || undefined,
+        // Unique public_id
+        public_id: `${Date.now()}-${Math.round(Math.random() * 1e9)}`,
+      };
+    },
+  });
 
-// ─── Helper: upload buffer to Cloudinary ────────────────────────────────────
-function uploadToCloudinary(buffer, options) {
-    return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(options, (error, result) => {
-            if (error) return reject(error);
-            resolve(result);
-        });
-        Readable.from(buffer).pipe(uploadStream);
-    });
+  upload = multer({ storage });
+  console.log('☁️  Upload: using Cloudinary storage');
+} else {
+  // Local disk storage fallback
+  const localDir = 'uploads/';
+  if (!fs.existsSync(localDir)) fs.mkdirSync(localDir, { recursive: true });
+
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, localDir),
+    filename:    (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
+  });
+
+  upload = multer({ storage });
+  console.log('💾  Upload: using local disk storage (set CLOUDINARY_* env vars for production)');
 }
 
-// ─── Route: POST /api/upload ─────────────────────────────────────────────────
+// ─── POST /api/upload ─────────────────────────────────────────────────────────
 router.post('/', upload.fields([
-    { name: 'audio', maxCount: 1 },
-    { name: 'cover', maxCount: 1 },
-]), async (req, res) => {
-    try {
-        const files = req.files;
-
-        if (!files || (Object.keys(files).length === 0)) {
-            return res.status(400).json({ success: false, message: 'No files uploaded' });
-        }
-
-        const result = {};
-
-        // Upload audio to Cloudinary
-        if (files.audio && files.audio.length > 0) {
-            const audioFile = files.audio[0];
-            const uploaded = await uploadToCloudinary(audioFile.buffer, {
-                folder: 'pulse-music/audio',
-                resource_type: 'video', // Cloudinary uses 'video' for audio
-                public_id: `audio_${Date.now()}`,
-            });
-            result.audioUrl = uploaded.secure_url;
-        }
-
-        // Upload cover to Cloudinary
-        if (files.cover && files.cover.length > 0) {
-            const coverFile = files.cover[0];
-            const uploaded = await uploadToCloudinary(coverFile.buffer, {
-                folder: 'pulse-music/covers',
-                resource_type: 'image',
-                public_id: `cover_${Date.now()}`,
-                transformation: [{ width: 500, height: 500, crop: 'fill', quality: 'auto' }],
-            });
-            result.coverUrl = uploaded.secure_url;
-        }
-
-        return res.json({ success: true, data: result });
-    } catch (error) {
-        console.error('Upload error:', error);
-        return res.status(500).json({ success: false, message: 'File upload failed: ' + error.message });
+  { name: 'audio', maxCount: 1 },
+  { name: 'cover', maxCount: 1 },
+]), (req, res) => {
+  try {
+    const files = req.files;
+    if (!files || Object.keys(files).length === 0) {
+      return res.status(400).json({ success: false, message: 'No files uploaded' });
     }
+
+    const result = {};
+
+    if (files.audio && files.audio.length > 0) {
+      const f = files.audio[0];
+      // Cloudinary gives us `path` as the secure URL; disk gives us `filename`
+      result.audioUrl = f.path || `${req.protocol}://${req.get('host')}/uploads/${f.filename}`;
+    }
+
+    if (files.cover && files.cover.length > 0) {
+      const f = files.cover[0];
+      result.coverUrl = f.path || `${req.protocol}://${req.get('host')}/uploads/${f.filename}`;
+    }
+
+    return res.json({ success: true, data: result });
+  } catch (error) {
+    console.error('Upload error:', error);
+    return res.status(500).json({ success: false, message: 'File upload failed' });
+  }
 });
 
 export default router;
