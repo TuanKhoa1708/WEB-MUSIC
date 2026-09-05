@@ -12,11 +12,18 @@ const axiosInstance = axios.create({
 
 // ─── Request interceptor ──────────────────────────────────────────────────────
 // Automatically attach Bearer token if present in storage.
+// If body is FormData (file upload), delete the default Content-Type so that
+// axios/browser can auto-set multipart/form-data with the correct boundary.
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getToken()
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
+    }
+    // When sending FormData, remove the default application/json Content-Type
+    // so axios automatically sets multipart/form-data with the proper boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type']
     }
     return config
   },
