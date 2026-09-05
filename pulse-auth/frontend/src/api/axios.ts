@@ -21,9 +21,10 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`
     }
     // When sending FormData, remove the default application/json Content-Type
-    // so axios automatically sets multipart/form-data with the proper boundary
+    // so axios automatically sets multipart/form-data with the proper boundary.
+    // NOTE: In Axios v1.x, config.headers is an AxiosHeaders class — must use .delete() not plain delete
     if (config.data instanceof FormData) {
-      delete config.headers['Content-Type']
+      config.headers.delete('Content-Type')
     }
     return config
   },
