@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Play, Pause, Music2, ListPlus, Download, Lock } from 'lucide-react'
+import { Play, Pause, Music2, ListPlus, Download, Lock, Radio } from 'lucide-react'
 import { FavoriteButton } from './FavoriteButton'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
+import { useListenRoom } from '@/contexts/ListenRoomContext'
 import { PremiumUpgradeModal, usePremiumModal } from '@/components/premium/PremiumUpgradeModal'
 import { useIsPremium } from '@/hooks/listener/useSubscription'
+import toast from 'react-hot-toast'
 import type { Song } from '@/types/song.types'
 
 interface SongRowProps {
@@ -35,12 +37,19 @@ function getAlbumName(song: Song): string {
 
 export function SongRow({ song, index, queue, showAlbum = false, onAddToPlaylist, locked = false }: SongRowProps) {
   const { playSong, currentSong, isPlaying, togglePlay } = useMusicPlayer()
+  const { isInRoom, isHost } = useListenRoom()
+  const isGuestLocked = isInRoom && !isHost
   const isPremium = useIsPremium()
   const { isOpen: modalOpen, config: modalConfig, openModal, closeModal } = usePremiumModal()
   const isCurrent = currentSong?._id === song._id
   const [hovered, setHovered] = useState(false)
 
   const handlePlay = () => {
+    // Block playback if user is a guest in a listen room session
+    if (isGuestLocked) {
+      toast('🎵 Host controls playback in this session', { icon: <Radio size={14} /> })
+      return
+    }
     if (locked) {
       openModal(
         'Full Playlist Access',

@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion'
-import { Play, Music2 } from 'lucide-react'
+import { Play, Music2, Radio } from 'lucide-react'
 import { FavoriteButton } from './FavoriteButton'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
+import { useListenRoom } from '@/contexts/ListenRoomContext'
+import toast from 'react-hot-toast'
 import type { Song } from '@/types/song.types'
 
 interface SongCardProps {
@@ -18,24 +20,35 @@ function getArtistName(song: Song): string {
 
 export function SongCard({ song, queue, delay = 0 }: SongCardProps) {
   const { playSong, currentSong, isPlaying } = useMusicPlayer()
+  const { isInRoom, isHost } = useListenRoom()
+  const isGuestLocked = isInRoom && !isHost
   const isCurrent = currentSong?._id === song._id
+
+  const handleClick = () => {
+    if (isGuestLocked) {
+      toast('🎵 Host controls playback in this session', { icon: <Radio size={14} /> })
+      return
+    }
+    playSong(song, queue ?? [song])
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.35 }}
-      onClick={() => playSong(song, queue ?? [song])}
+      onClick={handleClick}
       style={{
         background: isCurrent ? 'rgba(63,214,255,0.06)' : '#111',
         border: isCurrent ? '1px solid rgba(63,214,255,0.2)' : '1px solid rgba(255,255,255,0.04)',
         borderRadius: 14,
         overflow: 'hidden',
-        cursor: 'pointer',
+        cursor: isGuestLocked ? 'not-allowed' : 'pointer',
         transition: 'transform 0.2s, background 0.2s',
         position: 'relative',
+        opacity: isGuestLocked ? 0.75 : 1,
       }}
-      whileHover={{ y: -3 }}
+      whileHover={isGuestLocked ? undefined : { y: -3 }}
     >
       {/* Cover */}
       <div style={{ position: 'relative', paddingTop: '100%', background: '#181818' }}>
