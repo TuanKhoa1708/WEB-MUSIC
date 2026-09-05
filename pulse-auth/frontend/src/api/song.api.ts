@@ -60,10 +60,6 @@ export async function deleteSongApi(id: string): Promise<void> {
 // ─── POST /upload ─────────────────────────────────────────────────────────────
 // Upload audio and/or cover files using multipart/form-data
 export async function uploadFilesApi(formData: FormData): Promise<{ success: boolean; data: { audioUrl?: string; coverUrl?: string } }> {
-  const { data } = await axiosInstance.post<{ success: boolean; data: { audioUrl?: string; coverUrl?: string } }>('/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  })
+  const { data } = await axiosInstance.post<{ success: boolean; data: { audioUrl?: string; coverUrl?: string } }>('/upload', formData)
   return data
 }

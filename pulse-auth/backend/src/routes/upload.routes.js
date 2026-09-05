@@ -74,12 +74,12 @@ router.post('/', upload.fields([
     if (files.audio && files.audio.length > 0) {
       const f = files.audio[0];
       // Cloudinary gives us `path` as the secure URL; disk gives us `filename`
-      result.audioUrl = f.path || `${req.protocol}://${req.get('host')}/uploads/${f.filename}`;
+      result.audioUrl = (f.path && f.path.startsWith('http')) ? f.path : `${req.protocol}://${req.get('host')}/uploads/${f.filename}`;
     }
 
     if (files.cover && files.cover.length > 0) {
       const f = files.cover[0];
-      result.coverUrl = f.path || `${req.protocol}://${req.get('host')}/uploads/${f.filename}`;
+      result.coverUrl = (f.path && f.path.startsWith('http')) ? f.path : `${req.protocol}://${req.get('host')}/uploads/${f.filename}`;
     }
 
     return res.json({ success: true, data: result });
