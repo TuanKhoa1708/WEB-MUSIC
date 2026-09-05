@@ -7,6 +7,7 @@ import React, {
 } from 'react'
 import { loginService, logoutService } from '@/services/auth.service'
 import { getToken, removeToken, getUserInfo, setUserInfo } from '@/utils/token'
+import axiosInstance from '@/api/axios'
 import type { AuthContextValue, AuthUser, LoginRequest } from '@/types/auth'
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -19,20 +20,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // On mount: check whether a token already exists in storage.
+  // On mount: restore user from localStorage, then verify role from server.
+  // This ensures revoked artists can't persist access via stale cached role.
   useEffect(() => {
     const token = getToken()
     if (!token) {
       setLoading(false)
       return
     }
-    // Restore user from local storage
+
+    // Restore immediately from localStorage for fast initial render
     const savedUser = getUserInfo()
     if (savedUser) {
       setUser(savedUser)
     }
-    setLoading(false)
-  }, [])
+
+    // Then verify current role from the server (async, non-blocking)
+    axiosInstance.get<AuthUser>('/auth/me')
+      .then(({ data }) => {
+        // Only update if role or key fields changed (to avoid infinite re-renders)
+        setUser((prev) => {
+          const merged = { ...prev, ...data }
+          // Persist the refreshed user with server-authoritative role
+          setUserInfo(merged)
+          return merged
+        })
+      })
+      .catch(() => {
+        // Token invalid / expired → force logout
+        removeToken()
+        setUser(null)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = useCallback(async (data: LoginRequest): Promise<AuthUser> => {
     const loggedInUser = await loginService(data)

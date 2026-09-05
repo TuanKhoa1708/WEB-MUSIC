@@ -72,3 +72,18 @@ export function useRejectArtistRequest() {
     },
   });
 }
+
+export function useApproveRevokeRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await axiosInstance.put(`/artist-requests/${id}/revoke-approve`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['artist-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['artists'] });
+    },
+  });
+}

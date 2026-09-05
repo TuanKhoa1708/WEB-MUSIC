@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Inbox, Check, X, Eye } from 'lucide-react';
-import { useAdminArtistRequests, useApproveArtistRequest, useRejectArtistRequest } from '@/hooks/useArtistRequests';
+import { Inbox, Check, X, Eye, AlertTriangle } from 'lucide-react';
+import { useAdminArtistRequests, useApproveArtistRequest, useRejectArtistRequest, useApproveRevokeRequest } from '@/hooks/useArtistRequests';
 import { DataTable } from '@/components/admin/DataTable';
 import type { Column } from '@/components/admin/DataTable';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
@@ -13,9 +13,11 @@ export function ArtistRequestsPage() {
   const { data: requests = [], isLoading } = useAdminArtistRequests(statusFilter === 'all' ? undefined : statusFilter);
   const { mutateAsync: approveRequest, isPending: isApproving } = useApproveArtistRequest();
   const { mutateAsync: rejectRequest, isPending: isRejecting } = useRejectArtistRequest();
+  const { mutateAsync: approveRevoke, isPending: isApprovingRevoke } = useApproveRevokeRequest();
 
   const [approveTarget, setApproveTarget] = useState<ArtistRequest | null>(null);
   const [rejectTarget, setRejectTarget] = useState<ArtistRequest | null>(null);
+  const [revokeApproveTarget, setRevokeApproveTarget] = useState<ArtistRequest | null>(null);
 
   const handleApproveConfirm = async () => {
     if (!approveTarget) return;
@@ -36,6 +38,17 @@ export function ArtistRequestsPage() {
       setRejectTarget(null);
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to reject request');
+    }
+  };
+
+  const handleRevokeApproveConfirm = async () => {
+    if (!revokeApproveTarget) return;
+    try {
+      await approveRevoke(revokeApproveTarget._id);
+      toast.success('Artist role revoked and songs deleted.');
+      setRevokeApproveTarget(null);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to approve revocation');
     }
   };
 
@@ -70,22 +83,49 @@ export function ArtistRequestsPage() {
       ),
     },
     {
+      key: 'type',
+      header: 'Type',
+      render: (row) => (
+        <span style={{
+          fontSize: 12,
+          color: row.type === 'revoke_artist' ? '#FF5B5B' : '#3FD6FF',
+          fontWeight: 600,
+          background: row.type === 'revoke_artist' ? 'rgba(255,91,91,0.1)' : 'rgba(63,214,255,0.1)',
+          padding: '4px 8px',
+          borderRadius: 4
+        }}>
+          {row.type === 'revoke_artist' ? 'Revoke Role' : 'Become Artist'}
+        </span>
+      ),
+    },
+    {
       key: 'status',
       header: 'Status',
       align: 'center',
-      render: (row) => (
-        <span style={{
-          padding: '4px 8px',
-          borderRadius: 4,
-          fontSize: 11,
-          fontWeight: 600,
-          background: row.status === 'pending' ? 'rgba(247,181,0,0.1)' : row.status === 'approved' ? 'rgba(61,220,132,0.1)' : 'rgba(255,91,91,0.1)',
-          color: row.status === 'pending' ? '#F7B500' : row.status === 'approved' ? '#3DDC84' : '#FF5B5B',
-          textTransform: 'uppercase'
-        }}>
-          {row.status}
-        </span>
-      ),
+      render: (row) => {
+        let color = '#F7B500';
+        let bg = 'rgba(247,181,0,0.1)';
+        if (row.status === 'approved' || row.status === 'revoke_approved') {
+          color = '#3DDC84';
+          bg = 'rgba(61,220,132,0.1)';
+        } else if (row.status === 'rejected' || row.status === 'revoke_pending') {
+          color = '#FF5B5B';
+          bg = 'rgba(255,91,91,0.1)';
+        }
+        return (
+          <span style={{
+            padding: '4px 8px',
+            borderRadius: 4,
+            fontSize: 11,
+            fontWeight: 600,
+            background: bg,
+            color: color,
+            textTransform: 'uppercase'
+          }}>
+            {row.status.replace('_', ' ')}
+          </span>
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -103,12 +143,14 @@ export function ArtistRequestsPage() {
       align: 'right',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-          {/* <ActionBtn icon={<Eye size={13} />} title="View Details" color="#fff" /> */}
           {row.status === 'pending' && (
             <>
               <ActionBtn icon={<Check size={14} strokeWidth={3} />} title="Approve" color="#3DDC84" onClick={() => setApproveTarget(row)} />
               <ActionBtn icon={<X size={14} strokeWidth={3} />} title="Reject" color="#FF5B5B" onClick={() => setRejectTarget(row)} />
             </>
+          )}
+          {row.status === 'revoke_pending' && (
+             <ActionBtn icon={<AlertTriangle size={14} strokeWidth={3} />} title="Approve Revocation" color="#FF5B5B" onClick={() => setRevokeApproveTarget(row)} />
           )}
         </div>
       ),
@@ -148,9 +190,11 @@ export function ArtistRequestsPage() {
             onChange={e => setStatusFilter(e.target.value)}
             style={{ background: '#1a1a1a', border: '1px solid #333', color: '#fff', padding: '8px 12px', borderRadius: 8, fontSize: 13, outline: 'none' }}
           >
-            <option value="pending">Pending</option>
+            <option value="pending">Pending Application</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
+            <option value="revoke_pending">Pending Revocation</option>
+            <option value="revoke_approved">Revoked</option>
             <option value="all">All Requests</option>
           </select>
         </div>
@@ -189,6 +233,29 @@ export function ArtistRequestsPage() {
         isLoading={isRejecting}
         onConfirm={handleRejectConfirm}
         onCancel={() => setRejectTarget(null)}
+      />
+
+      {/* Confirm Revoke Dialog */}
+      <ConfirmDialog
+        open={!!revokeApproveTarget}
+        title="Approve Role Revocation"
+        description={
+          <div>
+            <p style={{ marginBottom: 12 }}>Are you sure you want to approve revocation for <strong>{revokeApproveTarget?.stageName}</strong>?</p>
+            {revokeApproveTarget?.revokeReason && (
+              <div style={{ padding: 12, background: 'rgba(255,255,255,0.05)', borderRadius: 8, marginBottom: 12, fontSize: 13, fontStyle: 'italic', color: '#aaa' }}>
+                " {revokeApproveTarget.revokeReason} "
+              </div>
+            )}
+            <p style={{ color: '#FF5B5B', fontWeight: 600 }}>This will delete ALL their songs and remove their artist privileges permanently.</p>
+          </div>
+        }
+        confirmLabel="Approve Revocation"
+        cancelLabel="Cancel"
+        variant="danger"
+        isLoading={isApprovingRevoke}
+        onConfirm={handleRevokeApproveConfirm}
+        onCancel={() => setRevokeApproveTarget(null)}
       />
     </div>
   );

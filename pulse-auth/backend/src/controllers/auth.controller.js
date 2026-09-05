@@ -119,3 +119,26 @@ export const login = async (req, res) => {
         });
     }
 };
+
+// ================= GET ME (verify current role from DB) =================
+export const getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json({
+            id: user._id,
+            fullName: user.fullName,
+            username: user.username,
+            email: user.email,
+            avatarUrl: user.avatarUrl,
+            role: user.role,
+            isPremium: user.isPremium,
+            subscriptionPlan: user.subscriptionPlan,
+            subscriptionExpiresAt: user.subscriptionExpiresAt,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

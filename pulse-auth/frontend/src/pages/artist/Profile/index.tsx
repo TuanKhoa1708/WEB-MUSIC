@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { UserCircle2, Save, Upload, Loader2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { UserCircle2, Save, Upload, Loader2, AlertTriangle, X } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { updateMeService } from '@/services/user.service'
 import { uploadFilesApi } from '@/api/song.api' // Reuse upload endpoint for images
+import { requestRevokeRoleApi, getMyArtistRequestApi } from '@/api/artistRequest.api'
 import toast from 'react-hot-toast'
 
 export function ArtistProfilePage() {
   const { user } = useAuth() // login updates AuthContext state
   const [isSaving, setIsSaving] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+
+  // Revocation request state
+  const [showRevokeModal, setShowRevokeModal] = useState(false)
+  const [revokeReason, setRevokeReason] = useState('')
+  const [isRevoking, setIsRevoking] = useState(false)
+  const [hasPendingRevoke, setHasPendingRevoke] = useState(false)
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -27,6 +34,17 @@ export function ArtistProfilePage() {
       })
     }
   }, [user])
+
+  // Check if artist already has a pending revoke request
+  useEffect(() => {
+    getMyArtistRequestApi()
+      .then((req) => {
+        if (req?.status === 'revoke_pending') setHasPendingRevoke(true)
+      })
+      .catch((err) => {
+        console.log('No pending revoke request found or error:', err.message)
+      })
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -80,6 +98,25 @@ export function ArtistProfilePage() {
       toast.error(error?.response?.data?.message || 'Failed to update profile')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleRevokeSubmit = async () => {
+    if (!revokeReason.trim()) {
+      toast.error('Please provide a reason for your request')
+      return
+    }
+    setIsRevoking(true)
+    try {
+      await requestRevokeRoleApi(revokeReason.trim())
+      toast.success('Revocation request submitted! Admin will review it shortly.')
+      setShowRevokeModal(false)
+      setHasPendingRevoke(true)
+      setRevokeReason('')
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to submit request')
+    } finally {
+      setIsRevoking(false)
     }
   }
 
@@ -318,6 +355,202 @@ export function ArtistProfilePage() {
           </div>
         </form>
       </motion.div>
+
+      {/* ── Danger Zone ──────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          marginTop: 24,
+          background: 'rgba(255,91,91,0.04)',
+          border: '1px solid rgba(255,91,91,0.15)',
+          borderRadius: 20,
+          padding: 28,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+          <AlertTriangle size={18} color="#FF5B5B" />
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: '#FF5B5B', letterSpacing: '-0.02em', margin: 0 }}>
+            Danger Zone
+          </h2>
+        </div>
+        <p style={{ fontSize: 13, color: '#666', marginBottom: 20, lineHeight: 1.6 }}>
+          Requesting role revocation will remove your Artist status. All your songs will be permanently deleted 
+          after admin approval. This action cannot be undone.
+        </p>
+
+        {hasPendingRevoke ? (
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '10px 18px', borderRadius: 12,
+            background: 'rgba(247,181,0,0.08)', border: '1px solid rgba(247,181,0,0.25)',
+            color: '#F7B500', fontSize: 13, fontWeight: 600,
+          }}>
+            <AlertTriangle size={14} />
+            Revocation request pending admin review
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowRevokeModal(true)}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              height: 42, padding: '0 20px',
+              borderRadius: 12,
+              background: 'rgba(255,91,91,0.08)',
+              border: '1px solid rgba(255,91,91,0.25)',
+              color: '#FF5B5B',
+              fontSize: 13, fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255,91,91,0.15)'
+              e.currentTarget.style.borderColor = 'rgba(255,91,91,0.4)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255,91,91,0.08)'
+              e.currentTarget.style.borderColor = 'rgba(255,91,91,0.25)'
+            }}
+          >
+            <AlertTriangle size={15} />
+            Request Artist Role Revocation
+          </button>
+        )}
+      </motion.div>
+
+      {/* ── Revoke Confirmation Modal ─────────────────── */}
+      <AnimatePresence>
+        {showRevokeModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 9999,
+              background: 'rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: 24,
+            }}
+            onClick={(e) => { if (e.target === e.currentTarget) setShowRevokeModal(false) }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                background: '#111',
+                border: '1px solid rgba(255,91,91,0.25)',
+                borderRadius: 20,
+                padding: 32,
+                width: '100%',
+                maxWidth: 480,
+                boxShadow: '0 24px 80px rgba(0,0,0,0.8)',
+              }}
+            >
+              {/* Modal header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12,
+                    background: 'rgba(255,91,91,0.1)', border: '1px solid rgba(255,91,91,0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <AlertTriangle size={20} color="#FF5B5B" />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>
+                      Request Role Revocation
+                    </h3>
+                    <p style={{ fontSize: 12, color: '#666', margin: '4px 0 0' }}>
+                      This request will be reviewed by admin
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowRevokeModal(false)}
+                  style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4, borderRadius: 6 }}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Warning */}
+              <div style={{
+                background: 'rgba(255,91,91,0.06)', border: '1px solid rgba(255,91,91,0.15)',
+                borderRadius: 12, padding: '12px 16px', marginBottom: 20,
+              }}>
+                <p style={{ fontSize: 13, color: '#FF5B5B', lineHeight: 1.6, margin: 0 }}>
+                  ⚠️ <strong>Warning:</strong> Upon admin approval, all your songs will be permanently deleted 
+                  and your account will revert to a regular user.
+                </p>
+              </div>
+
+              {/* Reason textarea */}
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 13, color: '#888', fontWeight: 600, marginBottom: 8 }}>
+                  Reason for leaving <span style={{ color: '#FF5B5B' }}>*</span>
+                </label>
+                <textarea
+                  value={revokeReason}
+                  onChange={(e) => setRevokeReason(e.target.value)}
+                  placeholder="Please explain why you want to revoke your artist role..."
+                  rows={4}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: 12,
+                    background: '#1a1a1a',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    color: '#fff',
+                    fontSize: 14,
+                    outline: 'none',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    lineHeight: 1.6,
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setShowRevokeModal(false)}
+                  disabled={isRevoking}
+                  style={{
+                    height: 42, padding: '0 20px', borderRadius: 12,
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#888', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRevokeSubmit}
+                  disabled={isRevoking || !revokeReason.trim()}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    height: 42, padding: '0 20px', borderRadius: 12,
+                    background: isRevoking || !revokeReason.trim() ? 'rgba(255,91,91,0.3)' : 'rgba(255,91,91,0.9)',
+                    border: 'none', color: '#fff', fontSize: 14, fontWeight: 700,
+                    cursor: isRevoking || !revokeReason.trim() ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {isRevoking ? (
+                    <><Loader2 size={15} className="animate-spin" /> Submitting...</>
+                  ) : (
+                    'Submit Request'
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
+
