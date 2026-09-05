@@ -58,8 +58,43 @@ export async function deleteSongApi(id: string): Promise<void> {
 }
 
 // ─── POST /upload ─────────────────────────────────────────────────────────────
-// Upload audio and/or cover files using multipart/form-data
+// Upload audio and/or cover files using multipart/form-data.
+// Uses native fetch() instead of axios to avoid Content-Type boundary issues.
+// The browser sets the correct multipart/form-data + boundary header automatically
+// when FormData is passed directly to fetch().
 export async function uploadFilesApi(formData: FormData): Promise<{ success: boolean; data: { audioUrl?: string; coverUrl?: string } }> {
-  const { data } = await axiosInstance.post<{ success: boolean; data: { audioUrl?: string; coverUrl?: string } }>('/upload', formData)
-  return data
+  const baseURL = import.meta.env.VITE_API_BASE_URL as string
+  const token = localStorage.getItem('pulse_access_token')
+
+  // AbortController for a 2-minute timeout (handles Render cold starts + large files)
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 120_000)
+
+  try {
+    const res = await fetch(`${baseURL}/upload`, {
+      method: 'POST',
+      headers: {
+        // DO NOT set Content-Type here — browser sets it automatically with boundary
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeoutId)
+
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({ message: `Upload failed (HTTP ${res.status})` }))
+      throw new Error(errBody?.message ?? `Upload failed (HTTP ${res.status})`)
+    }
+
+    return res.json()
+  } catch (err: any) {
+    clearTimeout(timeoutId)
+    if (err.name === 'AbortError') {
+      throw new Error('Upload timed out. Please try again with a smaller file.')
+    }
+    throw err
+  }
 }
+

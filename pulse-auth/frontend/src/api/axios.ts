@@ -4,7 +4,7 @@ import type { ApiErrorResponse } from '@/types/auth'
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL as string,
-  timeout: 10_000,
+  timeout: 60_000, // 60s — allow for Render cold starts and large file uploads
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,19 +12,11 @@ const axiosInstance = axios.create({
 
 // ─── Request interceptor ──────────────────────────────────────────────────────
 // Automatically attach Bearer token if present in storage.
-// If body is FormData (file upload), delete the default Content-Type so that
-// axios/browser can auto-set multipart/form-data with the correct boundary.
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getToken()
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
-    }
-    // When sending FormData, remove the default application/json Content-Type
-    // so axios automatically sets multipart/form-data with the proper boundary.
-    // NOTE: In Axios v1.x, config.headers is an AxiosHeaders class — must use .delete() not plain delete
-    if (config.data instanceof FormData) {
-      config.headers.delete('Content-Type')
     }
     return config
   },
