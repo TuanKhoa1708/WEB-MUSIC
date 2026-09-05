@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 
+import React from 'react'
+
 interface ConfirmDialogProps {
   open: boolean
   title: string
-  description: string
+  description: string | React.ReactNode
   confirmLabel?: string
   cancelLabel?: string
   variant?: 'danger' | 'warning' | 'primary'
