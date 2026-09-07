@@ -35,10 +35,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center overflow-x-hidden bg-[#090909]">
+    <div className="min-h-screen w-full relative flex items-center justify-center overflow-x-auto overflow-y-auto bg-[#090909] py-12 px-4">
 
       {/* ── Background Image ── */}
-      <div className="absolute inset-y-0 left-0 w-full lg:w-[65%] overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <img
           src="/hero-artist.png"
           alt="Artist"
@@ -48,71 +48,66 @@ export default function LoginPage() {
             transform: 'scale(1.05)',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#090909]/50 to-[#090909]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#090909] via-transparent to-[#090909]/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#090909]/60 to-[#090909]" />
+        <div className="absolute inset-0 bg-[#090909]/80 lg:bg-gradient-to-t lg:from-[#090909] lg:via-transparent lg:to-[#090909]/40" />
       </div>
 
       {/* ── Content Layout ── */}
-      <div className="relative z-10 w-full max-w-[1680px] min-h-screen mx-auto flex flex-col lg:flex-row items-center">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
 
-        {/* ══ LEFT COLUMN ══ */}
-        <div className="w-full lg:w-[56%] flex flex-col h-screen px-10 lg:px-20 xl:px-28 py-10">
+        {/* ══ LEFT COLUMN (Phần chữ thương hiệu) ══ */}
+        <div className="w-full lg:w-[50%] flex flex-col items-center lg:items-start text-center lg:text-left">
           {/* Top: Logo */}
-          <div className="pt-2">
+          <div className="mb-6 flex justify-center lg:justify-start w-full">
             <Logo size="md" />
           </div>
 
           {/* Center: Hero text */}
-          <div className="flex-1 flex items-center">
-            <div className="max-w-[520px]">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-8 h-[1px] bg-[#3FD6FF]" />
-                <span className="text-[#3FD6FF] text-[10px] font-bold tracking-[0.2em] uppercase">
-                  Your Music Universe
-                </span>
-              </div>
+          <div className="max-w-[520px]">
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+              <div className="w-8 h-[1px] bg-[#3FD6FF]" />
+              <span className="text-[#3FD6FF] text-[10px] font-bold tracking-[0.2em] uppercase">
+                Your Music Universe
+              </span>
+              <div className="w-8 h-[1px] bg-[#3FD6FF] lg:hidden" />
+            </div>
 
-              <h1 className="font-bold leading-[1.05] mb-5 tracking-tight"
-                style={{
-                  fontSize: 'clamp(58px, 6vw, 86px)',
-                  letterSpacing: '-0.04em'
-                }}>
-                <span className="text-white">Feel</span>
-                <br />
-                <span className="text-[#3FD6FF]">Every Beat.</span>
-              </h1>
+            <h1 className="font-bold leading-[1.05] mb-4 tracking-tight text-4xl sm:text-5xl lg:text-[80px]">
+              <span className="text-white">Feel</span>
+              <br className="hidden lg:block" />{' '}
+              <span className="text-[#3FD6FF]">Every Beat.</span>
+            </h1>
 
-              <p className="text-[#999] text-[15px] leading-relaxed max-w-[420px] mb-6">
-                Millions of songs, endless discovery.<br />
-                Your perfect soundtrack awaits.
-              </p>
+            <p className="text-[#999] text-sm lg:text-[15px] leading-relaxed max-w-[420px] mb-6 mx-auto lg:mx-0">
+              Millions of songs, endless discovery.<br />
+              Your perfect soundtrack awaits.
+            </p>
 
-              <div className="mt-8">
-                <MusicWave className="h-7 opacity-80" />
-              </div>
+            <div className="flex justify-center lg:justify-start">
+              <MusicWave className="h-6 lg:h-7 opacity-80" />
             </div>
           </div>
 
           {/* Bottom: footer */}
-          <div className="pb-6 hidden lg:block">
+          <div className="mt-8 hidden lg:block">
             <p className="text-[#555] text-xs">
               © 2024 Pulse. All rights reserved. &nbsp;·&nbsp; Terms of Service &nbsp;·&nbsp; Privacy Policy
             </p>
           </div>
         </div>
 
-        {/* ══ RIGHT COLUMN ══ */}
-        <div className="w-full lg:w-[44%] flex items-center justify-center px-8 lg:px-12 py-12">
+        {/* ══ RIGHT COLUMN (Form đăng nhập) ══ */}
+        <div className="w-full lg:w-[50%] flex items-center justify-center">
           <motion.div
-            className="w-full rounded-[24px]"
+            className="w-full rounded-[20px] lg:rounded-[24px]"
             style={{
-              maxWidth: 580,
-              padding: '48px 56px',
-              background: 'rgba(13,13,13,0.92)',
+              maxWidth: 520,
+              padding: '36px 28px sm:px-10 lg:px-12',
+              background: 'rgba(13,13,13,0.95)',
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              boxShadow: '0 32px 64px -12px rgba(0,0,0,0.7)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 32px 64px -12px rgba(0,0,0,0.8)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -121,18 +116,18 @@ export default function LoginPage() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Heading */}
-            <div style={{ marginBottom: '40px' }}>
-              <h2 className="text-[32px] font-bold text-white tracking-tight leading-tight mb-2">
+            <div className="mb-6 lg:mb-8">
+              <h2 className="text-2xl lg:text-[32px] font-bold text-white tracking-tight leading-tight mb-2">
                 Welcome Back
               </h2>
-              <p className="text-[#888] text-[15px]">
+              <p className="text-[#888] text-sm lg:text-[15px]">
                 Sign in to continue your music journey.
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col gap-6">
-              <div className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col gap-5">
+              <div className="flex flex-col gap-4">
                 <Input
                   label="Email address"
                   type="email"
@@ -152,7 +147,7 @@ export default function LoginPage() {
               </div>
 
               {/* Remember + Forgot */}
-              <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center justify-between mt-1">
                 <button
                   type="button"
                   className="flex items-center gap-3 cursor-pointer text-left"
@@ -201,7 +196,7 @@ export default function LoginPage() {
               </div>
 
               {/* Submit */}
-              <div className="mt-4">
+              <div className="mt-2">
                 <Button
                   type="submit"
                   variant="primary"
@@ -215,7 +210,7 @@ export default function LoginPage() {
             </form>
 
             {/* Footer link */}
-            <p className="text-center mt-8 text-[13px] text-[#777]">
+            <p className="text-center mt-6 text-[13px] text-[#777]">
               Don't have an account?{' '}
               <Link
                 to="/signup"

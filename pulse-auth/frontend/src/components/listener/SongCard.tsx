@@ -38,6 +38,7 @@ export function SongCard({ song, queue, delay = 0 }: SongCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.35 }}
       onClick={handleClick}
+      className="group"
       style={{
         background: isCurrent ? 'rgba(63,214,255,0.06)' : '#111',
         border: isCurrent ? '1px solid rgba(63,214,255,0.2)' : '1px solid rgba(255,255,255,0.04)',
@@ -85,7 +86,7 @@ export function SongCard({ song, queue, delay = 0 }: SongCardProps) {
       </div>
 
       {/* Info */}
-      <div style={{ padding: '12px 12px 10px' }}>
+      <div className="p-2 md:p-3">
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 6 }}>
           <div style={{ minWidth: 0 }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: isCurrent ? '#3FD6FF' : '#fff', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

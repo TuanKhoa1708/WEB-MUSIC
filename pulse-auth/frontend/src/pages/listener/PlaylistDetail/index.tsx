@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react'
 import { ArrowLeft, Play, Shuffle, ListMusic, Crown, Lock } from 'lucide-react'
 import { usePlaylistDetail, usePlaylistSongs } from '@/hooks/listener/usePlaylists'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
@@ -11,7 +10,6 @@ import { useIsPremium } from '@/hooks/listener/useSubscription'
 import type { Song } from '@/types/song.types'
 import type { PlaylistSong } from '@/types/playlist.types'
 
-// Free users can preview this many songs before being gated
 const FREE_PREVIEW_LIMIT = 3
 
 export function PlaylistDetailPage() {
@@ -53,8 +51,8 @@ export function PlaylistDetailPage() {
 
   if (playlistLoading) {
     return (
-      <div style={{ padding: '32px 32px 0' }}>
-        <div style={{ height: 180, background: '#111', borderRadius: 16, marginBottom: 24 }} />
+      <div className="px-4 md:px-6 lg:px-8 pt-6 md:pt-8 max-w-[1000px] mx-auto">
+        <div className="h-44 bg-[#111] rounded-2xl mb-6" />
         {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
       </div>
     )
@@ -63,7 +61,7 @@ export function PlaylistDetailPage() {
   if (!playlist) return null
 
   const isGated = !isPremium && songs.length > FREE_PREVIEW_LIMIT
-  const lockedFrom = FREE_PREVIEW_LIMIT // index from which songs are locked
+  const lockedFrom = FREE_PREVIEW_LIMIT
 
   return (
     <>
@@ -74,82 +72,60 @@ export function PlaylistDetailPage() {
         description={modalConfig.description}
       />
 
-      <div style={{ padding: '32px 32px 0', maxWidth: 1000, margin: '0 auto' }}>
+      <div className="px-4 md:px-6 lg:px-8 pt-6 md:pt-8 pb-8 max-w-[1000px] mx-auto">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#666', fontSize: 13, cursor: 'pointer', marginBottom: 24, padding: 0 }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = '#666')}
+          className="flex items-center gap-1.5 bg-none border-none text-[#666] hover:text-white text-xs md:text-sm cursor-pointer mb-6 p-0 transition-colors"
         >
           <ArrowLeft size={15} /> Back
         </button>
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 24, marginBottom: 36 }}>
+        <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 mb-8 md:mb-9 text-center sm:text-left">
           {/* Cover */}
-          <div style={{
-            width: 160, height: 160, borderRadius: 16, flexShrink: 0,
-            background: 'linear-gradient(135deg, rgba(63,214,255,0.08), rgba(32,148,255,0.04))',
-            border: '1px solid rgba(63,214,255,0.1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden',
-          }}>
+          <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl flex-shrink-0 bg-gradient-to-br from-[#3FD6FF]/10 to-[#2094ff]/5 border border-[#3FD6FF]/10 flex items-center justify-center overflow-hidden shadow-lg">
             {playlist.coverUrl ? (
-              <img src={playlist.coverUrl} alt={playlist.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={playlist.coverUrl} alt={playlist.title} className="w-full h-full object-cover" />
             ) : (
-              <ListMusic size={52} color="#3FD6FF22" />
+              <ListMusic size={52} className="text-[#3FD6FF]/20" />
             )}
           </div>
 
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 6px' }}>Playlist</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-bold text-[#555] uppercase tracking-widest mb-1">Playlist</p>
 
-            <h1 style={{ fontSize: 34, fontWeight: 900, color: '#fff', margin: '0 0 8px', letterSpacing: '-0.04em' }}>
+            <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-white mb-2 tracking-tight leading-tight">
               {playlist.title}
             </h1>
 
-            <p style={{ fontSize: 13, color: '#555', margin: '0 0 4px' }}>
+            <p className="text-xs sm:text-sm text-[#555] mb-3">
               {songs.length} songs
             </p>
 
             {/* Free tier notice */}
             {isGated && (
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '4px 10px', borderRadius: 8, marginBottom: 12,
-                background: 'rgba(255,185,0,0.08)',
-                border: '1px solid rgba(255,185,0,0.2)',
-              }}>
-                <Lock size={11} color="#FFB900" />
-                <span style={{ fontSize: 11, color: '#FFB900', fontWeight: 600 }}>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg mb-3 bg-[#FFB900]/10 border border-[#FFB900]/20">
+                <Lock size={11} className="text-[#FFB900]" />
+                <span className="text-[11px] text-[#FFB900] font-semibold">
                   Preview: {FREE_PREVIEW_LIMIT} of {songs.length} songs · Upgrade to unlock all
                 </span>
               </div>
             )}
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
               {songs.length > 0 && (
                 <>
                   <button
                     onClick={handlePlayAll}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 8,
-                      background: '#3FD6FF', border: 'none', borderRadius: 10,
-                      color: '#000', fontSize: 13, fontWeight: 700, padding: '9px 18px', cursor: 'pointer',
-                    }}
+                    className="flex items-center gap-2 bg-[#3FD6FF] hover:bg-[#2094ff] border-none rounded-xl text-black text-xs sm:text-sm font-bold px-4 py-2.5 cursor-pointer transition-colors"
                   >
                     <Play size={15} fill="#000" /> Play
                   </button>
                   <button
                     onClick={handleShuffle}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 8,
-                      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
-                      borderRadius: 10, color: '#ddd', fontSize: 13, fontWeight: 600,
-                      padding: '9px 18px', cursor: 'pointer',
-                    }}
+                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[#ddd] text-xs sm:text-sm font-semibold px-4 py-2.5 cursor-pointer transition-colors"
                   >
                     <Shuffle size={14} /> Shuffle
                   </button>
@@ -158,13 +134,7 @@ export function PlaylistDetailPage() {
                   {isGated && (
                     <button
                       onClick={() => openModal('Full Playlist Access', `Listen to all ${songs.length} songs with Premium.`)}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 6,
-                        background: 'linear-gradient(135deg, rgba(255,185,0,0.12), rgba(255,140,0,0.06))',
-                        border: '1px solid rgba(255,185,0,0.3)',
-                        borderRadius: 10, color: '#FFB900', fontSize: 12, fontWeight: 700,
-                        padding: '9px 16px', cursor: 'pointer',
-                      }}
+                      className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFB900]/15 to-[#FF8C00]/10 border border-[#FFB900]/30 hover:border-[#FFB900]/50 rounded-xl text-[#FFB900] text-xs font-bold px-3.5 py-2.5 cursor-pointer transition-colors"
                     >
                       <Crown size={13} /> Unlock All
                     </button>
@@ -177,19 +147,19 @@ export function PlaylistDetailPage() {
 
         {/* Songs */}
         {songsLoading ? (
-          <div style={{ background: '#0d0d0d', borderRadius: 14, border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+          <div className="bg-[#0d0d0d] rounded-2xl border border-white/5 overflow-hidden">
             {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
           </div>
         ) : songs.length === 0 ? (
           <EmptyState icon={<ListMusic size={48} />} title="This playlist is empty" description="Search for songs and add them to this playlist." />
         ) : (
-          <div style={{ background: '#0d0d0d', borderRadius: 14, border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+          <div className="bg-[#0d0d0d] rounded-2xl border border-white/5 overflow-hidden">
             {(playlistSongs ?? []).map((ps: PlaylistSong, i: number) => {
               const song = typeof ps.songId === 'object' ? ps.songId as unknown as Song : null
               if (!song) return null
               const isLocked = !isPremium && i >= lockedFrom
               return (
-                <div key={ps._id} style={{ display: 'grid', gridTemplateColumns: '1fr 32px', alignItems: 'center' }}>
+                <div key={ps._id} className="grid grid-cols-[1fr_auto] items-center">
                   <SongRow song={song} index={i} queue={songs} locked={isLocked} />
                 </div>
               )
@@ -197,25 +167,16 @@ export function PlaylistDetailPage() {
 
             {/* Premium upsell at bottom when gated */}
             {isGated && (
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-                padding: '20px 16px',
-                background: 'linear-gradient(180deg, transparent, rgba(255,185,0,0.04))',
-                borderTop: '1px solid rgba(255,185,0,0.1)',
-              }}>
-                <Crown size={16} color="#FFB900" />
-                <span style={{ fontSize: 13, color: '#888' }}>
-                  {songs.length - FREE_PREVIEW_LIMIT} more songs locked
-                </span>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 p-5 bg-gradient-to-b from-transparent to-[#FFB900]/5 border-t border-[#FFB900]/10 text-center">
+                <div className="flex items-center gap-2">
+                  <Crown size={16} className="text-[#FFB900]" />
+                  <span className="text-xs sm:text-sm text-[#888]">
+                    {songs.length - FREE_PREVIEW_LIMIT} more songs locked
+                  </span>
+                </div>
                 <button
                   onClick={() => openModal('Full Playlist Access', `Listen to all ${songs.length} songs with Premium.`)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    background: 'linear-gradient(135deg, #FFB900, #FF8C00)',
-                    border: 'none', borderRadius: 8,
-                    color: '#000', fontSize: 12, fontWeight: 800,
-                    padding: '7px 14px', cursor: 'pointer',
-                  }}
+                  className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFB900] to-[#FF8C00] hover:brightness-110 border-none rounded-lg text-black text-xs font-extrabold px-3.5 py-2 cursor-pointer transition-all"
                 >
                   Upgrade to Premium
                 </button>

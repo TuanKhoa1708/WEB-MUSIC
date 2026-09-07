@@ -8,8 +8,8 @@ import {
   Search,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { 
-  usePlaylists, 
+import {
+  usePlaylists,
   useDeletePlaylist,
   useCreatePlaylist,
   useUpdatePlaylist
@@ -22,40 +22,27 @@ import type { Playlist, CreatePlaylistInput, UpdatePlaylistInput } from '@/types
 
 const PAGE_SIZE = 12
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
+// ─── Empty state ─────────────────────────────────────────────────────────────
 
 function PlaylistEmptyState({ isSearch }: { isSearch?: boolean }) {
   return (
-    <div style={{ textAlign: 'center', padding: '64px 24px', gridColumn: '1 / -1' }}>
-      <div
-        style={{
-          width: 64,
-          height: 64,
-          borderRadius: 20,
-          background: 'rgba(247,181,0,0.06)',
-          border: '1px solid rgba(247,181,0,0.12)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 20px',
-          color: '#F7B500',
-        }}
-      >
+    <div className="text-center py-16 px-6 col-span-full">
+      <div className="w-16 h-16 rounded-[20px] bg-[#F7B500]/10 border border-[#F7B500]/20 flex items-center justify-center mx-auto mb-5 text-[#F7B500]">
         <ListMusic size={28} />
       </div>
-      <p style={{ fontSize: 18, color: '#fff', fontWeight: 700, marginBottom: 8, letterSpacing: '-0.02em' }}>
+      <p className="text-lg text-white font-bold mb-2 tracking-tight">
         {isSearch ? 'No playlists found' : 'No playlists yet'}
       </p>
-      <p style={{ fontSize: 14, color: '#888', maxWidth: 300, margin: '0 auto' }}>
-        {isSearch 
-          ? 'Try adjusting your search keywords.' 
+      <p className="text-sm text-[#888] max-w-[300px] mx-auto">
+        {isSearch
+          ? 'Try adjusting your search keywords.'
           : 'Create your first playlist to organize your favorite tracks.'}
       </p>
     </div>
   )
 }
 
-// ─── Playlist Card ────────────────────────────────────────────────────────────
+// ─── Playlist Card ───────────────────────────────────────────────────────────
 
 function PlaylistCard({
   playlist,
@@ -71,164 +58,58 @@ function PlaylistCard({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
-      className="group"
-      style={{
-        background: '#121212',
-        borderRadius: 16,
-        overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.06)',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-      }}
+      className="group bg-[#121212] rounded-2xl overflow-hidden border border-white/5 flex flex-col relative"
     >
-      <Link to={`/artist/playlists/${playlist._id}`} style={{ textDecoration: 'none', display: 'block' }}>
-        <div style={{ width: '100%', paddingTop: '100%', position: 'relative', background: '#1a1a1a' }}>
+      <Link to={`/artist/playlists/${playlist._id}`} className="block no-underline">
+        <div className="w-full pt-[100%] relative bg-[#1a1a1a]">
           {playlist.coverUrl ? (
             <img
               src={playlist.coverUrl}
               alt={playlist.title}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
+              className="absolute inset-0 w-full h-full object-cover"
             />
           ) : (
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#333',
-              }}
-            >
+            <div className="absolute inset-0 flex items-center justify-center text-[#333]">
               <ListMusic size={48} />
             </div>
           )}
 
           {/* Visibility badge */}
           <div
-            style={{
-              position: 'absolute',
-              top: 12,
-              left: 12,
-              padding: '4px 8px',
-              borderRadius: 6,
-              background: 'rgba(0,0,0,0.6)',
-              backdropFilter: 'blur(4px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              fontSize: 10,
-              fontWeight: 700,
-              color: playlist.isPublic ? '#3DDC84' : '#FF5B5B',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
+            className={`absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold uppercase tracking-wider ${playlist.isPublic ? 'text-[#3DDC84]' : 'text-[#FF5B5B]'
+              }`}
           >
             {playlist.isPublic ? 'Public' : 'Private'}
           </div>
         </div>
       </Link>
 
-      {/* Hover Actions (Clicking these should not trigger the link) */}
-      <div 
-        className="playlist-actions"
-        style={{
-          position: 'absolute',
-          top: 12,
-          right: 12,
-          display: 'flex',
-          gap: 6,
-          opacity: 0,
-          transition: 'opacity 0.2s',
-          zIndex: 2,
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLDivElement).style.opacity = '1'
-        }}
-      >
+      {/* Hover Actions */}
+      <div className="absolute top-3 right-3 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
         <button
           onClick={(e) => { e.preventDefault(); onEdit(playlist); }}
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 8,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(247,181,0,0.8)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+          className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer transition-colors hover:bg-[#F7B500]/80"
         >
           <Edit2 size={14} />
         </button>
         <button
           onClick={(e) => { e.preventDefault(); onDelete(playlist); }}
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 8,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,91,91,0.8)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+          className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer transition-colors hover:bg-red-500/80"
         >
           <Trash2 size={14} />
         </button>
       </div>
 
-      <style>{`.group:hover .playlist-actions { opacity: 0.9 !important; }`}</style>
-
-      <div style={{ padding: '16px' }}>
-        <Link to={`/artist/playlists/${playlist._id}`} style={{ textDecoration: 'none' }}>
+      <div className="p-4">
+        <Link to={`/artist/playlists/${playlist._id}`} className="no-underline block">
           <h3
-            style={{
-              fontSize: 15,
-              fontWeight: 700,
-              color: '#fff',
-              margin: '0 0 4px 0',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              letterSpacing: '-0.01em',
-            }}
+            className="text-[15px] font-bold text-white mb-1 truncate tracking-tight"
             title={playlist.title}
           >
             {playlist.title}
           </h3>
         </Link>
-        <p
-          style={{
-            fontSize: 13,
-            color: '#888',
-            margin: 0,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
+        <p className="text-[13px] text-[#888] truncate m-0">
           {playlist.description || 'No description'}
         </p>
       </div>
@@ -236,7 +117,7 @@ function PlaylistCard({
   )
 }
 
-// ─── Main page component ──────────────────────────────────────────────────────
+// ─── Main page component ─────────────────────────────────────────────────────
 
 export function ArtistPlaylistsPage() {
   const { user } = useAuth()
@@ -245,8 +126,8 @@ export function ArtistPlaylistsPage() {
   const [page, setPage] = useState(1)
 
   const [deleteTarget, setDeleteTarget] = useState<Playlist | null>(null)
-  const [isModalOpen, setIsModalOpen]   = useState(false)
-  const [editTarget, setEditTarget]     = useState<Playlist | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editTarget, setEditTarget] = useState<Playlist | null>(null)
 
   const artistId = user?.id || ''
   const { data: playlistsData, isLoading } = usePlaylists({ artistId })
@@ -282,76 +163,37 @@ export function ArtistPlaylistsPage() {
   }
 
   return (
-    <div style={{ padding: '32px 40px', minHeight: '100%' }}>
+    <div className="px-4 sm:px-6 md:px-10 py-6 md:py-8 min-h-full max-w-[1400px] mx-auto">
 
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          marginBottom: 32,
-          gap: 16,
-          flexWrap: 'wrap',
-        }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 14,
-              background: 'rgba(247,181,0,0.08)',
-              border: '1px solid rgba(247,181,0,0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#F7B500',
-              flexShrink: 0,
-            }}
-          >
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#F7B500]/10 border border-[#F7B500]/20 flex items-center justify-center text-[#F7B500] flex-shrink-0">
             <ListMusic size={24} />
           </div>
           <div>
-            <h1
-              style={{
-                fontSize: 26,
-                fontWeight: 800,
-                color: '#fff',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-              }}
-            >
+            <h1 className="text-2xl md:text-[26px] font-extrabold text-white tracking-tight leading-tight">
               My Playlists
             </h1>
-            <p style={{ fontSize: 14, color: '#666', marginTop: 4 }}>
+            <p className="text-xs md:text-sm text-[#666] mt-1">
               Curate and manage your custom collections
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <form onSubmit={handleSearchSubmit} style={{ position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: 14, top: 12, color: '#555' }} />
+        <div className="flex flex-wrap items-center gap-3">
+          <form onSubmit={handleSearchSubmit} className="relative flex-1 sm:flex-initial">
+            <Search size={16} className="absolute left-3.5 top-3 text-[#555]" />
             <input
               type="text"
               placeholder="Search playlists..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              style={{
-                height: 40,
-                width: 240,
-                paddingLeft: 40,
-                paddingRight: 16,
-                borderRadius: 12,
-                background: '#141414',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#fff',
-                fontSize: 14,
-                outline: 'none',
-              }}
+              className="h-10 w-full sm:w-[240px] pl-10 pr-4 rounded-xl bg-[#141414] border border-white/10 text-white text-sm outline-none focus:border-[#F7B500]/50 transition-colors"
             />
           </form>
 
@@ -362,23 +204,7 @@ export function ArtistPlaylistsPage() {
               setEditTarget(null)
               setIsModalOpen(true)
             }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              height: 40,
-              paddingLeft: 20,
-              paddingRight: 20,
-              borderRadius: 12,
-              border: 'none',
-              background: 'linear-gradient(135deg, #F7B500, #ffc933)',
-              color: '#000',
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(247,181,0,0.3)',
-              flexShrink: 0,
-            }}
+            className="flex items-center gap-2 h-10 px-5 rounded-xl border-none bg-gradient-to-br from-[#F7B500] to-[#ffc933] text-black text-sm font-bold cursor-pointer shadow-[0_4px_20px_rgba(247,181,0,0.3)] flex-shrink-0"
           >
             <Plus size={18} strokeWidth={2.5} />
             Create Playlist
@@ -386,26 +212,14 @@ export function ArtistPlaylistsPage() {
         </div>
       </motion.div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gap: 24,
-          marginBottom: 32,
-        }}
-      >
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5 mb-8">
         {isLoading ? (
-          Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} style={{ 
-              background: '#121212', 
-              borderRadius: 16, 
-              border: '1px solid rgba(255,255,255,0.04)',
-              overflow: 'hidden'
-            }}>
-              <div style={{ width: '100%', paddingTop: '100%', background: 'rgba(255,255,255,0.02)' }} />
-              <div style={{ padding: '16px' }}>
-                <div style={{ height: 16, width: '80%', background: 'rgba(255,255,255,0.04)', borderRadius: 4, marginBottom: 8 }} />
-                <div style={{ height: 14, width: '50%', background: 'rgba(255,255,255,0.02)', borderRadius: 4 }} />
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-[#121212] rounded-2xl border border-white/5 overflow-hidden">
+              <div className="w-full pt-[100%] bg-white/5" />
+              <div className="p-4">
+                <div className="h-4 w-4/5 bg-white/5 rounded mb-2" />
+                <div className="h-3 w-1/2 bg-white/5 rounded" />
               </div>
             </div>
           ))

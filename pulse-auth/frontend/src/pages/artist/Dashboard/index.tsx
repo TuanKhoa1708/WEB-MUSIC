@@ -19,59 +19,31 @@ export function ArtistDashboardPage() {
   }
 
   return (
-    <div style={{ padding: '32px 40px', minHeight: '100%' }}>
-      {/* ── Page header ──────────────────────────────── */}
+    <div className="px-4 sm:px-6 md:px-10 py-6 md:py-8 min-h-full max-w-[1400px] mx-auto">
+      {/* ── Page header ── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ marginBottom: 32 }}
+        className="mb-8"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              background: 'rgba(63,214,255,0.08)',
-              border: '1px solid rgba(63,214,255,0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#3FD6FF',
-              flexShrink: 0,
-            }}
-          >
-            <LayoutDashboard size={28} />
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] flex-shrink-0">
+            <LayoutDashboard size={24} className="md:w-7 md:h-7" />
           </div>
           <div>
-            <h1
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: '#fff',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-              }}
-            >
+            <h1 className="text-2xl md:text-[28px] font-extrabold text-white tracking-tight leading-tight">
               {getGreeting()}, {user?.fullName?.split(' ')[0] ?? 'Artist'}!
             </h1>
-            <p style={{ fontSize: 15, color: '#888', marginTop: 4 }}>
+            <p className="text-sm md:text-[15px] text-[#888] mt-1">
               Here's what's happening across the platform today.
             </p>
           </div>
         </div>
       </motion.div>
 
-      {/* ── Stat cards ─────────────────────────────────── */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 20,
-          marginBottom: 40,
-        }}
-      >
+      {/* ── Stat cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-10">
         <StatCard
           icon={<Music size={20} />}
           iconColor="#3FD6FF"
@@ -110,16 +82,16 @@ export function ArtistDashboardPage() {
         />
       </div>
 
-      {/* ── Quick actions ──────────────────────────────── */}
+      {/* ── Quick actions ── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
       >
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 16 }}>
+        <h2 className="text-base md:text-lg font-bold text-white mb-4">
           Quick Actions
         </h2>
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <QuickActionBtn
             to="/artist/songs"
             icon={<Music size={18} />}
@@ -148,46 +120,26 @@ function QuickActionBtn({ to, icon, label, color }: { to: string; icon: React.Re
   return (
     <Link
       to={to}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        padding: '16px 24px',
-        borderRadius: 16,
-        background: '#121212',
-        border: '1px solid rgba(255,255,255,0.06)',
-        color: '#fff',
-        textDecoration: 'none',
-        fontWeight: 600,
-        fontSize: 14,
-        transition: 'all 0.2s',
-      }}
+      className="flex items-center gap-3 p-4 md:px-6 md:py-4 rounded-2xl bg-[#121212] border border-white/5 text-white no-underline font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
       onMouseEnter={(e) => {
-        ;(e.currentTarget as HTMLAnchorElement).style.borderColor = color
-        ;(e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 4px 20px ${color}15`
-        ;(e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)'
+        ; (e.currentTarget as HTMLAnchorElement).style.borderColor = color
+          ; (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 4px 20px ${color}15`
       }}
       onMouseLeave={(e) => {
-        ;(e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.06)'
-        ;(e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none'
-        ;(e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)'
+        ; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.06)'
+          ; (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none'
       }}
     >
       <div
+        className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
         style={{
-          width: 36,
-          height: 36,
-          borderRadius: 10,
           background: `${color}15`,
           color: color,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
         }}
       >
         {icon}
       </div>
-      {label}
+      <span className="truncate">{label}</span>
     </Link>
   )
 }

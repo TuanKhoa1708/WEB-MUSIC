@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -7,10 +7,9 @@ import {
   Library,
   Heart,
   Clock,
-  ChevronLeft,
-  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   Disc3,
-  Plus,
   Mic2,
   Crown,
   Radio,
@@ -69,10 +68,25 @@ export function ListenerSidebar() {
   const isPremium = useIsPremium()
   const { isInRoom } = useListenRoom()
 
+  // Tự động thu gọn trên màn hình Tablet (< 1024px)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setCollapsed(true)
+      } else {
+        setCollapsed(false)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <motion.div
       animate={{ width: collapsed ? 68 : 240 }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative" // Thêm class group để bắt sự kiện hover cho các thành phần con
       style={{
         height: '100vh',
         background: '#0a0a0a',
@@ -80,9 +94,10 @@ export function ListenerSidebar() {
         display: 'flex',
         flexDirection: 'column',
         flexShrink: 0,
-        overflow: 'hidden',
+        overflow: 'visible', // Bắt buộc visible để nút bấm nằm lồi ra ngoài không bị cắt
         position: 'sticky',
         top: 0,
+        zIndex: 40,
       }}
     >
       {/* Logo */}
@@ -109,28 +124,39 @@ export function ListenerSidebar() {
         )}
       </div>
 
-      {/* Collapse toggle */}
+      {/* Nút thu gọn / mở rộng (Collapse toggle) */}
       <button
         onClick={() => setCollapsed((c) => !c)}
+        className="opacity-0 group-hover:opacity-100 transition-all duration-300"
         style={{
           position: 'absolute',
-          top: 22,
-          right: collapsed ? -12 : -12,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          right: -12, // Dịch ra mép
           width: 24,
-          height: 24,
-          borderRadius: '50%',
-          background: '#1e1e1e',
+          height: 48, // Kéo dài ra thành hình viên thuốc cho dễ bấm
+          borderRadius: 12,
+          background: '#1a1a1a',
           border: '1px solid rgba(255,255,255,0.1)',
-          color: '#666',
+          boxShadow: '4px 0 12px rgba(0,0,0,0.5)',
+          color: '#888',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 10,
+          zIndex: 50,
           flexShrink: 0,
         }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = '#3FD6FF'
+          e.currentTarget.style.background = '#222'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = '#888'
+          e.currentTarget.style.background = '#1a1a1a'
+        }}
       >
-        {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+        {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
       </button>
 
       <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: collapsed ? '8px 10px' : '8px 12px' }}>
