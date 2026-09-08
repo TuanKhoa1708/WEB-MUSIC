@@ -44,11 +44,13 @@ export function Pagination({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 10,
         paddingTop: 16,
       }}
     >
       {/* Results count */}
-      <span style={{ fontSize: 12, color: '#444', fontWeight: 500 }}>
+      <span style={{ fontSize: 12, color: '#444', fontWeight: 500, whiteSpace: 'nowrap' }}>
         Showing{' '}
         <span style={{ color: '#888' }}>{from}–{to}</span>
         {' '}of{' '}
@@ -57,7 +59,7 @@ export function Pagination({
       </span>
 
       {/* Page buttons */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
         <PageBtn
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -70,7 +72,7 @@ export function Pagination({
           p === '...' ? (
             <span
               key={`ellipsis-${i}`}
-              style={{ padding: '0 6px', color: '#333', fontSize: 13 }}
+              style={{ padding: '0 4px', color: '#333', fontSize: 13 }}
             >
               ···
             </span>
@@ -131,6 +133,7 @@ function PageBtn({ children, onClick, active, disabled, ariaLabel }: PageBtnProp
         justifyContent: 'center',
         padding: '0 8px',
         transition: 'all 0.15s',
+        flexShrink: 0,
       }}
       onMouseEnter={(e) => {
         if (!disabled && !active) {

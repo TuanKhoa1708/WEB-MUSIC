@@ -1,11 +1,12 @@
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { AdminSidebar } from '@/components/admin/Sidebar'
+import { AdminSidebar, AdminMobileDrawer, MobileSidebarContext } from '@/components/admin/Sidebar'
 import { AdminHeader } from '@/components/admin/Header'
 
 /**
  * AdminLayout — the shell for every admin page.
  *
- * Structure:
+ * Desktop (≥ 768px):
  *   ┌──────────────────────────────────────────────┐
  *   │  <AdminSidebar />  │  <AdminHeader />         │
  *   │   sticky, full-h   │  sticky top              │
@@ -13,44 +14,76 @@ import { AdminHeader } from '@/components/admin/Header'
  *   │                    │  <Outlet />              │
  *   │                    │  scrollable content area │
  *   └──────────────────────────────────────────────┘
+ *
+ * Mobile (< 768px):
+ *   ┌──────────────────────────────────────────────┐
+ *   │  <AdminHeader />  (hamburger btn)            │
+ *   ├──────────────────────────────────────────────┤
+ *   │  <Outlet />  (full width)                    │
+ *   └──────────────────────────────────────────────┘
+ *   + <AdminMobileDrawer /> slides in from left on toggle
  */
 export function AdminLayout() {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        minHeight: '100vh',
-        backgroundColor: '#090909',
-        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-      }}
-    >
-      {/* Sidebar */}
-      <AdminSidebar />
+  const [mobileOpen, setMobileOpen] = useState(false)
 
-      {/* Main column */}
+  return (
+    <MobileSidebarContext.Provider value={{ mobileOpen, setMobileOpen }}>
       <div
         style={{
-          flex: 1,
           display: 'flex',
-          flexDirection: 'column',
-          minWidth: 0,
-          overflowX: 'hidden',
+          minHeight: '100vh',
+          backgroundColor: '#090909',
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         }}
       >
-        {/* Header */}
-        <AdminHeader />
+        {/* Desktop sidebar — hidden on mobile via CSS */}
+        <div className="admin-sidebar-wrapper">
+          <AdminSidebar />
+        </div>
 
-        {/* Page content */}
-        <main
+        {/* Mobile drawer */}
+        <AdminMobileDrawer
+          isOpen={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+        />
+
+        {/* Main column */}
+        <div
           style={{
             flex: 1,
-            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0,
             overflowX: 'hidden',
           }}
         >
-          <Outlet />
-        </main>
+          {/* Header */}
+          <AdminHeader />
+
+          {/* Page content */}
+          <main
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            }}
+          >
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+
+      {/* Responsive admin sidebar styles */}
+      <style>{`
+        .admin-sidebar-wrapper {
+          display: flex;
+        }
+        @media (max-width: 767px) {
+          .admin-sidebar-wrapper {
+            display: none;
+          }
+        }
+      `}</style>
+    </MobileSidebarContext.Provider>
   )
 }

@@ -237,7 +237,7 @@ export function PlaylistManagementPage() {
   }
 
   return (
-    <div style={{ padding: '32px 40px', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(16px, 4vw, 40px) clamp(16px, 3vw, 40px)', minHeight: '100%' }}>
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -286,8 +286,8 @@ export function PlaylistManagementPage() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <form onSubmit={handleSearchSubmit} style={{ position: 'relative' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', flex: 1, justifyContent: 'flex-end' }}>
+          <form onSubmit={handleSearchSubmit} style={{ position: 'relative', flex: '1 1 200px', maxWidth: 280 }}>
             <Search size={16} style={{ position: 'absolute', left: 14, top: 12, color: '#555' }} />
             <input
               type="text"
@@ -296,7 +296,7 @@ export function PlaylistManagementPage() {
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
                 height: 40,
-                width: 240,
+                width: '100%',
                 paddingLeft: 40,
                 paddingRight: 16,
                 borderRadius: 12,
@@ -305,6 +305,8 @@ export function PlaylistManagementPage() {
                 color: '#fff',
                 fontSize: 14,
                 outline: 'none',
+                boxSizing: 'border-box',
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               }}
             />
           </form>

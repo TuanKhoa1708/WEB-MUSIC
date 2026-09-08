@@ -3,7 +3,7 @@ import { LayoutDashboard } from 'lucide-react'
 
 export function AdminDashboardPage() {
   return (
-    <div style={{ padding: '32px 28px' }}>
+    <div style={{ padding: 'clamp(16px, 3vw, 32px) clamp(16px, 3vw, 28px)' }}>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
