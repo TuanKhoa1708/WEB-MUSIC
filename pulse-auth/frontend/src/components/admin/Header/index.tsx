@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Bell, Search, ChevronRight } from 'lucide-react'
+import { Bell, Search, ChevronRight, Menu } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useMobileSidebar } from '@/components/admin/Sidebar'
 
 // ─── Breadcrumb map ───────────────────────────────────────────────────────────
 
 const BREADCRUMB_MAP: Record<string, string[]> = {
-  '/admin/dashboard':  ['Admin', 'Dashboard'],
-  '/admin/artists':    ['Admin', 'Artist Management'],
-  '/admin/listeners':  ['Admin', 'Listener Management'],
-  '/admin/songs':      ['Admin', 'Song Management'],
-  '/admin/albums':     ['Admin', 'Album Management'],
-  '/admin/playlists':  ['Admin', 'Playlist Management'],
-  '/admin/settings':   ['Admin', 'Settings'],
+  '/admin/dashboard':      ['Admin', 'Dashboard'],
+  '/admin/artist-requests':['Admin', 'Artist Requests'],
+  '/admin/artists':        ['Admin', 'Artist Management'],
+  '/admin/listeners':      ['Admin', 'Listener Management'],
+  '/admin/songs':          ['Admin', 'Song Management'],
+  '/admin/albums':         ['Admin', 'Album Management'],
+  '/admin/playlists':      ['Admin', 'Playlist Management'],
+  '/admin/settings':       ['Admin', 'Settings'],
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -22,6 +24,7 @@ export function AdminHeader() {
   const location = useLocation()
   const [searchFocused, setSearchFocused] = useState(false)
   const [notifCount] = useState(3)
+  const { setMobileOpen } = useMobileSidebar()
 
   const crumbs = BREADCRUMB_MAP[location.pathname] ?? ['Admin']
 
@@ -32,8 +35,8 @@ export function AdminHeader() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingLeft: 28,
-        paddingRight: 28,
+        paddingLeft: 20,
+        paddingRight: 20,
         borderBottom: '1px solid rgba(255,255,255,0.05)',
         background: 'rgba(9,9,9,0.8)',
         backdropFilter: 'blur(20px)',
@@ -42,15 +45,66 @@ export function AdminHeader() {
         top: 0,
         zIndex: 30,
         flexShrink: 0,
-        gap: 20,
+        gap: 12,
+        minWidth: 0,
       }}
     >
-      {/* ── Breadcrumb ──────────────────────────────────────────── */}
-      <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+      {/* ── Hamburger (mobile only) ──────────────────────────── */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open menu"
+        className="admin-hamburger"
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: 10,
+          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(255,255,255,0.03)',
+          color: '#888',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          flexShrink: 0,
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#fff'
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#888'
+        }}
+      >
+        <Menu size={18} />
+      </button>
+
+      {/* ── Breadcrumb ────────────────────────────────────────── */}
+      <nav
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 5,
+          flex: 1,
+          overflow: 'hidden',
+          minWidth: 0,
+        }}
+      >
         {crumbs.map((crumb, i) => (
-          <div key={crumb} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div
+            key={crumb}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              overflow: 'hidden',
+              minWidth: 0,
+              flexShrink: i === crumbs.length - 1 ? 1 : 0,
+            }}
+          >
             {i > 0 && (
-              <ChevronRight size={13} style={{ color: '#333', flexShrink: 0 }} />
+              <ChevronRight size={12} style={{ color: '#333', flexShrink: 0 }} />
             )}
             <span
               style={{
@@ -58,6 +112,9 @@ export function AdminHeader() {
                 fontWeight: i === crumbs.length - 1 ? 700 : 500,
                 color: i === crumbs.length - 1 ? '#fff' : '#444',
                 letterSpacing: '-0.01em',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
             >
               {crumb}
@@ -66,13 +123,14 @@ export function AdminHeader() {
         ))}
       </nav>
 
-      {/* ── Search ─────────────────────────────────────────────── */}
+      {/* ── Search — hidden on mobile ────────────────────────── */}
       <div
+        className="admin-header-search"
         style={{
           position: 'relative',
-          width: 240,
+          flexShrink: 0,
+          width: searchFocused ? 280 : 200,
           transition: 'width 0.3s ease',
-          ...(searchFocused ? { width: 320 } : {}),
         }}
       >
         <Search
@@ -104,12 +162,13 @@ export function AdminHeader() {
             outline: 'none',
             transition: 'border-color 0.2s, box-shadow 0.2s',
             boxShadow: searchFocused ? '0 0 0 3px rgba(63,214,255,0.08)' : 'none',
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
           }}
         />
       </div>
 
       {/* ── Right controls ─────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
         {/* Notification bell */}
         <button
           style={{
@@ -125,6 +184,7 @@ export function AdminHeader() {
             justifyContent: 'center',
             cursor: 'pointer',
             transition: 'all 0.2s',
+            flexShrink: 0,
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
@@ -159,12 +219,13 @@ export function AdminHeader() {
             width: 1,
             height: 24,
             background: 'rgba(255,255,255,0.06)',
-            margin: '0 4px',
+            margin: '0 2px',
+            flexShrink: 0,
           }}
         />
 
         {/* Admin avatar + name */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', flexShrink: 0 }}>
           <div
             style={{
               width: 32,
@@ -183,8 +244,9 @@ export function AdminHeader() {
           >
             {user?.fullName?.charAt(0).toUpperCase() ?? 'A'}
           </div>
-          <div style={{ lineHeight: 1 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
+          {/* Hide name text on narrow screens */}
+          <div className="admin-header-username" style={{ lineHeight: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>
               {user?.fullName ?? 'Admin'}
             </div>
             <div style={{ fontSize: 11, color: '#3FD6FF', fontWeight: 600, marginTop: 2 }}>
@@ -193,6 +255,30 @@ export function AdminHeader() {
           </div>
         </div>
       </div>
+
+      {/* Responsive styles */}
+      <style>{`
+        /* Show hamburger only on mobile */
+        .admin-hamburger {
+          display: none;
+        }
+        @media (max-width: 767px) {
+          .admin-hamburger {
+            display: flex;
+          }
+          .admin-header-search {
+            display: none;
+          }
+          .admin-header-username {
+            display: none;
+          }
+        }
+        @media (max-width: 480px) {
+          .admin-header-username {
+            display: none;
+          }
+        }
+      `}</style>
     </header>
   )
 }

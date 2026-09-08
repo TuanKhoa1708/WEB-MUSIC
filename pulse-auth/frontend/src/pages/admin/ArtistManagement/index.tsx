@@ -232,7 +232,7 @@ export function ArtistManagementPage() {
 
   // ─────────────────────────────────────────────────────
   return (
-    <div style={{ padding: '28px', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
 
       {/* ── Page header ──────────────────────────────── */}
       <motion.div
@@ -245,6 +245,7 @@ export function ArtistManagementPage() {
           justifyContent: 'space-between',
           marginBottom: 28,
           gap: 16,
+          flexWrap: 'wrap',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>

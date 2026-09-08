@@ -611,7 +611,8 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                 </Field>
 
                 {/* Artist + Album row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div className="song-form-row-grid">
+                  <style>{`.song-form-row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } @media (max-width: 480px) { .song-form-row-grid { grid-template-columns: 1fr; } }`}</style>
                   <Field label="Artist" required error={errors.artistId}>
                     <StyledSelect
                       id="song-artist"

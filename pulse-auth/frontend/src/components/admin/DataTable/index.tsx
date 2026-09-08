@@ -62,7 +62,7 @@ export function DataTable<T>({
         background: '#111',
       }}
     >
-      <div style={{ overflowX: 'auto' }}>
+      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <table
           style={{
             width: '100%',

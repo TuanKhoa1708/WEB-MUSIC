@@ -158,12 +158,12 @@ export function ArtistRequestsPage() {
   ];
 
   return (
-    <div style={{ padding: '28px', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}
+        style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ width: 44, height: 44, borderRadius: 13, background: 'rgba(63,214,255,0.08)', border: '1px solid rgba(63,214,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3FD6FF' }}>
@@ -184,11 +184,11 @@ export function ArtistRequestsPage() {
         style={{ background: '#0f0f0f', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 16, overflow: 'hidden' }}
       >
         {/* Toolbar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap' }}>
           <select 
             value={statusFilter} 
             onChange={e => setStatusFilter(e.target.value)}
-            style={{ background: '#1a1a1a', border: '1px solid #333', color: '#fff', padding: '8px 12px', borderRadius: 8, fontSize: 13, outline: 'none' }}
+            style={{ background: '#1a1a1a', border: '1px solid #333', color: '#fff', padding: '8px 12px', borderRadius: 8, fontSize: 13, outline: 'none', flex: '1 1 180px', maxWidth: 280, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
           >
             <option value="pending">Pending Application</option>
             <option value="approved">Approved</option>

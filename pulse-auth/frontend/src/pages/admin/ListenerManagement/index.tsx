@@ -268,7 +268,7 @@ function FilterSelect({
           cursor: 'pointer',
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
           appearance: 'none',
-          minWidth: 130,
+          minWidth: 110,
           transition: 'all 0.15s',
           outline: 'none',
         }}
@@ -702,7 +702,7 @@ export function ListenerManagementPage() {
 
   // ─────────────────────────────────────────────────────────
   return (
-    <div style={{ padding: '28px', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
 
       {/* ── Page header ───────────────────────────────────── */}
       <motion.div
