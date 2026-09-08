@@ -99,15 +99,15 @@ export default function LoginPage() {
         {/* ══ RIGHT COLUMN (Form đăng nhập) ══ */}
         <div className="w-full lg:w-[50%] flex items-center justify-center">
           <motion.div
-            className="w-full rounded-[20px] lg:rounded-[24px]"
+            className="w-full rounded-[24px]"
             style={{
-              maxWidth: 520,
-              padding: '36px 28px sm:px-10 lg:px-12',
-              background: 'rgba(13,13,13,0.95)',
+              maxWidth: 580,
+              padding: '48px 56px',
+              background: 'rgba(13,13,13,0.92)',
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 32px 64px -12px rgba(0,0,0,0.8)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              boxShadow: '0 32px 64px -12px rgba(0,0,0,0.7)',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -116,18 +116,18 @@ export default function LoginPage() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Heading */}
-            <div className="mb-6 lg:mb-8">
-              <h2 className="text-2xl lg:text-[32px] font-bold text-white tracking-tight leading-tight mb-2">
+            <div style={{ marginBottom: '40px' }}>
+              <h2 className="text-[32px] font-bold text-white tracking-tight leading-tight mb-2">
                 Welcome Back
               </h2>
-              <p className="text-[#888] text-sm lg:text-[15px]">
+              <p className="text-[#888] text-[15px]">
                 Sign in to continue your music journey.
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col gap-5">
-              <div className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex-1 flex flex-col gap-6">
+              <div className="flex flex-col gap-5">
                 <Input
                   label="Email address"
                   type="email"
@@ -196,7 +196,7 @@ export default function LoginPage() {
               </div>
 
               {/* Submit */}
-              <div className="mt-2">
+              <div className="mt-4">
                 <Button
                   type="submit"
                   variant="primary"
@@ -210,7 +210,7 @@ export default function LoginPage() {
             </form>
 
             {/* Footer link */}
-            <p className="text-center mt-6 text-[13px] text-[#777]">
+            <p className="text-center mt-8 text-[13px] text-[#777]">
               Don't have an account?{' '}
               <Link
                 to="/signup"
