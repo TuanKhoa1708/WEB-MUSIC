@@ -64,8 +64,8 @@ export function AlbumDetailPage() {
 
   if (albumLoading) {
     return (
-      <div style={{ padding: '32px 32px 0' }}>
-        <div style={{ height: 200, background: '#111', borderRadius: 16, marginBottom: 24 }} />
+      <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-8 md:pt-10 max-w-[1000px] mx-auto">
+        <div className="h-44 bg-[#111] rounded-2xl mb-6" />
         {Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)}
       </div>
     )
@@ -88,49 +88,33 @@ export function AlbumDetailPage() {
         description={modalConfig.description}
       />
 
-      <div style={{ padding: '32px 32px 0', maxWidth: 1000, margin: '0 auto' }}>
+      <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-8 md:pt-10 pb-8 max-w-[1000px] mx-auto">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            background: 'none', border: 'none', color: '#666',
-            fontSize: 13, cursor: 'pointer', marginBottom: 24, padding: 0,
-            transition: 'color 0.15s',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = '#666')}
+          className="flex items-center gap-1.5 bg-none border-none text-[#666] hover:text-white text-xs md:text-sm cursor-pointer mb-6 p-0 transition-colors"
         >
           <ArrowLeft size={15} /> Back
         </button>
 
         {/* Album header */}
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 24, marginBottom: 36 }}>
+        <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 mb-8 md:mb-9 text-center sm:text-left">
           {/* Cover */}
-          <div style={{
-            width: 180, height: 180,
-            borderRadius: 16,
-            overflow: 'hidden',
-            flexShrink: 0,
-            background: 'linear-gradient(135deg, #1a1a2e, #0f0f1a)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-          }}>
+          <div className="w-32 h-32 sm:w-40 sm:h-44 rounded-2xl flex-shrink-0 bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1a] shadow-lg flex items-center justify-center overflow-hidden">
             {album.coverUrl ? (
-              <img src={album.coverUrl} alt={album.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={album.coverUrl} alt={album.title} className="w-full h-full object-cover" />
             ) : (
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
-                <Disc3 size={60} />
-              </div>
+              <Disc3 size={52} className="text-[#333]" />
             )}
           </div>
 
-          <div>
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 6px' }}>Album</p>
-            <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', margin: '0 0 8px', letterSpacing: '-0.04em' }}>
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-bold text-[#555] uppercase tracking-widest mb-1">Album</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-white mb-2 tracking-tight leading-tight">
               {album.title}
             </h1>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: '#555', fontSize: 13, marginBottom: 8 }}>
-              <span style={{ color: '#ddd', fontWeight: 600 }}>{artistName}</span>
+            <div className="flex flex-wrap gap-2 items-center justify-center sm:justify-start text-[#555] text-xs sm:text-sm mb-2">
+              <span className="text-[#ddd] font-semibold">{artistName}</span>
               {album.releaseYear && <><span>•</span><span>{album.releaseYear}</span></>}
               {albumSongs.length > 0 && (
                 <><span>•</span><span>{albumSongs.length} songs, {getTotalDuration(albumSongs)}</span></>
@@ -154,46 +138,25 @@ export function AlbumDetailPage() {
 
             {/* Buttons */}
             {albumSongs.length > 0 && (
-              <div style={{ display: 'flex', gap: 10, marginTop: isGated ? 0 : 20 }}>
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 mt-2">
                 <button
                   onClick={handlePlayAll}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    background: '#3FD6FF', border: 'none', borderRadius: 10,
-                    color: '#000', fontSize: 14, fontWeight: 700, padding: '10px 22px',
-                    cursor: 'pointer', transition: 'background 0.2s',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#5de0ff')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = '#3FD6FF')}
+                  className="flex items-center gap-2 bg-[#3FD6FF] hover:bg-[#2094ff] border-none rounded-xl text-black text-xs sm:text-sm font-bold px-4 py-2.5 cursor-pointer transition-colors"
                 >
-                  <Play size={16} fill="#000" /> Play
+                  <Play size={15} fill="#000" /> Play
                 </button>
                 <button
                   onClick={handleShuffle}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 10, color: '#ddd', fontSize: 14, fontWeight: 600,
-                    padding: '10px 22px', cursor: 'pointer', transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+                  className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[#ddd] text-xs sm:text-sm font-semibold px-4 py-2.5 cursor-pointer transition-colors"
                 >
-                  <Shuffle size={15} /> Shuffle
+                  <Shuffle size={14} /> Shuffle
                 </button>
 
                 {/* Upgrade CTA */}
                 {isGated && (
                   <button
                     onClick={() => openModal('Full Album Access', `Listen to all ${albumSongs.length} songs with Premium.`)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      background: 'linear-gradient(135deg, rgba(255,185,0,0.12), rgba(255,140,0,0.06))',
-                      border: '1px solid rgba(255,185,0,0.3)',
-                      borderRadius: 10, color: '#FFB900', fontSize: 12, fontWeight: 700,
-                      padding: '10px 16px', cursor: 'pointer',
-                    }}
+                    className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFB900]/15 to-[#FF8C00]/10 border border-[#FFB900]/30 hover:border-[#FFB900]/50 rounded-xl text-[#FFB900] text-xs font-bold px-3.5 py-2.5 cursor-pointer transition-colors"
                   >
                     <Crown size={13} /> Unlock All
                   </button>
@@ -213,20 +176,15 @@ export function AlbumDetailPage() {
         ) : (
           <>
             {/* Table header */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '40px 1fr 80px 60px 32px 32px',
-              gap: 12, padding: '0 12px 8px',
-              borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: 4,
-            }}>
-              <span style={{ fontSize: 11, color: '#444', textAlign: 'center' }}>#</span>
-              <span style={{ fontSize: 11, color: '#444' }}>Title</span>
-              <span style={{ fontSize: 11, color: '#444', textAlign: 'right' }}>Duration</span>
-              <span />
+            <div className="grid grid-cols-[40px_1fr_32px] sm:grid-cols-[40px_1fr_80px_60px_32px_32px] gap-3 px-3 pb-2 border-b border-white/5 mb-1">
+              <span className="text-[11px] text-[#444] text-center">#</span>
+              <span className="text-[11px] text-[#444]">Title</span>
+              <span className="hidden sm:block text-[11px] text-[#444] text-right">Duration</span>
+              <span className="hidden sm:block" />
               <span />
               <span />
             </div>
-            <div style={{ background: '#0d0d0d', borderRadius: 14, border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+            <div className="bg-[#0d0d0d] rounded-2xl border border-white/5 overflow-hidden">
               {albumSongs.map((song, i) => (
                 <SongRow
                   key={song._id}
