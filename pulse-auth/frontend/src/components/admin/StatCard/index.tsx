@@ -35,7 +35,7 @@ export function StatCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="p-4 sm:p-5 md:p-[22px_24px]"
+      className="p-4 sm:p-5 md:px-6 md:py-5"
       style={{
         background: '#141414',
         border: '1px solid rgba(255,255,255,0.05)',

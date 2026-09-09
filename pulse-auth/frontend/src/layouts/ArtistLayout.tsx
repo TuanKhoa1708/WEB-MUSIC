@@ -16,8 +16,8 @@ export function ArtistLayout() {
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         }}
       >
-        {/* Desktop sidebar — hidden on mobile via CSS */}
-        <div className="artist-sidebar-wrapper">
+        {/* Desktop sidebar — hidden on mobile */}
+        <div className="hidden md:block shrink-0">
           <ArtistSidebar />
         </div>
 
@@ -54,17 +54,6 @@ export function ArtistLayout() {
         </div>
       </div>
 
-      {/* Responsive artist sidebar styles */}
-      <style>{`
-        .artist-sidebar-wrapper {
-          display: flex;
-        }
-        @media (max-width: 767px) {
-          .artist-sidebar-wrapper {
-            display: none;
-          }
-        }
-      `}</style>
     </MobileSidebarContext.Provider>
   )
 }

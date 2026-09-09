@@ -53,20 +53,8 @@ export function ArtistHeader() {
       <button
         onClick={() => setMobileOpen(true)}
         aria-label="Open menu"
-        className="artist-hamburger"
+        className="md:hidden flex items-center justify-center shrink-0 w-9 h-9 rounded-[10px] bg-white/5 border border-white/10 text-[#888] cursor-pointer transition-all"
         style={{
-          width: 36,
-          height: 36,
-          borderRadius: 10,
-          border: '1px solid rgba(255,255,255,0.06)',
-          background: 'rgba(255,255,255,0.03)',
-          color: '#888',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          flexShrink: 0,
-          transition: 'all 0.2s',
         }}
         onMouseEnter={(e) => {
           (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
@@ -106,12 +94,9 @@ export function ArtistHeader() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
         {/* Hidden search input — expands on focus */}
         <div
-          className="artist-header-search"
+          className="hidden md:block relative overflow-hidden transition-[width] duration-300 ease-in-out"
           style={{
-            position: 'relative',
             width: searchFocused ? 220 : 0,
-            transition: 'width 0.3s ease',
-            overflow: 'hidden',
           }}
         >
           <input
@@ -173,7 +158,7 @@ export function ArtistHeader() {
               initials
             )}
           </div>
-          <div className="artist-header-username" style={{ lineHeight: 1 }}>
+          <div className="hidden md:block leading-none">
             <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
               {user?.fullName ?? 'Artist'}
             </div>
@@ -183,24 +168,6 @@ export function ArtistHeader() {
           </div>
         </div>
       </div>
-
-      {/* Responsive styles */}
-      <style>{`
-        .artist-hamburger {
-          display: none;
-        }
-        @media (max-width: 767px) {
-          .artist-hamburger {
-            display: flex;
-          }
-          .artist-header-search {
-            display: none;
-          }
-          .artist-header-username {
-            display: none;
-          }
-        }
-      `}</style>
     </header>
   )
 }
