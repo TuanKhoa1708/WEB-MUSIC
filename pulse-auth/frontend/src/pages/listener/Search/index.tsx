@@ -31,9 +31,9 @@ export function SearchPage() {
   const allSongs = songs.data?.data ?? []
 
   return (
-    <div className="px-4 md:px-6 lg:px-8 pt-6 md:pt-8" style={{ maxWidth: 1400, margin: '0 auto' }}>
+    <div className="px-4 md:px-6 lg:px-8 pt-8 md:pt-10" style={{ maxWidth: 1400, margin: '0 auto' }}>
       {/* Header */}
-      <div className="mb-6 md:mb-7">
+      <div className="mb-8 md:mb-9">
         <h1 className="text-2xl md:text-3xl font-black text-white m-0 tracking-tight">
           Search
         </h1>
@@ -44,7 +44,7 @@ export function SearchPage() {
         <>
           <section className="mb-8 md:mb-10">
             <SectionHeader title="Browse by Genre" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
               {GENRES.map((genre, i) => (
                 <GenreChip
                   key={genre}
@@ -161,7 +161,7 @@ function GenreChip({ genre, index, onClick }: { genre: string; index: number; on
     <div
       onClick={onClick}
       style={{
-        height: 72,
+        height: 88,
         borderRadius: 12,
         background: bg,
         border: `1px solid ${accent}22`,

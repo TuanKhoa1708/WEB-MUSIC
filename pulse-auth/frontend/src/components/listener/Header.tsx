@@ -81,22 +81,32 @@ export function ListenerHeader() {
           placeholder="Search songs, artists, albums..."
           value={searchQuery}
           onChange={handleSearchChange}
-          onFocus={() => { if (location.pathname !== '/listener/search') navigate('/listener/search') }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'
+            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)'
+            if (location.pathname !== '/listener/search') navigate('/listener/search')
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
+          className="search-input"
           style={{
             width: '100%',
-            height: 38,
+            height: 40,
             paddingLeft: 40,
             paddingRight: searchQuery ? 36 : 16,
             borderRadius: 20,
-            background: '#1a1a1a',
-            border: '1px solid rgba(255,255,255,0.08)',
-            color: '#fff',
+            background: '#1e1e1e',
+            border: '1px solid rgba(255,255,255,0.10)',
+            color: '#ffffff',
             fontSize: 14,
             outline: 'none',
-            transition: 'border-color 0.2s',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+            caretColor: '#3FD6FF',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)')}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+          onMouseEnter={(e) => { if (document.activeElement !== e.currentTarget) e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)' }}
+          onMouseLeave={(e) => { if (document.activeElement !== e.currentTarget) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)' }}
         />
         {searchQuery && (
           <button
