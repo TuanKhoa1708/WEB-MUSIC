@@ -34,9 +34,9 @@ export function RecentlyPlayedPage() {
   }
 
   return (
-    <div style={{ padding: '32px 32px 0', maxWidth: 900, margin: '0 auto' }}>
+    <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10" style={{ maxWidth: 900, margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 mb-8 md:mb-10">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{
             width: 60, height: 60, borderRadius: 14,

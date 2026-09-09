@@ -65,7 +65,7 @@ export function HomePage() {
             title="Recently Played"
             seeAllLink="/listener/history"
           />
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {recentSongs.slice(0, 6).map((song, i) => (
               <QuickPlayCard key={`${song._id}-${i}`} song={song} queue={recentSongs} />
             ))}
@@ -82,11 +82,11 @@ export function HomePage() {
             seeAllLink="/listener/search"
           />
           {recsLoading ? (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {recommendations!.data.slice(0, 6).map((song, i) => (
                 <SongCard key={song._id} song={song} queue={recommendations!.data} delay={i * 0.05} />
               ))}
@@ -123,11 +123,11 @@ export function HomePage() {
             seeAllLink="/listener/search"
           />
           {albumsLoading ? (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {albums!.data.map((album, i) => (
                 <AlbumCard key={album._id} album={album} delay={i * 0.05} />
               ))}
@@ -144,11 +144,11 @@ export function HomePage() {
             seeAllLink="/listener/search"
           />
           {artistsLoading ? (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {artists!.data.map((artist, i) => (
                 <ArtistCard key={artist._id} artist={artist} delay={i * 0.05} />
               ))}
