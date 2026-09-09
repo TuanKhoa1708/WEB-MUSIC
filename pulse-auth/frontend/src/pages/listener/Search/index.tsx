@@ -105,7 +105,7 @@ export function SearchPage() {
           {(artists.data?.data?.length ?? 0) > 0 && (
             <section className="mb-8 md:mb-10">
               <SectionHeader title="Artists" />
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {artists.data!.data.map((artist, i) => (
                   <ArtistCard key={artist._id} artist={artist} delay={i * 0.04} />
                 ))}
