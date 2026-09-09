@@ -138,7 +138,9 @@ export function ListenerHeader() {
             <span className="hidden sm:block text-[13px] font-semibold text-[#ddd]">
               {user.fullName?.split(' ')[0]}
             </span>
-            <PremiumBadge isPremium={user.isPremium === true} compact />
+            <div className="hidden sm:block">
+              <PremiumBadge isPremium={user.isPremium === true} compact />
+            </div>
           </button>
 
           <AnimatePresence>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, createContext, useContext } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -11,8 +11,25 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  X
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+
+// ─── Mobile sidebar context ───────────────────────────────────────────────────
+
+interface MobileSidebarCtx {
+  mobileOpen: boolean
+  setMobileOpen: (v: boolean) => void
+}
+
+export const MobileSidebarContext = createContext<MobileSidebarCtx>({
+  mobileOpen: false,
+  setMobileOpen: () => {},
+})
+
+export function useMobileSidebar() {
+  return useContext(MobileSidebarContext)
+}
 
 // ─── Nav section definition ───────────────────────────────────────────────────
 
@@ -50,10 +67,15 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ]
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// ─── Shared inner sidebar content ─────────────────────────────────────────────
 
-export function ArtistSidebar() {
-  const [collapsed, setCollapsed] = useState(false)
+function SidebarContent({
+  collapsed,
+  onClose,
+}: {
+  collapsed: boolean
+  onClose?: () => void
+}) {
   const { logout } = useAuth()
   const navigate = useNavigate()
 
@@ -63,23 +85,8 @@ export function ArtistSidebar() {
   }
 
   return (
-    <motion.aside
-      animate={{ width: collapsed ? 72 : 240 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        flexShrink: 0,
-        height: '100vh',
-        position: 'sticky',
-        top: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#0e0e0e',
-        borderRight: '1px solid rgba(255,255,255,0.05)',
-        overflow: 'hidden',
-        zIndex: 40,
-      }}
-    >
-      {/* ── Logo ─────────────────────────────────────────────────── */}
+    <>
+      {/* ── Logo ──────────────────────────────────────────── */}
       <div
         style={{
           height: 64,
@@ -123,15 +130,40 @@ export function ArtistSidebar() {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 whiteSpace: 'nowrap',
+                flex: 1,
               }}
             >
               Pulse Artist
             </motion.span>
           )}
         </AnimatePresence>
+
+        {/* Mobile close button */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Close menu"
+            style={{
+              marginLeft: 'auto',
+              width: 32,
+              height: 32,
+              borderRadius: 8,
+              border: '1px solid rgba(255,255,255,0.06)',
+              background: 'rgba(255,255,255,0.03)',
+              color: '#666',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <X size={14} />
+          </button>
+        )}
       </div>
 
-      {/* ── Nav sections ──────────────────────────────────────────── */}
+      {/* ── Nav sections ─────────────────────────────────────── */}
       <nav
         style={{
           flex: 1,
@@ -169,13 +201,18 @@ export function ArtistSidebar() {
 
             {/* Items */}
             {section.items.map((item) => (
-              <SidebarNavItem key={item.to} item={item} collapsed={collapsed} />
+              <SidebarNavItem
+                key={item.to}
+                item={item}
+                collapsed={collapsed}
+                onNavigate={onClose}
+              />
             ))}
           </div>
         ))}
       </nav>
 
-      {/* ── Bottom actions ────────────────────────────────────────── */}
+      {/* ── Bottom actions ────────────────────────────────── */}
       <div
         style={{
           padding: '12px',
@@ -226,60 +263,157 @@ export function ArtistSidebar() {
           </AnimatePresence>
         </button>
 
-        {/* Collapse button */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          title={collapsed ? 'Expand' : 'Collapse'}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            padding: '10px',
-            borderRadius: 10,
-            border: 'none',
-            background: 'transparent',
-            color: '#555',
-            cursor: 'pointer',
-            width: '100%',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)'
-            ;(e.currentTarget as HTMLButtonElement).style.color = '#888'
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
-            ;(e.currentTarget as HTMLButtonElement).style.color = '#555'
-          }}
-        >
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                style={{ fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap' }}
-              >
-                Collapse
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </button>
+        {/* Collapse toggle — desktop only */}
+        {!onClose && (
+          <button
+            onClick={() => {/* handled by parent */}}
+            title={collapsed ? 'Expand' : 'Collapse'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              padding: '10px',
+              borderRadius: 10,
+              border: 'none',
+              background: 'transparent',
+              color: '#555',
+              cursor: 'pointer',
+              width: '100%',
+              transition: 'all 0.2s',
+            }}
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  style={{ fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap' }}
+                >
+                  Collapse
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
+        )}
+      </div>
+    </>
+  )
+}
+
+// ─── Desktop sidebar ──────────────────────────────────────────────────────────
+
+export function ArtistSidebar() {
+  const [collapsed, setCollapsed] = useState(false)
+
+  return (
+    <motion.aside
+      animate={{ width: collapsed ? 72 : 240 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        flexShrink: 0,
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        background: '#0e0e0e',
+        borderRight: '1px solid rgba(255,255,255,0.05)',
+        overflow: 'hidden',
+        zIndex: 40,
+      }}
+      className="artist-sidebar-desktop"
+    >
+      <div
+        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+        onClick={(e) => {
+          // Collapse toggle button click propagates here
+          const btn = (e.target as Element).closest('button[title="Expand"], button[title="Collapse"]')
+          if (btn) setCollapsed((c) => !c)
+        }}
+      >
+        <SidebarContent collapsed={collapsed} />
       </div>
     </motion.aside>
   )
 }
 
+// ─── Mobile drawer ────────────────────────────────────────────────────────────
+
+export function ArtistMobileDrawer({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean
+  onClose: () => void
+}) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.6)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 200,
+            }}
+          />
+
+          {/* Drawer panel */}
+          <motion.aside
+            initial={{ x: -280 }}
+            animate={{ x: 0 }}
+            exit={{ x: -280 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: 260,
+              height: '100vh',
+              background: '#0e0e0e',
+              borderRight: '1px solid rgba(255,255,255,0.06)',
+              zIndex: 201,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            }}
+          >
+            <SidebarContent collapsed={false} onClose={onClose} />
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
+  )
+}
+
 // ─── Single Nav Item ──────────────────────────────────────────────────────────
 
-function SidebarNavItem({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
+function SidebarNavItem({
+  item,
+  collapsed,
+  onNavigate,
+}: {
+  item: NavItem
+  collapsed: boolean
+  onNavigate?: () => void
+}) {
   return (
     <NavLink
       to={item.to}
       title={collapsed ? item.label : undefined}
+      onClick={onNavigate}
       style={{ textDecoration: 'none', display: 'block', padding: '2px 10px' }}
     >
       {({ isActive }) => (

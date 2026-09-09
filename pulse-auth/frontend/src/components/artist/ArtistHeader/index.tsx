@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Menu } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useMobileSidebar } from '@/components/artist/Sidebar'
 
 // ─── Breadcrumb map ───────────────────────────────────────────────────────────
 
@@ -19,6 +20,7 @@ export function ArtistHeader() {
   const { user } = useAuth()
   const location = useLocation()
   const [searchFocused, setSearchFocused] = useState(false)
+  const { setMobileOpen } = useMobileSidebar()
 
   // Fallback for nested routes like /artist/playlists/:id
   const crumbs = BREADCRUMB_MAP[location.pathname] ?? ['Artist']
@@ -47,6 +49,37 @@ export function ArtistHeader() {
         gap: 20,
       }}
     >
+      {/* ── Hamburger (mobile only) ──────────────────────────── */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open menu"
+        className="artist-hamburger"
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: 10,
+          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(255,255,255,0.03)',
+          color: '#888',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          flexShrink: 0,
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#fff'
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#888'
+        }}
+      >
+        <Menu size={18} />
+      </button>
+
       {/* ── Breadcrumb ──────────────────────────────────────────── */}
       <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
         {crumbs.map((crumb, i) => (
@@ -73,6 +106,7 @@ export function ArtistHeader() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
         {/* Hidden search input — expands on focus */}
         <div
+          className="artist-header-search"
           style={{
             position: 'relative',
             width: searchFocused ? 220 : 0,
@@ -139,7 +173,7 @@ export function ArtistHeader() {
               initials
             )}
           </div>
-          <div style={{ lineHeight: 1 }}>
+          <div className="artist-header-username" style={{ lineHeight: 1 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
               {user?.fullName ?? 'Artist'}
             </div>
@@ -149,6 +183,24 @@ export function ArtistHeader() {
           </div>
         </div>
       </div>
+
+      {/* Responsive styles */}
+      <style>{`
+        .artist-hamburger {
+          display: none;
+        }
+        @media (max-width: 767px) {
+          .artist-hamburger {
+            display: flex;
+          }
+          .artist-header-search {
+            display: none;
+          }
+          .artist-header-username {
+            display: none;
+          }
+        }
+      `}</style>
     </header>
   )
 }
