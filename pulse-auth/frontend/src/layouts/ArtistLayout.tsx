@@ -54,17 +54,6 @@ export function ArtistLayout() {
         </div>
       </div>
 
-      {/* Responsive artist sidebar styles */}
-      <style>{`
-        .artist-sidebar-wrapper {
-          display: flex;
-        }
-        @media (max-width: 767px) {
-          .artist-sidebar-wrapper {
-            display: none;
-          }
-        }
-      `}</style>
     </MobileSidebarContext.Provider>
   )
 }
