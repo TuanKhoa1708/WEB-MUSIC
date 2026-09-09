@@ -31,7 +31,7 @@ export function SearchPage() {
   const allSongs = songs.data?.data ?? []
 
   return (
-    <div className="px-4 md:px-6 lg:px-8 pt-8 md:pt-10" style={{ maxWidth: 1400, margin: '0 auto' }}>
+    <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10" style={{ maxWidth: 1400, margin: '0 auto' }}>
       {/* Header */}
       <div className="mb-8 md:mb-9">
         <h1 className="text-2xl md:text-3xl font-black text-white m-0 tracking-tight">

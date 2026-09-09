@@ -51,7 +51,7 @@ export function PlaylistDetailPage() {
 
   if (playlistLoading) {
     return (
-      <div className="px-4 md:px-6 lg:px-8 pt-6 md:pt-8 max-w-[1000px] mx-auto">
+      <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10 max-w-[1000px] mx-auto">
         <div className="h-44 bg-[#111] rounded-2xl mb-6" />
         {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
       </div>
@@ -72,7 +72,7 @@ export function PlaylistDetailPage() {
         description={modalConfig.description}
       />
 
-      <div className="px-4 md:px-6 lg:px-8 pt-6 md:pt-8 pb-8 max-w-[1000px] mx-auto">
+      <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10 pb-8 max-w-[1000px] mx-auto">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
