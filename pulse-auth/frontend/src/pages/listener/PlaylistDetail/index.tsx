@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Play, Shuffle, ListMusic, Crown, Lock } from 'lucide-react'
 import { usePlaylistDetail, usePlaylistSongs } from '@/hooks/listener/usePlaylists'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
