@@ -42,7 +42,7 @@ export function HomePage() {
 
   return (
     <div
-      className="px-4 md:px-6 lg:px-8 pt-6 md:pt-8"
+      className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10"
       style={{ maxWidth: 1400, margin: '0 auto' }}
     >
       {/* Greeting */}

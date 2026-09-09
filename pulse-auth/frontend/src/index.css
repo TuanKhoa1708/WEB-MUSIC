@@ -247,3 +247,13 @@ body {
   to   { transform: rotate(360deg); }
 }
 
+/* Search input — ensure text & placeholder are visible */
+.search-input {
+  color: #ffffff !important;
+}
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+.search-input:focus {
+  color: #ffffff !important;
+}
