@@ -4,6 +4,7 @@ import { FavoriteButton } from './FavoriteButton'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
 import { useListenRoom } from '@/contexts/ListenRoomContext'
 import toast from 'react-hot-toast'
+import { cn } from '@/lib/utils'
 import type { Song } from '@/types/song.types'
 
 interface SongCardProps {

@@ -30,6 +30,7 @@ export function SearchPage() {
   const { data: genreSongs } = useSongs({ limit: 4 })
   const allSongs = songs.data?.data ?? []
 
+  return (
     <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10 max-w-[1400px] mx-auto">
       {/* Header */}
       <div className="mb-8 md:mb-9">
