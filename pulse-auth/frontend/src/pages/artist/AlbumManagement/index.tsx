@@ -194,6 +194,7 @@ export function AlbumManagementPage() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="h-10 w-full sm:w-[240px] pl-10 pr-4 rounded-xl bg-[#141414] border border-white/10 text-white text-sm outline-none focus:border-[#3FD6FF]/50 transition-colors"
+              style={{ paddingLeft: '2.5rem' }}
             />
           </form>
 
@@ -207,6 +208,7 @@ export function AlbumManagementPage() {
                 setEditTarget(null)
                 setIsModalOpen(true)
               }}
+              style={{ gap: '8px' }}
             >
               <Plus size={18} strokeWidth={2.5} />
               Create Album

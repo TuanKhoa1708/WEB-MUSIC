@@ -159,11 +159,11 @@ export function ArtistHeader() {
                 initials
               )}
             </div>
-            <div className="hidden md:block leading-none" style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
+            <div className="hidden md:flex flex-col gap-1" style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em', lineHeight: 1 }}>
                 {user?.fullName ?? 'Artist'}
               </div>
-              <div style={{ fontSize: 11, color: '#3FD6FF', fontWeight: 600, marginTop: 2 }}>
+              <div style={{ fontSize: 12, color: '#3FD6FF', fontWeight: 600, lineHeight: 1 }}>
                 Artist
               </div>
             </div>
