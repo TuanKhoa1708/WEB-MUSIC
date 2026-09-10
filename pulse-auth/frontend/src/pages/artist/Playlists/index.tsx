@@ -26,14 +26,14 @@ const PAGE_SIZE = 12
 
 function PlaylistEmptyState({ isSearch }: { isSearch?: boolean }) {
   return (
-    <div className="text-center py-16 px-6 col-span-full">
-      <div className="w-16 h-16 rounded-[20px] bg-[#F7B500]/10 border border-[#F7B500]/20 flex items-center justify-center mx-auto mb-5 text-[#F7B500]">
+    <div className="flex flex-col items-center justify-center text-center py-16 px-6 col-span-full">
+      <div className="w-16 h-16 rounded-[20px] bg-[#F7B500]/10 border border-[#F7B500]/20 flex items-center justify-center mb-5 text-[#F7B500]">
         <ListMusic size={28} />
       </div>
       <p className="text-lg text-white font-bold mb-2 tracking-tight">
         {isSearch ? 'No playlists found' : 'No playlists yet'}
       </p>
-      <p className="text-sm text-[#888] max-w-[300px] mx-auto">
+      <p className="text-sm text-[#888] max-w-[300px]">
         {isSearch
           ? 'Try adjusting your search keywords.'
           : 'Create your first playlist to organize your favorite tracks.'}

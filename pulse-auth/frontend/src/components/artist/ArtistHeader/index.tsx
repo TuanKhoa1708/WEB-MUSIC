@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight, LogOut, User } from 'lucide-react'
+import { ChevronRight, LogOut, User, Menu } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useMobileSidebar } from '@/components/artist/Sidebar'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // ─── Breadcrumb map ───────────────────────────────────────────────────────────
@@ -18,6 +19,7 @@ const BREADCRUMB_MAP: Record<string, string[]> = {
 
 export function ArtistHeader() {
   const { user, logout } = useAuth()
+  const { setMobileOpen } = useMobileSidebar()
   const location = useLocation()
   const navigate = useNavigate()
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -61,6 +63,22 @@ export function ArtistHeader() {
         gap: 20,
       }}
     >
+      {/* ── Hamburger (mobile only) ──────────────────────────── */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open menu"
+        className="md:hidden flex items-center justify-center shrink-0 w-9 h-9 rounded-[10px] bg-white/5 border border-white/10 text-[#888] cursor-pointer transition-all"
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#fff'
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#888'
+        }}
+      >
+        <Menu size={18} />
+      </button>
 
       {/* ── Breadcrumb ──────────────────────────────────────────── */}
       <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
@@ -86,7 +104,6 @@ export function ArtistHeader() {
 
       {/* ── Right: user pill ────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-
         {/* Divider */}
         <div
           style={{
@@ -142,7 +159,7 @@ export function ArtistHeader() {
                 initials
               )}
             </div>
-            <div className="artist-header-username" style={{ lineHeight: 1, textAlign: 'left' }}>
+            <div className="hidden md:block leading-none" style={{ textAlign: 'left' }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
                 {user?.fullName ?? 'Artist'}
               </div>
@@ -195,15 +212,6 @@ export function ArtistHeader() {
           </AnimatePresence>
         </div>
       </div>
-
-      {/* Responsive styles */}
-      <style>{`
-        @media (max-width: 767px) {
-          .artist-header-username {
-            display: none;
-          }
-        }
-      `}</style>
     </header>
   )
 }

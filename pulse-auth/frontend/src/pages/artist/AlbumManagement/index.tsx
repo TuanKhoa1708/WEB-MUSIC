@@ -24,14 +24,14 @@ const PAGE_SIZE = 12
 
 function AlbumEmptyState({ isSearch }: { isSearch?: boolean }) {
   return (
-    <div className="text-center py-16 px-6 col-span-full">
-      <div className="w-16 h-16 rounded-[20px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center mx-auto mb-5 text-[#3FD6FF]">
+    <div className="flex flex-col items-center justify-center text-center py-16 px-6 col-span-full">
+      <div className="w-16 h-16 rounded-[20px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center mb-5 text-[#3FD6FF]">
         <Disc3 size={28} />
       </div>
       <p className="text-lg text-white font-bold mb-2 tracking-tight">
         {isSearch ? 'No albums found' : 'No albums yet'}
       </p>
-      <p className="text-sm text-[#888] max-w-[300px] mx-auto">
+      <p className="text-sm text-[#888] max-w-[300px]">
         {isSearch
           ? 'Try adjusting your search keywords.'
           : 'Create your first album and start building your music catalog.'}
