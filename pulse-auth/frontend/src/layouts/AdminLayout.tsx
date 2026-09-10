@@ -73,17 +73,6 @@ export function AdminLayout() {
         </div>
       </div>
 
-      {/* Responsive admin sidebar styles */}
-      <style>{`
-        .admin-sidebar-wrapper {
-          display: flex;
-        }
-        @media (max-width: 767px) {
-          .admin-sidebar-wrapper {
-            display: none;
-          }
-        }
-      `}</style>
     </MobileSidebarContext.Provider>
   )
 }

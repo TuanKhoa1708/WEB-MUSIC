@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { Bell, Search, ChevronRight, Menu } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Bell, Search, ChevronRight, LogOut, Settings } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useMobileSidebar } from '@/components/admin/Sidebar'
+import { motion, AnimatePresence } from 'framer-motion'
 
 // ─── Breadcrumb map ───────────────────────────────────────────────────────────
 
@@ -20,11 +20,23 @@ const BREADCRUMB_MAP: Record<string, string[]> = {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function AdminHeader() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
   const [searchFocused, setSearchFocused] = useState(false)
   const [notifCount] = useState(3)
-  const { setMobileOpen } = useMobileSidebar()
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   const crumbs = BREADCRUMB_MAP[location.pathname] ?? ['Admin']
 
@@ -49,36 +61,6 @@ export function AdminHeader() {
         minWidth: 0,
       }}
     >
-      {/* ── Hamburger (mobile only) ──────────────────────────── */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        aria-label="Open menu"
-        className="admin-hamburger"
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: 10,
-          border: '1px solid rgba(255,255,255,0.06)',
-          background: 'rgba(255,255,255,0.03)',
-          color: '#888',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          flexShrink: 0,
-          transition: 'all 0.2s',
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#fff'
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#888'
-        }}
-      >
-        <Menu size={18} />
-      </button>
 
       {/* ── Breadcrumb ────────────────────────────────────────── */}
       <nav
@@ -224,48 +206,98 @@ export function AdminHeader() {
           }}
         />
 
-        {/* Admin avatar + name */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', flexShrink: 0 }}>
-          <div
+        {/* Admin avatar + name — click to open dropdown */}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setShowUserMenu((p) => !p)}
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: 9,
-              background: 'linear-gradient(135deg, #3FD6FF22, #3FD6FF0a)',
-              border: '1px solid rgba(63,214,255,0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 13,
-              fontWeight: 700,
-              color: '#3FD6FF',
+              display: 'flex', alignItems: 'center', gap: 8,
+              background: 'transparent',
+              border: '1px solid rgba(255,255,255,0.05)',
+              borderRadius: 999,
+              padding: '4px 10px 4px 4px',
+              cursor: 'pointer',
+              transition: 'border-color 0.2s',
               flexShrink: 0,
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)')}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)')}
           >
-            {user?.fullName?.charAt(0).toUpperCase() ?? 'A'}
-          </div>
-          {/* Hide name text on narrow screens */}
-          <div className="admin-header-username" style={{ lineHeight: 1 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>
-              {user?.fullName ?? 'Admin'}
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 9,
+                background: 'linear-gradient(135deg, #3FD6FF22, #3FD6FF0a)',
+                border: '1px solid rgba(63,214,255,0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 13,
+                fontWeight: 700,
+                color: '#3FD6FF',
+                flexShrink: 0,
+              }}
+            >
+              {user?.fullName?.charAt(0).toUpperCase() ?? 'A'}
             </div>
-            <div style={{ fontSize: 11, color: '#3FD6FF', fontWeight: 600, marginTop: 2 }}>
-              Administrator
+            <div className="admin-header-username" style={{ lineHeight: 1, textAlign: 'left' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>
+                {user?.fullName ?? 'Admin'}
+              </div>
+              <div style={{ fontSize: 11, color: '#3FD6FF', fontWeight: 600, marginTop: 2 }}>
+                Administrator
+              </div>
             </div>
-          </div>
+          </button>
+
+          <AnimatePresence>
+            {showUserMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  right: 0,
+                  background: '#181818',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 12,
+                  overflow: 'hidden',
+                  minWidth: 180,
+                  boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
+                  zIndex: 100,
+                }}
+              >
+                <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{user?.fullName}</div>
+                  <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{user?.email}</div>
+                  <div style={{ fontSize: 11, color: '#3FD6FF', fontWeight: 600, marginTop: 4 }}>Administrator</div>
+                </div>
+                <div style={{ padding: '6px' }}>
+                  <MenuBtn
+                    icon={<Settings size={14} />}
+                    label="Settings"
+                    onClick={() => { navigate('/admin/settings'); setShowUserMenu(false) }}
+                  />
+                  <MenuBtn
+                    icon={<LogOut size={14} />}
+                    label="Log Out"
+                    danger
+                    onClick={() => { logout(); navigate('/') }}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* Responsive styles */}
       <style>{`
-        /* Show hamburger only on mobile */
-        .admin-hamburger {
-          display: none;
-        }
         @media (max-width: 767px) {
-          .admin-hamburger {
-            display: flex;
-          }
           .admin-header-search {
             display: none;
           }
@@ -280,5 +312,54 @@ export function AdminHeader() {
         }
       `}</style>
     </header>
+  )
+}
+
+// ─── Dropdown menu button ─────────────────────────────────────────────────────
+
+function MenuBtn({
+  icon,
+  label,
+  onClick,
+  danger = false,
+}: {
+  icon: React.ReactNode
+  label: string
+  onClick: () => void
+  danger?: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '9px 12px',
+        borderRadius: 8,
+        border: 'none',
+        background: 'transparent',
+        color: danger ? '#ef4444' : '#aaa',
+        fontSize: 13,
+        fontWeight: 500,
+        cursor: 'pointer',
+        transition: 'all 0.15s',
+        textAlign: 'left',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = danger
+          ? 'rgba(239,68,68,0.1)'
+          : 'rgba(255,255,255,0.06)'
+        e.currentTarget.style.color = danger ? '#f87171' : '#fff'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'transparent'
+        e.currentTarget.style.color = danger ? '#ef4444' : '#aaa'
+      }}
+    >
+      {icon}
+      {label}
+    </button>
   )
 }
