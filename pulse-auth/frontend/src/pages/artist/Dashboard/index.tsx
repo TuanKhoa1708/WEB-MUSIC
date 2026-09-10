@@ -2,7 +2,6 @@ import { motion } from 'framer-motion'
 import {
   Music,
   Disc3,
-  ListMusic,
   TrendingUp,
   Play,
   Heart,
@@ -59,11 +58,12 @@ export function ArtistDashboardPage() {
                 color: '#fff',
                 letterSpacing: '-0.03em',
                 lineHeight: 1.1,
+                margin: 0,
               }}
             >
               Welcome back, {user?.fullName?.split(' ')[0] || 'Artist'}! 👋
             </h1>
-            <p style={{ fontSize: 'clamp(13px, 1.5vw, 14px)', color: '#777', marginTop: 6 }}>
+            <p style={{ fontSize: 'clamp(13px, 1.5vw, 14px)', color: '#777', marginTop: 6, marginBottom: 0 }}>
               Here is how your music performance is looking today.
             </p>
           </div>
@@ -95,7 +95,7 @@ export function ArtistDashboardPage() {
         </div>
       </motion.div>
 
-      {/* ── Stat Cards Grid (Chuẩn responsive hệt Admin) ───────────────────── */}
+      {/* ── Stat Cards Grid ──────────────────────────────────────────────────── */}
       <div
         style={{
           display: 'grid',
