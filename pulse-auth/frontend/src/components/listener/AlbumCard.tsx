@@ -41,39 +41,64 @@ export function AlbumCard({ album, delay = 0, onClick }: AlbumCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.35 }}
       onClick={handleClick}
-      className="group relative bg-[#111] border border-white/5 rounded-[14px] overflow-hidden cursor-pointer transition-transform duration-200 hover:-translate-y-[3px]"
+      whileHover={{ y: -3 }}
+      style={{
+        background: '#111',
+        border: '1px solid rgba(255,255,255,0.04)',
+        borderRadius: 14,
+        overflow: 'hidden',
+        cursor: 'pointer',
+        position: 'relative',
+      }}
     >
       {/* Cover */}
-      <div className="relative pt-[100%] bg-[#181818]">
+      <div style={{ position: 'relative', paddingTop: '100%', background: '#181818' }}>
         {album.coverUrl ? (
           <img
             src={album.coverUrl}
             alt={album.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[#333]">
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
             <Disc3 size={40} />
           </div>
         )}
 
         {/* Play button overlay */}
-        <div className="absolute bottom-2.5 right-2.5 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
+        <motion.div
+          className="album-play-btn"
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ opacity: 1, scale: 1 }}
+          style={{
+            position: 'absolute',
+            bottom: 10,
+            right: 10,
+          }}
+        >
           <button
             onClick={handlePlay}
-            className="w-9 h-9 rounded-full bg-[#3FD6FF] border-none flex items-center justify-center cursor-pointer shadow-[0_4px_16px_rgba(63,214,255,0.4)]"
+            style={{
+              width: 36, height: 36,
+              borderRadius: '50%',
+              background: '#3FD6FF',
+              border: 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(63,214,255,0.4)',
+            }}
           >
-            <Play size={16} fill="#000" color="#000" className="ml-0.5" />
+            <Play size={16} fill="#000" color="#000" style={{ marginLeft: 2 }} />
           </button>
-        </div>
+        </motion.div>
       </div>
 
       {/* Info */}
-      <div className="p-[12px_12px_10px]">
-        <p className="text-[13px] font-bold text-white m-0 whitespace-nowrap overflow-hidden text-ellipsis">
+      <div style={{ padding: '12px 12px 10px' }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {album.title}
         </p>
-        <p className="text-xs text-[#666] mt-[3px] mb-0 whitespace-nowrap overflow-hidden text-ellipsis">
+        <p style={{ fontSize: 12, color: '#666', margin: '3px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {getArtistName(album)}{album.releaseYear ? ` • ${album.releaseYear}` : ''}
         </p>
       </div>

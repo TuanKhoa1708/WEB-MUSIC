@@ -31,7 +31,7 @@ export function SearchPage() {
   const allSongs = songs.data?.data ?? []
 
   return (
-    <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10 max-w-[1400px] mx-auto">
+    <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10" style={{ maxWidth: 1400, margin: '0 auto' }}>
       {/* Header */}
       <div className="mb-8 md:mb-9">
         <h1 className="text-2xl md:text-3xl font-black text-white m-0 tracking-tight">
@@ -160,16 +160,26 @@ function GenreChip({ genre, index, onClick }: { genre: string; index: number; on
   return (
     <div
       onClick={onClick}
-      className="h-[88px] rounded-xl flex items-center justify-center text-[15px] font-bold cursor-pointer transition-all duration-150 hover:scale-[1.03]"
       style={{
+        height: 88,
+        borderRadius: 12,
         background: bg,
         border: `1px solid ${accent}22`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 15,
+        fontWeight: 700,
         color: accent,
+        cursor: 'pointer',
+        transition: 'transform 0.15s, border-color 0.15s',
       }}
       onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'scale(1.03)'
         e.currentTarget.style.borderColor = `${accent}55`
       }}
       onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1)'
         e.currentTarget.style.borderColor = `${accent}22`
       }}
     >

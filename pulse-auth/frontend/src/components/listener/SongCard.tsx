@@ -4,7 +4,6 @@ import { FavoriteButton } from './FavoriteButton'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
 import { useListenRoom } from '@/contexts/ListenRoomContext'
 import toast from 'react-hot-toast'
-import { cn } from '@/lib/utils'
 import type { Song } from '@/types/song.types'
 
 interface SongCardProps {
@@ -39,47 +38,61 @@ export function SongCard({ song, queue, delay = 0 }: SongCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.35 }}
       onClick={handleClick}
-      className={cn(
-        "group relative rounded-[14px] overflow-hidden transition-all duration-200",
-        isGuestLocked ? "cursor-not-allowed opacity-75" : "cursor-pointer",
-        isCurrent ? "bg-[rgba(63,214,255,0.06)] border border-[rgba(63,214,255,0.2)]" : "bg-[#111] border border-white/5 hover:-translate-y-[3px]"
-      )}
+      className="group"
+      style={{
+        background: isCurrent ? 'rgba(63,214,255,0.06)' : '#111',
+        border: isCurrent ? '1px solid rgba(63,214,255,0.2)' : '1px solid rgba(255,255,255,0.04)',
+        borderRadius: 14,
+        overflow: 'hidden',
+        cursor: isGuestLocked ? 'not-allowed' : 'pointer',
+        transition: 'transform 0.2s, background 0.2s',
+        position: 'relative',
+        opacity: isGuestLocked ? 0.75 : 1,
+      }}
+      whileHover={isGuestLocked ? undefined : { y: -3 }}
     >
       {/* Cover */}
-      <div className="relative pt-[100%] bg-[#181818]">
+      <div style={{ position: 'relative', paddingTop: '100%', background: '#181818' }}>
         {song.coverUrl ? (
           <img
             src={song.coverUrl}
             alt={song.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[#333]">
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
             <Music2 size={36} />
           </div>
         )}
 
         {/* Play overlay */}
         <div
-          className={cn(
-            "absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-200 group-hover:opacity-100",
-            (isCurrent && isPlaying) ? "opacity-100" : "opacity-0"
-          )}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: isCurrent && isPlaying ? 1 : 0,
+            transition: 'opacity 0.2s',
+          }}
+          className="play-overlay"
         >
-          <div className="w-9 h-9 rounded-full bg-[#3FD6FF] flex items-center justify-center">
-            <Play size={16} fill="#000" color="#000" className="ml-0.5" />
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#3FD6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Play size={16} fill="#000" color="#000" style={{ marginLeft: 2 }} />
           </div>
         </div>
       </div>
 
       {/* Info */}
       <div className="p-2 md:p-3">
-        <div className="flex items-start justify-between gap-1.5">
-          <div className="min-w-0">
-            <p className={cn("text-[13px] font-bold m-0 whitespace-nowrap overflow-hidden text-ellipsis", isCurrent ? "text-[#3FD6FF]" : "text-white")}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 6 }}>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: isCurrent ? '#3FD6FF' : '#fff', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {song.title}
             </p>
-            <p className="text-xs text-[#666] m-0 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
+            <p style={{ fontSize: 12, color: '#666', margin: '3px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {getArtistName(song)}
             </p>
           </div>
@@ -88,6 +101,8 @@ export function SongCard({ song, queue, delay = 0 }: SongCardProps) {
           </div>
         </div>
       </div>
+
+      <style>{`.play-overlay:hover { opacity: 1 !important; }`}</style>
     </motion.div>
   )
 }
