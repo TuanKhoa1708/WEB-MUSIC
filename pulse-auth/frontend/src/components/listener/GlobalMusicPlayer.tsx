@@ -140,29 +140,11 @@ export function GlobalMusicPlayer() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: 'fixed',
-              bottom: 88,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 49,
-              background: 'linear-gradient(135deg, rgba(63,214,255,0.12), rgba(32,148,255,0.06))',
-              border: '1px solid rgba(63,214,255,0.25)',
-              borderRadius: 12,
-              padding: '8px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(63,214,255,0.08)',
-            }}
+            className="fixed bottom-[88px] left-1/2 -translate-x-1/2 z-[49] bg-gradient-to-br from-[#3FD6FF]/10 to-[#2094ff]/5 border border-[#3FD6FF]/25 rounded-xl px-4 py-2 flex items-center gap-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.5),0_0_0_1px_rgba(63,214,255,0.08)] whitespace-nowrap"
           >
-            <div style={{
-              width: 6, height: 6, borderRadius: '50%',
-              background: '#4ade80',
-              boxShadow: '0 0 8px rgba(74,222,128,0.6)',
-            }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#4ade80] shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
             <Radio size={12} color="#3FD6FF" />
-            <span style={{ fontSize: 12, color: '#3FD6FF', fontWeight: 700 }}>
+            <span className="text-xs text-[#3FD6FF] font-bold">
               Listening with friends · Host controls playback
             </span>
           </motion.div>
@@ -182,58 +164,31 @@ export function GlobalMusicPlayer() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: 'fixed',
-              bottom: 88,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 49,
-              background: 'linear-gradient(135deg, #0f0f0f, #161610)',
-              border: '1px solid rgba(255,185,0,0.25)',
-              borderRadius: 14,
-              padding: '12px 18px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 14,
-              boxShadow: '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,185,0,0.1)',
-              maxWidth: 520,
-              width: 'calc(100vw - 48px)',
-            }}
+            className="fixed bottom-[88px] left-1/2 -translate-x-1/2 z-[49] bg-gradient-to-br from-[#0f0f0f] to-[#161610] border border-[#FFB900]/25 rounded-[14px] px-[18px] py-3 flex items-center gap-3.5 shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,185,0,0.1)] w-[calc(100vw-48px)] max-w-[520px]"
           >
-            <div style={{
-              width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-              background: 'linear-gradient(135deg, rgba(255,185,0,0.15), rgba(255,140,0,0.08))',
-              border: '1px solid rgba(255,185,0,0.3)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+            <div className="w-9 h-9 rounded-[10px] shrink-0 bg-gradient-to-br from-[#FFB900]/15 to-[#FF8C00]/10 border border-[#FFB900]/30 flex items-center justify-center">
               <Headphones size={16} color="#FFB900" />
             </div>
 
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#FFB900', margin: 0 }}>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-[#FFB900] m-0">
                 Enjoying your music? 🎵
               </p>
-              <p style={{ fontSize: 11, color: '#666', margin: '2px 0 0' }}>
+              <p className="text-[11px] text-[#666] mt-0.5 mb-0">
                 Get HD audio, unlimited skips &amp; no ads with Premium.
               </p>
             </div>
 
             <button
               onClick={() => { dismissAd(); navigate('/listener/premium') }}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0,
-                background: 'linear-gradient(135deg, #FFB900, #FF8C00)',
-                border: 'none', borderRadius: 8,
-                color: '#000', fontSize: 11, fontWeight: 800,
-                padding: '6px 12px', cursor: 'pointer', whiteSpace: 'nowrap',
-              }}
+              className="flex items-center gap-1.5 shrink-0 bg-gradient-to-br from-[#FFB900] to-[#FF8C00] border-none rounded-lg text-black text-[11px] font-extrabold px-3 py-1.5 cursor-pointer whitespace-nowrap"
             >
               <Crown size={11} /> Upgrade
             </button>
 
             <button
               onClick={dismissAd}
-              style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4, flexShrink: 0 }}
+              className="bg-transparent border-none text-[#555] cursor-pointer p-1 shrink-0 hover:text-white transition-colors"
               title="Dismiss"
             >
               <X size={14} />

@@ -1,13 +1,21 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Search, X, LogOut, Settings, Crown } from 'lucide-react'
+import { Search, X, LogOut, Settings, Crown, Menu } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
 import { NotificationBell } from './NotificationBell'
+import { useListenerMobileSidebar } from '@/components/listener/Sidebar'
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+function cn(...inputs: (string | undefined | null | false)[]) {
+  return twMerge(clsx(inputs))
+}
 
 export function ListenerHeader() {
   const { user, logout } = useAuth()
+  const { setMobileOpen } = useListenerMobileSidebar()
   const navigate = useNavigate()
   const location = useLocation()
   const [searchQuery, setSearchQuery] = useState('')
@@ -54,53 +62,45 @@ export function ListenerHeader() {
   }, [])
 
   return (
-    <header className="flex items-center gap-3 sm:gap-4 px-4 md:px-6 sticky top-0 z-20 h-16 bg-[#090909]/85 backdrop-blur-xl border-b border-white/5">
+    <header className="flex items-center gap-3 sm:gap-4 px-4 md:px-6 sticky top-0 z-20 h-16 bg-[#090909]/85 backdrop-blur-xl border-b border-white/5 shrink-0">
+      
+      {/* Hamburger (Mobile) */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="md:hidden flex items-center justify-center shrink-0 w-9 h-9 rounded-[10px] bg-white/5 border border-white/10 text-[#888] hover:bg-white/10 hover:text-white transition-colors"
+      >
+        <Menu size={18} />
+      </button>
+
       {/* Search bar */}
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="flex-1 max-w-[480px] relative min-w-[140px]"
+        className="flex-1 max-w-[480px] relative min-w-[140px] group"
       >
         <Search
           size={15}
-          style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#555', pointerEvents: 'none' }}
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#555] pointer-events-none group-focus-within:text-[#3FD6FF] transition-colors"
         />
         <input
           type="text"
           placeholder="Search songs, artists, albums..."
           value={searchQuery}
           onChange={handleSearchChange}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'
-            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)'
+          onFocus={() => {
             if (location.pathname !== '/listener/search') navigate('/listener/search')
           }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
-            e.currentTarget.style.boxShadow = 'none'
-          }}
-          className="search-input"
-          style={{
-            width: '100%',
-            height: 40,
-            paddingLeft: 40,
-            paddingRight: searchQuery ? 36 : 16,
-            borderRadius: 20,
-            background: '#1e1e1e',
-            border: '1px solid rgba(255,255,255,0.10)',
-            color: '#ffffff',
-            fontSize: 14,
-            outline: 'none',
-            transition: 'border-color 0.2s, box-shadow 0.2s',
-            caretColor: '#3FD6FF',
-          }}
-          onMouseEnter={(e) => { if (document.activeElement !== e.currentTarget) e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)' }}
-          onMouseLeave={(e) => { if (document.activeElement !== e.currentTarget) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)' }}
+          className={cn(
+            "w-full h-10 rounded-full bg-[#1e1e1e] border border-white/10 text-white text-[14px] outline-none transition-all",
+            "focus:border-[#3FD6FF]/50 focus:shadow-[0_0_0_3px_rgba(63,214,255,0.08)] hover:border-[#3FD6FF]/30",
+            searchQuery ? "pl-10 pr-9" : "pl-10 pr-4"
+          )}
+          style={{ caretColor: '#3FD6FF' }}
         />
         {searchQuery && (
           <button
             type="button"
             onClick={handleClear}
-            style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 2 }}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors p-0.5"
           >
             <X size={14} />
           </button>
@@ -121,18 +121,14 @@ export function ListenerHeader() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setShowUserMenu((p) => !p)}
-            className="flex items-center gap-1.5 sm:gap-2 bg-transparent border border-white/5 hover:border-[#3FD6FF]/30 rounded-full p-1 pr-2 sm:pr-3 cursor-pointer transition-all"
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)')}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+            className="flex items-center gap-1.5 sm:gap-2 bg-transparent border border-white/5 hover:border-[#3FD6FF]/30 rounded-full p-1 pr-2 sm:pr-3 cursor-pointer transition-colors"
           >
-            <div style={{
-              width: 28, height: 28, borderRadius: '50%',
-              background: user.isPremium
-                ? 'linear-gradient(135deg, #FFB900, #FF8C00)'
-                : 'linear-gradient(135deg, #3FD6FF, #2094ff)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 12, fontWeight: 700, color: '#000',
-            }}>
+            <div className={cn(
+              "w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold text-black shrink-0",
+              user.isPremium 
+                ? "bg-gradient-to-br from-[#FFB900] to-[#FF8C00]"
+                : "bg-gradient-to-br from-[#3FD6FF] to-[#2094ff]"
+            )}>
               {user.isPremium ? <Crown size={13} /> : (user.fullName?.[0]?.toUpperCase() || '?')}
             </div>
             <span className="hidden sm:block text-[13px] font-semibold text-[#ddd]">
@@ -150,27 +146,16 @@ export function ListenerHeader() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 8px)',
-                  right: 0,
-                  background: '#181818',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                  minWidth: 180,
-                  boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
-                  zIndex: 100,
-                }}
+                className="absolute top-[calc(100%+8px)] right-0 bg-[#181818] border border-white/10 rounded-xl overflow-hidden min-w-[180px] shadow-[0_16px_40px_rgba(0,0,0,0.6)] z-[100]"
               >
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{user.fullName}</div>
-                  <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{user.email}</div>
-                  <div style={{ marginTop: 6 }}>
+                <div className="p-[12px_16px] border-b border-white/5">
+                  <div className="text-[13px] font-semibold text-white truncate">{user.fullName}</div>
+                  <div className="text-[11px] text-[#555] mt-0.5 truncate">{user.email}</div>
+                  <div className="mt-1.5">
                     <PremiumBadge isPremium={user.isPremium === true} />
                   </div>
                 </div>
-                <div style={{ padding: '6px' }}>
+                <div className="p-1.5 space-y-0.5">
                   {user.role === 'artist' && (
                     <MenuBtn
                       icon={<Settings size={14} />}
@@ -218,31 +203,20 @@ export function ListenerHeader() {
 }
 
 function MenuBtn({ icon, label, onClick, danger, premium }: { icon: React.ReactNode; label: string; onClick: () => void; danger?: boolean; premium?: boolean }) {
-  const color = danger ? '#ef4444' : premium ? '#FFB900' : '#ccc'
-  const hoverBg = danger ? 'rgba(239,68,68,0.08)' : premium ? 'rgba(255,185,0,0.08)' : 'rgba(255,255,255,0.06)'
   return (
     <button
       onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        width: '100%',
-        padding: '9px 12px',
-        background: 'none',
-        border: 'none',
-        borderRadius: 8,
-        color,
-        fontSize: 13,
-        cursor: 'pointer',
-        transition: 'background 0.15s',
-        textAlign: 'left',
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = hoverBg)}
-      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+      className={cn(
+        "flex items-center gap-2.5 w-full p-[9px_12px] rounded-lg text-[13px] transition-colors text-left",
+        danger 
+          ? "text-red-500 hover:bg-red-500/10" 
+          : premium 
+            ? "text-[#FFB900] hover:bg-[#FFB900]/10" 
+            : "text-[#ccc] hover:bg-white/5"
+      )}
     >
-      {icon}
-      {label}
+      <span className="shrink-0">{icon}</span>
+      <span className="truncate">{label}</span>
     </button>
   )
 }

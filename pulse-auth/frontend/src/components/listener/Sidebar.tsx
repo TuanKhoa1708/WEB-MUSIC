@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, createContext, useContext } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home,
   Search,
@@ -13,25 +13,31 @@ import {
   Mic2,
   Crown,
   Radio,
+  X,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
 import { useIsPremium } from '@/hooks/listener/useSubscription'
 import { useListenRoom } from '@/contexts/ListenRoomContext'
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
-const NAV_LINK_BASE: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  padding: '10px 14px',
-  borderRadius: 10,
-  fontSize: 14,
-  fontWeight: 500,
-  color: '#666',
-  textDecoration: 'none',
-  transition: 'all 0.2s',
-  cursor: 'pointer',
+function cn(...inputs: (string | undefined | null | false)[]) {
+  return twMerge(clsx(inputs))
 }
+
+// ─── Context ─────────────────────────────────────────────────────────
+
+export const MobileSidebarContext = createContext<{
+  mobileOpen: boolean
+  setMobileOpen: (val: boolean) => void
+}>({ mobileOpen: false, setMobileOpen: () => {} })
+
+export function useListenerMobileSidebar() {
+  return useContext(MobileSidebarContext)
+}
+
+// ─── Data ────────────────────────────────────────────────────────────
 
 interface NavItem {
   to: string
@@ -55,13 +61,16 @@ const accountNav: NavItem[] = [
   { to: '/listener/premium', icon: <Crown size={18} />, label: 'Go Premium' },
 ]
 
-export function ListenerSidebar() {
+// ─── Sidebar Component ───────────────────────────────────────────────
+
+export function ListenerSidebar({ isMobile = false, onClose }: { isMobile?: boolean; onClose?: () => void }) {
   const [collapsed, setCollapsed] = useState(false)
   const { user } = useAuth()
   const isPremium = useIsPremium()
   const { isInRoom } = useListenRoom()
 
   useEffect(() => {
+    if (isMobile) return // Mobile is never collapsed in drawer mode
     const handleResize = () => {
       if (window.innerWidth < 1024) {
         setCollapsed(true)
@@ -72,123 +81,103 @@ export function ListenerSidebar() {
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [isMobile])
 
   return (
     <motion.div
-      animate={{ width: collapsed ? 68 : 240 }}
+      animate={{ width: isMobile ? 280 : collapsed ? 68 : 240 }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative"
-      style={{
-        height: '100vh',
-        background: '#0a0a0a',
-        borderRight: '1px solid rgba(255,255,255,0.06)',
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
-        overflow: 'visible',
-        position: 'sticky',
-        top: 0,
-        zIndex: 40,
-      }}
+      className={cn(
+        "group relative flex flex-col shrink-0 h-full overflow-visible",
+        isMobile ? "bg-[#0a0a0a]" : "bg-[#0a0a0a] border-r border-white/5 sticky top-0 z-40 h-screen"
+      )}
     >
       {/* Logo */}
-      <div style={{ padding: collapsed ? '20px 16px' : '20px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 72 }}>
-        {!collapsed && (
+      <div className={cn("flex items-center justify-between min-h-[72px]", collapsed && !isMobile ? "p-[20px_16px]" : "p-5")}>
+        {(!collapsed || isMobile) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+            className="flex items-center gap-2.5"
           >
-            <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #3FD6FF, #2094ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-[#3FD6FF] to-[#2094ff] flex items-center justify-center shrink-0">
               <Disc3 size={18} color="#000" />
             </div>
-            <span style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', textShadow: '0 0 16px rgba(63,214,255,0.4)' }}>
+            <span className="text-[18px] font-extrabold text-white tracking-[-0.03em] drop-shadow-[0_0_16px_rgba(63,214,255,0.4)]">
               Pulse
             </span>
           </motion.div>
         )}
-        {collapsed && (
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #3FD6FF, #2094ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', flexShrink: 0 }}>
+        {collapsed && !isMobile && (
+          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-[#3FD6FF] to-[#2094ff] flex items-center justify-center mx-auto shrink-0">
             <Disc3 size={18} color="#000" />
           </div>
         )}
+
+        {/* Close Button on Mobile */}
+        {isMobile && onClose && (
+          <button 
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-[#888] hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
-      {/* Collapse toggle (Fix hiển thị cho Mobile/Tablet) */}
-      <button
-        onClick={() => setCollapsed((c) => !c)}
-        className="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-all duration-300"
-        style={{
-          position: 'absolute',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          right: -12,
-          width: 24,
-          height: 48,
-          borderRadius: 12,
-          background: '#1a1a1a',
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '4px 0 12px rgba(0,0,0,0.5)',
-          color: '#888',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50,
-          flexShrink: 0,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = '#3FD6FF'
-          e.currentTarget.style.background = '#222'
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = '#888'
-          e.currentTarget.style.background = '#1a1a1a'
-        }}
-      >
-        {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
-      </button>
+      {/* Collapse toggle (Desktop/Tablet only) */}
+      {!isMobile && (
+        <button
+          onClick={() => setCollapsed((c) => !c)}
+          className="absolute top-1/2 -translate-y-1/2 -right-3 w-6 h-12 rounded-xl bg-[#1a1a1a] border border-white/10 shadow-[4px_0_12px_rgba(0,0,0,0.5)] text-[#888] hover:text-[#3FD6FF] hover:bg-[#222] flex items-center justify-center z-50 shrink-0 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer"
+        >
+          {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
+        </button>
+      )}
 
-      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: collapsed ? '8px 10px' : '8px 12px' }}>
-        <NavSection label="Menu" collapsed={collapsed}>
-          {mainNav.map((item) => <SidebarLink key={item.to} item={item} collapsed={collapsed} />)}
+      {/* Nav Content */}
+      <div className={cn("flex-1 overflow-y-auto overflow-x-hidden", collapsed && !isMobile ? "p-[8px_10px]" : "p-[8px_12px]")}>
+        <NavSection label="Menu" collapsed={collapsed && !isMobile}>
+          {mainNav.map((item) => (
+            <SidebarLink key={item.to} item={item} collapsed={collapsed && !isMobile} onClick={onClose} />
+          ))}
         </NavSection>
 
-        <NavSection label="Library" collapsed={collapsed}>
-          {libraryNav.map((item) => <SidebarLink key={item.to} item={item} collapsed={collapsed} />)}
+        <NavSection label="Library" collapsed={collapsed && !isMobile}>
+          {libraryNav.map((item) => (
+            <SidebarLink key={item.to} item={item} collapsed={collapsed && !isMobile} onClick={onClose} />
+          ))}
         </NavSection>
 
         {user?.role === 'user' && (
-          <NavSection label="Account" collapsed={collapsed}>
-            {accountNav.map((item) => <SidebarLink key={item.to} item={item} collapsed={collapsed} />)}
+          <NavSection label="Account" collapsed={collapsed && !isMobile}>
+            {accountNav.map((item) => (
+              <SidebarLink key={item.to} item={item} collapsed={collapsed && !isMobile} onClick={onClose} />
+            ))}
           </NavSection>
         )}
 
-        <NavSection label="Listen Together" collapsed={collapsed}>
+        <NavSection label="Listen Together" collapsed={collapsed && !isMobile}>
           <NavLink
             to="/listener/room/join"
-            title={collapsed ? 'Join Session' : undefined}
-            style={({ isActive }) => ({
-              ...NAV_LINK_BASE,
-              display: 'flex',
-              justifyContent: collapsed ? 'center' : 'flex-start',
-              color: isInRoom ? '#3FD6FF' : isActive ? '#fff' : '#666',
-              background: isActive ? 'rgba(63,214,255,0.08)' : isInRoom ? 'rgba(63,214,255,0.05)' : 'transparent',
-              borderLeft: isActive && !collapsed ? '2px solid #3FD6FF' : '2px solid transparent',
-            })}
-            onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = 'rgba(63,214,255,0.08)'; el.style.color = '#3FD6FF' }}
-            onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = isInRoom ? 'rgba(63,214,255,0.05)' : 'transparent'; el.style.color = isInRoom ? '#3FD6FF' : '#666' }}
+            onClick={onClose}
+            title={(collapsed && !isMobile) ? 'Join Session' : undefined}
+            className={({ isActive }) => cn(
+              "flex items-center gap-2.5 p-[10px_14px] rounded-[10px] text-[14px] font-medium transition-all duration-200",
+              (collapsed && !isMobile) ? "justify-center" : "justify-start",
+              isInRoom ? "text-[#3FD6FF] bg-[rgba(63,214,255,0.05)]" : isActive ? "text-white bg-[rgba(63,214,255,0.08)] border-l-2 border-[#3FD6FF]" : "text-[#666] hover:bg-white/5 hover:text-[#ccc] border-l-2 border-transparent",
+              !isActive && "border-l-2 border-transparent"
+            )}
           >
-            <span style={{ flexShrink: 0, position: 'relative' }}>
+            <span className="shrink-0 relative">
               <Radio size={18} />
               {isInRoom && (
-                <span style={{ position: 'absolute', top: -2, right: -2, width: 6, height: 6, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.7)' }} />
+                <span className="absolute -top-[2px] -right-[2px] w-1.5 h-1.5 rounded-full bg-[#4ade80] shadow-[0_0_6px_rgba(74,222,128,0.7)]" />
               )}
             </span>
-            {!collapsed && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {(!collapsed || isMobile) && (
+              <span className="flex items-center gap-1.5">
                 Join Session
                 {!isPremium && <Crown size={11} color="#FFB900" />}
               </span>
@@ -198,24 +187,18 @@ export function ListenerSidebar() {
       </div>
 
       {/* User info at bottom */}
-      {!collapsed && user && (
-        <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #3FD6FF22, #2094ff22)',
-                border: '1px solid rgba(63,214,255,0.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 13, fontWeight: 700, color: '#3FD6FF', flexShrink: 0,
-              }}>
+      {(!collapsed || isMobile) && user && (
+        <div className="p-[12px_16px] border-t border-white/5">
+          <div className="flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#3FD6FF22] to-[#2094ff22] border border-[#3FD6FF33] flex items-center justify-center text-[13px] font-bold text-[#3FD6FF] shrink-0">
                 {user.fullName?.[0]?.toUpperCase() || '?'}
               </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div className="min-w-0">
+                <div className="text-[13px] font-semibold text-white truncate">
                   {user.fullName}
                 </div>
-                <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>
+                <div className="text-[11px] text-[#555] mt-0.5">
                   <PremiumBadge isPremium={user?.isPremium === true} />
                 </div>
               </div>
@@ -229,9 +212,9 @@ export function ListenerSidebar() {
 
 function NavSection({ label, collapsed, children }: { label: string; collapsed: boolean; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div className="mb-4">
       {!collapsed && (
-        <p style={{ fontSize: 10, fontWeight: 700, color: '#3a3a3a', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 14px 6px' }}>
+        <p className="text-[10px] font-bold text-[#3a3a3a] tracking-[0.1em] uppercase px-3.5 pb-1.5">
           {label}
         </p>
       )}
@@ -240,36 +223,67 @@ function NavSection({ label, collapsed, children }: { label: string; collapsed: 
   )
 }
 
-function SidebarLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
+function SidebarLink({ item, collapsed, onClick }: { item: NavItem; collapsed: boolean; onClick?: () => void }) {
   return (
     <NavLink
       to={item.to}
+      onClick={onClick}
       title={collapsed ? item.label : undefined}
-      style={({ isActive }) => ({
-        ...NAV_LINK_BASE,
-        display: 'flex',
-        justifyContent: collapsed ? 'center' : 'flex-start',
-        color: isActive ? '#fff' : '#666',
-        background: isActive ? 'rgba(63,214,255,0.08)' : 'transparent',
-        borderLeft: isActive && !collapsed ? '2px solid #3FD6FF' : '2px solid transparent',
-      })}
-      onMouseEnter={(e) => {
-        const el = e.currentTarget as HTMLElement
-        if (!el.classList.contains('active')) {
-          el.style.background = 'rgba(255,255,255,0.04)'
-          el.style.color = '#ccc'
-        }
-      }}
-      onMouseLeave={(e) => {
-        const el = e.currentTarget as HTMLElement
-        if (!el.classList.contains('active')) {
-          el.style.background = 'transparent'
-          el.style.color = '#666'
-        }
-      }}
+      className={({ isActive }) => cn(
+        "flex items-center gap-2.5 p-[10px_14px] rounded-[10px] text-[14px] font-medium transition-all duration-200",
+        collapsed ? "justify-center" : "justify-start",
+        isActive 
+          ? "text-white bg-[rgba(63,214,255,0.08)] border-l-2 border-[#3FD6FF]" 
+          : "text-[#666] border-l-2 border-transparent hover:bg-white/5 hover:text-[#ccc]"
+      )}
     >
-      <span style={{ flexShrink: 0 }}>{item.icon}</span>
+      <span className="shrink-0">{item.icon}</span>
       {!collapsed && <span>{item.label}</span>}
     </NavLink>
+  )
+}
+
+// ─── Mobile Drawer ───────────────────────────────────────────────────
+
+export function ListenerMobileDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  // Prevent body scroll when drawer is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] md:hidden"
+          />
+
+          {/* Drawer content */}
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 left-0 bottom-0 z-[101] flex md:hidden"
+          >
+            <ListenerSidebar isMobile onClose={onClose} />
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
 }

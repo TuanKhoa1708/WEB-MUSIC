@@ -123,14 +123,9 @@ export function AlbumDetailPage() {
 
             {/* Free tier notice */}
             {isGated && (
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '4px 10px', borderRadius: 8, marginBottom: 12,
-                background: 'rgba(255,185,0,0.08)',
-                border: '1px solid rgba(255,185,0,0.2)',
-              }}>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg mb-3 bg-[#FFB900]/10 border border-[#FFB900]/20">
                 <Lock size={11} color="#FFB900" />
-                <span style={{ fontSize: 11, color: '#FFB900', fontWeight: 600 }}>
+                <span className="text-[11px] text-[#FFB900] font-semibold">
                   Preview: {FREE_PREVIEW_LIMIT} of {albumSongs.length} songs · Upgrade to unlock all
                 </span>
               </div>
@@ -168,7 +163,7 @@ export function AlbumDetailPage() {
 
         {/* Songs */}
         {songsLoading ? (
-          <div style={{ background: '#0d0d0d', borderRadius: 14, border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+          <div className="bg-[#0d0d0d] rounded-2xl border border-white/5 overflow-hidden">
             {Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)}
           </div>
         ) : albumSongs.length === 0 ? (
@@ -197,25 +192,14 @@ export function AlbumDetailPage() {
 
               {/* Premium upsell at bottom when gated */}
               {isGated && (
-                <div style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-                  padding: '20px 16px',
-                  background: 'linear-gradient(180deg, transparent, rgba(255,185,0,0.04))',
-                  borderTop: '1px solid rgba(255,185,0,0.1)',
-                }}>
+                <div className="flex items-center justify-center gap-3 p-[20px_16px] bg-gradient-to-b from-transparent to-[#FFB900]/5 border-t border-[#FFB900]/10">
                   <Crown size={16} color="#FFB900" />
-                  <span style={{ fontSize: 13, color: '#888' }}>
+                  <span className="text-[13px] text-[#888]">
                     {albumSongs.length - FREE_PREVIEW_LIMIT} more songs locked
                   </span>
                   <button
                     onClick={() => openModal('Full Album Access', `Listen to all ${albumSongs.length} songs with Premium.`)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      background: 'linear-gradient(135deg, #FFB900, #FF8C00)',
-                      border: 'none', borderRadius: 8,
-                      color: '#000', fontSize: 12, fontWeight: 800,
-                      padding: '7px 14px', cursor: 'pointer',
-                    }}
+                    className="flex items-center gap-1.5 bg-gradient-to-br from-[#FFB900] to-[#FF8C00] border-none rounded-lg text-black text-xs font-extrabold px-3.5 py-[7px] cursor-pointer"
                   >
                     Upgrade to Premium
                   </button>
