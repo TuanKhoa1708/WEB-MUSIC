@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -12,26 +12,8 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Inbox,
-  X,
-  LogOut,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-
-// --- Mobile sidebar context ---
-
-interface MobileSidebarCtx {
-  mobileOpen: boolean
-  setMobileOpen: (v: boolean) => void
-}
-
-export const MobileSidebarContext = createContext<MobileSidebarCtx>({
-  mobileOpen: false,
-  setMobileOpen: () => { },
-})
-
-export function useMobileSidebar() {
-  return useContext(MobileSidebarContext)
-}
 
 // --- Nav item definition ---
 
@@ -174,121 +156,7 @@ export function AdminSidebar() {
   )
 }
 
-export function AdminMobileDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const { user, logout } = useAuth()
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
-
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={onClose}
-            style={{
-              position: 'fixed', inset: 0,
-              background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
-              zIndex: 100,
-            }}
-          />
-
-          <motion.div
-            initial={{ x: '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            style={{
-              position: 'fixed', top: 0, left: 0, bottom: 0,
-              width: '280px', background: '#0a0a0a',
-              borderRight: '1px solid rgba(255,255,255,0.05)',
-              zIndex: 101, display: 'flex', flexDirection: 'column',
-            }}
-          >
-            {/* Header */}
-            <div style={{
-              padding: '20px', display: 'flex', alignItems: 'center',
-              justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.04)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #3FD6FF, #2094ff)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Disc3 size={18} color="#000" />
-                </div>
-                <span style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em' }}>
-                  Pulse
-                </span>
-              </div>
-              <button onClick={onClose} style={{
-                width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.05)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
-                border: 'none', cursor: 'pointer'
-              }}>
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Nav Items */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px 12px' }}>
-              {NAV_ITEMS.map((item) => (
-                <SidebarNavItem key={item.to} item={item} collapsed={false} onClick={onClose} />
-              ))}
-            </div>
-
-            {/* User & Logout */}
-            {user && (
-              <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                  <div style={{
-                    width: 40, height: 40, borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #3FD6FF22, #2094ff22)',
-                    border: '1px solid rgba(63,214,255,0.2)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 15, fontWeight: 700, color: '#3FD6FF',
-                  }}>
-                    {user.fullName?.[0]?.toUpperCase() || '?'}
-                  </div>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {user.fullName}
-                    </div>
-                    <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>Admin Account</div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    onClose()
-                    logout()
-                  }}
-                  style={{
-                    width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '12px', borderRadius: 10, background: 'rgba(255,91,91,0.1)',
-                    color: '#FF5B5B', border: 'none', cursor: 'pointer',
-                    fontSize: 14, fontWeight: 600, justifyContent: 'center'
-                  }}
-                >
-                  <LogOut size={16} />
-                  Log Out
-                </button>
-              </div>
-            )}
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  )
-}
 
 function SidebarNavItem({
   item,

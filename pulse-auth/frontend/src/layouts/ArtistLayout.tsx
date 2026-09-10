@@ -1,59 +1,22 @@
-import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { ArtistSidebar, ArtistMobileDrawer, MobileSidebarContext } from '@/components/artist/Sidebar'
+import { ArtistSidebar } from '@/components/artist/Sidebar'
 import { ArtistHeader } from '@/components/artist/ArtistHeader'
 
 export function ArtistLayout() {
-  const [mobileOpen, setMobileOpen] = useState(false)
-
   return (
-    <MobileSidebarContext.Provider value={{ mobileOpen, setMobileOpen }}>
-      <div
-        style={{
-          display: 'flex',
-          minHeight: '100vh',
-          backgroundColor: '#090909',
-          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        }}
-      >
-        {/* Desktop sidebar — hidden on mobile */}
-        <div className="hidden md:block shrink-0">
-          <ArtistSidebar />
-        </div>
+    <div className="flex min-h-screen bg-[#090909] font-sans">
+      {/* Sidebar always visible, handles its own mobile collapse */}
+      <ArtistSidebar />
 
-        {/* Mobile drawer */}
-        <ArtistMobileDrawer
-          isOpen={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-        />
+      {/* Main column */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden relative h-screen">
+        <ArtistHeader />
 
-        {/* Main column */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0,
-            overflowX: 'hidden',
-          }}
-        >
-          {/* Header */}
-          <ArtistHeader />
-
-          {/* Page content */}
-          <main
-            style={{
-              flex: 1,
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              paddingBottom: '64px', // Extra padding for mobile if needed
-            }}
-          >
-            <Outlet />
-          </main>
-        </div>
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
+          <Outlet />
+        </main>
       </div>
-
-    </MobileSidebarContext.Provider>
+    </div>
   )
 }

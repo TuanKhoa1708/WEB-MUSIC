@@ -1,25 +1,23 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight, LogOut, User, Menu } from 'lucide-react'
+import { ChevronRight, LogOut, User } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useMobileSidebar } from '@/components/artist/Sidebar'
 import { motion, AnimatePresence } from 'framer-motion'
 
-// ─── Breadcrumb map ───────────────────────────────────────────────────────────
+// ─── Breadcrumb map ──────────────────────────────────────────────────────────
 
 const BREADCRUMB_MAP: Record<string, string[]> = {
-  '/artist/dashboard':  ['Artist', 'Dashboard'],
-  '/artist/songs':      ['Artist', 'Songs'],
-  '/artist/albums':     ['Artist', 'Albums'],
-  '/artist/playlists':  ['Artist', 'Playlists'],
-  '/artist/profile':    ['Artist', 'My Profile'],
+  '/artist/dashboard': ['Artist', 'Dashboard'],
+  '/artist/songs': ['Artist', 'Songs'],
+  '/artist/albums': ['Artist', 'Albums'],
+  '/artist/playlists': ['Artist', 'Playlists'],
+  '/artist/profile': ['Artist', 'My Profile'],
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export function ArtistHeader() {
   const { user, logout } = useAuth()
-  const { setMobileOpen } = useMobileSidebar()
   const location = useLocation()
   const navigate = useNavigate()
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -63,27 +61,11 @@ export function ArtistHeader() {
         gap: 20,
       }}
     >
-      {/* ── Hamburger (mobile only) ──────────────────────────── */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        aria-label="Open menu"
-        className="md:hidden flex items-center justify-center shrink-0 w-9 h-9 rounded-[10px] bg-white/5 border border-white/10 text-[#888] cursor-pointer transition-all"
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#fff'
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#888'
-        }}
-      >
-        <Menu size={18} />
-      </button>
-
-      {/* ── Breadcrumb ──────────────────────────────────────────── */}
-      <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
-        {crumbs.map((crumb, i) => (
-          <div key={crumb} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      {/* ── Breadcrumb ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+          {crumbs.map((crumb, i) => (
+            <div key={crumb} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {i > 0 && (
               <ChevronRight size={13} style={{ color: '#333', flexShrink: 0 }} />
             )}
@@ -100,9 +82,10 @@ export function ArtistHeader() {
             </span>
           </div>
         ))}
-      </nav>
+        </nav>
+      </div>
 
-      {/* ── Right: user pill ────────────────────────────────────── */}
+      {/* ── Right: user pill ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
         {/* Divider */}
         <div
@@ -216,7 +199,7 @@ export function ArtistHeader() {
   )
 }
 
-// ─── Dropdown menu button ─────────────────────────────────────────────────────
+// ─── Dropdown menu button ────────────────────────────────────────────────────
 
 function MenuBtn({
   icon,
