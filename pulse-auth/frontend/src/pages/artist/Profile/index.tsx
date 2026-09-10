@@ -121,23 +121,44 @@ export function ArtistProfilePage() {
   }
 
   return (
-    <div className="px-6 md:px-10 py-8 max-w-[800px] mx-auto">
+    <div style={{ padding: '32px 40px', maxWidth: 800 }}>
       {/* ── Page header ──────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8"
+        style={{ marginBottom: 32 }}
       >
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] shrink-0">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              background: 'rgba(63,214,255,0.08)',
+              border: '1px solid rgba(63,214,255,0.18)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#3FD6FF',
+              flexShrink: 0,
+            }}
+          >
             <UserCircle2 size={28} />
           </div>
           <div>
-            <h1 className="text-[28px] font-extrabold text-white tracking-[-0.03em] leading-tight m-0">
+            <h1
+              style={{
+                fontSize: 28,
+                fontWeight: 800,
+                color: '#fff',
+                letterSpacing: '-0.03em',
+                lineHeight: 1.1,
+              }}
+            >
               My Profile
             </h1>
-            <p className="text-[15px] text-[#888] mt-1 m-0">
+            <p style={{ fontSize: 15, color: '#888', marginTop: 4 }}>
               Manage your personal information
             </p>
           </div>
@@ -149,50 +170,82 @@ export function ArtistProfilePage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-        className="bg-[#121212] border border-white/5 rounded-[20px] p-6 md:p-8"
+        style={{
+          background: '#121212',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 20,
+          padding: 32,
+        }}
       >
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           
           {/* Avatar Upload */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <div className="relative w-[100px] h-[100px] rounded-full bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <div
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                background: 'rgba(255,255,255,0.05)',
+                border: '2px dashed rgba(255,255,255,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                position: 'relative',
+              }}
+            >
               {formData.avatarUrl ? (
-                <img src={formData.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={formData.avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <UserCircle2 size={40} className="text-[#555]" />
+                <UserCircle2 size={40} color="#555" />
               )}
 
               {isUploading && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <Loader2 size={24} className="animate-spin text-[#3FD6FF]" />
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Loader2 size={24} className="animate-spin" color="#3FD6FF" />
                 </div>
               )}
             </div>
 
-            <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-              <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#3FD6FF]/10 text-[#3FD6FF] font-semibold text-[13px] cursor-pointer hover:bg-[#3FD6FF]/20 transition-colors">
+            <div>
+              <label
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '10px 16px',
+                  borderRadius: 12,
+                  background: 'rgba(63,214,255,0.1)',
+                  color: '#3FD6FF',
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
                 <Upload size={16} />
                 Upload New Avatar
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleAvatarUpload}
-                  className="hidden"
+                  style={{ display: 'none' }}
                   disabled={isUploading}
                 />
               </label>
-              <p className="text-xs text-[#666] mt-2 m-0">
+              <p style={{ fontSize: 12, color: '#666', marginTop: 8 }}>
                 Recommended: Square image, at least 400x400px.
               </p>
             </div>
           </div>
 
-          <div className="h-[1px] bg-white/5" />
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.04)' }} />
 
           {/* Form Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             <div>
-              <label className="block text-[13px] text-[#888] font-semibold mb-2">
+              <label style={{ display: 'block', fontSize: 13, color: '#888', fontWeight: 600, marginBottom: 8 }}>
                 Full Name
               </label>
               <input
@@ -201,11 +254,21 @@ export function ArtistProfilePage() {
                 value={formData.fullName}
                 onChange={handleInputChange}
                 required
-                className="w-full h-11 px-4 rounded-xl bg-[#1a1a1a] border border-white/10 text-white text-sm outline-none focus:border-[#3FD6FF]/50 transition-colors"
+                style={{
+                  width: '100%',
+                  height: 44,
+                  padding: '0 16px',
+                  borderRadius: 12,
+                  background: '#1a1a1a',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#fff',
+                  fontSize: 14,
+                  outline: 'none',
+                }}
               />
             </div>
             <div>
-              <label className="block text-[13px] text-[#888] font-semibold mb-2">
+              <label style={{ display: 'block', fontSize: 13, color: '#888', fontWeight: 600, marginBottom: 8 }}>
                 Username
               </label>
               <input
@@ -214,34 +277,68 @@ export function ArtistProfilePage() {
                 value={formData.username}
                 onChange={handleInputChange}
                 required
-                className="w-full h-11 px-4 rounded-xl bg-[#1a1a1a] border border-white/10 text-white text-sm outline-none focus:border-[#3FD6FF]/50 transition-colors"
+                style={{
+                  width: '100%',
+                  height: 44,
+                  padding: '0 16px',
+                  borderRadius: 12,
+                  background: '#1a1a1a',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#fff',
+                  fontSize: 14,
+                  outline: 'none',
+                }}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[13px] text-[#888] font-semibold mb-2">
+            <label style={{ display: 'block', fontSize: 13, color: '#888', fontWeight: 600, marginBottom: 8 }}>
               Email Address (Read-only)
             </label>
             <input
               type="email"
               value={user?.email || ''}
               disabled
-              className="w-full h-11 px-4 rounded-xl bg-white/5 border border-white/5 text-[#666] text-sm outline-none cursor-not-allowed"
+              style={{
+                width: '100%',
+                height: 44,
+                padding: '0 16px',
+                borderRadius: 12,
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.04)',
+                color: '#666',
+                fontSize: 14,
+                outline: 'none',
+                cursor: 'not-allowed',
+              }}
             />
-            <p className="text-xs text-[#555] mt-2 m-0">
+            <p style={{ fontSize: 12, color: '#555', marginTop: 8 }}>
               Email changes must be requested through support.
             </p>
           </div>
 
           {/* Submit */}
-          <div className="flex justify-end mt-4">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
             <button
               type="submit"
               disabled={isSaving || isUploading}
-              className={`flex items-center gap-2 h-11 px-6 rounded-xl bg-gradient-to-br from-[#3FD6FF] to-[#2094ff] border-none text-black text-sm font-bold shadow-[0_4px_20px_rgba(63,214,255,0.3)] transition-all ${
-                (isSaving || isUploading) ? 'cursor-wait opacity-70' : 'cursor-pointer hover:brightness-110'
-              }`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                height: 44,
+                padding: '0 24px',
+                borderRadius: 12,
+                background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
+                border: 'none',
+                color: '#000',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: (isSaving || isUploading) ? 'wait' : 'pointer',
+                opacity: (isSaving || isUploading) ? 0.7 : 1,
+                boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
+              }}
             >
               {isSaving ? (
                 <>
@@ -264,28 +361,57 @@ export function ArtistProfilePage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="mt-6 bg-[#FF5B5B]/5 border border-[#FF5B5B]/15 rounded-[20px] p-7"
+        style={{
+          marginTop: 24,
+          background: 'rgba(255,91,91,0.04)',
+          border: '1px solid rgba(255,91,91,0.15)',
+          borderRadius: 20,
+          padding: 28,
+        }}
       >
-        <div className="flex items-center gap-2.5 mb-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
           <AlertTriangle size={18} color="#FF5B5B" />
-          <h2 className="text-base font-extrabold text-[#FF5B5B] tracking-[-0.02em] m-0">
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: '#FF5B5B', letterSpacing: '-0.02em', margin: 0 }}>
             Danger Zone
           </h2>
         </div>
-        <p className="text-[13px] text-[#666] mb-5 leading-relaxed">
+        <p style={{ fontSize: 13, color: '#666', marginBottom: 20, lineHeight: 1.6 }}>
           Requesting role revocation will remove your Artist status. All your songs will be permanently deleted 
           after admin approval. This action cannot be undone.
         </p>
 
         {hasPendingRevoke ? (
-          <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F7B500]/10 border border-[#F7B500]/25 text-[#F7B500] text-[13px] font-semibold">
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '10px 18px', borderRadius: 12,
+            background: 'rgba(247,181,0,0.08)', border: '1px solid rgba(247,181,0,0.25)',
+            color: '#F7B500', fontSize: 13, fontWeight: 600,
+          }}>
             <AlertTriangle size={14} />
             Revocation request pending admin review
           </div>
         ) : (
           <button
             onClick={() => setShowRevokeModal(true)}
-            className="inline-flex items-center gap-2 h-[42px] px-5 rounded-xl bg-[#FF5B5B]/10 hover:bg-[#FF5B5B]/15 border border-[#FF5B5B]/25 hover:border-[#FF5B5B]/40 text-[#FF5B5B] text-[13px] font-bold cursor-pointer transition-all duration-200"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              height: 42, padding: '0 20px',
+              borderRadius: 12,
+              background: 'rgba(255,91,91,0.08)',
+              border: '1px solid rgba(255,91,91,0.25)',
+              color: '#FF5B5B',
+              fontSize: 13, fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255,91,91,0.15)'
+              e.currentTarget.style.borderColor = 'rgba(255,91,91,0.4)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255,91,91,0.08)'
+              e.currentTarget.style.borderColor = 'rgba(255,91,91,0.25)'
+            }}
           >
             <AlertTriangle size={15} />
             Request Artist Role Revocation
@@ -300,7 +426,13 @@ export function ArtistProfilePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md flex items-center justify-center p-6"
+            style={{
+              position: 'fixed', inset: 0, zIndex: 9999,
+              background: 'rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: 24,
+            }}
             onClick={(e) => { if (e.target === e.currentTarget) setShowRevokeModal(false) }}
           >
             <motion.div
@@ -308,70 +440,104 @@ export function ArtistProfilePage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 16 }}
               transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-[#111] border border-[#FF5B5B]/25 rounded-[20px] p-8 w-full max-w-[480px] shadow-[0_24px_80px_rgba(0,0,0,0.8)]"
+              style={{
+                background: '#111',
+                border: '1px solid rgba(255,91,91,0.25)',
+                borderRadius: 20,
+                padding: 32,
+                width: '100%',
+                maxWidth: 480,
+                boxShadow: '0 24px 80px rgba(0,0,0,0.8)',
+              }}
             >
               {/* Modal header */}
-              <div className="flex items-start justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-[#FF5B5B]/10 border border-[#FF5B5B]/20 flex items-center justify-center shrink-0">
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12,
+                    background: 'rgba(255,91,91,0.1)', border: '1px solid rgba(255,91,91,0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
                     <AlertTriangle size={20} color="#FF5B5B" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-extrabold text-white m-0 tracking-[-0.02em]">
+                    <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>
                       Request Role Revocation
                     </h3>
-                    <p className="text-xs text-[#666] m-0 mt-1">
+                    <p style={{ fontSize: 12, color: '#666', margin: '4px 0 0' }}>
                       This request will be reviewed by admin
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowRevokeModal(false)}
-                  className="bg-transparent border-none text-[#555] hover:text-[#888] cursor-pointer p-1 rounded-md transition-colors"
+                  style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', padding: 4, borderRadius: 6 }}
                 >
                   <X size={18} />
                 </button>
               </div>
 
               {/* Warning */}
-              <div className="bg-[#FF5B5B]/10 border border-[#FF5B5B]/15 rounded-xl px-4 py-3 mb-5">
-                <p className="text-[13px] text-[#FF5B5B] leading-relaxed m-0">
+              <div style={{
+                background: 'rgba(255,91,91,0.06)', border: '1px solid rgba(255,91,91,0.15)',
+                borderRadius: 12, padding: '12px 16px', marginBottom: 20,
+              }}>
+                <p style={{ fontSize: 13, color: '#FF5B5B', lineHeight: 1.6, margin: 0 }}>
                   ⚠️ <strong>Warning:</strong> Upon admin approval, all your songs will be permanently deleted 
                   and your account will revert to a regular user.
                 </p>
               </div>
 
               {/* Reason textarea */}
-              <div className="mb-6">
-                <label className="block text-[13px] text-[#888] font-semibold mb-2">
-                  Reason for leaving <span className="text-[#FF5B5B]">*</span>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 13, color: '#888', fontWeight: 600, marginBottom: 8 }}>
+                  Reason for leaving <span style={{ color: '#FF5B5B' }}>*</span>
                 </label>
                 <textarea
                   value={revokeReason}
                   onChange={(e) => setRevokeReason(e.target.value)}
                   placeholder="Please explain why you want to revoke your artist role..."
                   rows={4}
-                  className="w-full px-4 py-3 rounded-xl bg-[#1a1a1a] border border-white/10 text-white text-sm outline-none resize-y font-sans leading-relaxed box-border focus:border-[#FF5B5B]/50 transition-colors"
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: 12,
+                    background: '#1a1a1a',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    color: '#fff',
+                    fontSize: 14,
+                    outline: 'none',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    lineHeight: 1.6,
+                    boxSizing: 'border-box',
+                  }}
                 />
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 justify-end">
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
                 <button
                   onClick={() => setShowRevokeModal(false)}
                   disabled={isRevoking}
-                  className="h-[42px] px-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[#888] hover:text-[#ccc] text-sm font-semibold cursor-pointer transition-colors"
+                  style={{
+                    height: 42, padding: '0 20px', borderRadius: 12,
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#888', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleRevokeSubmit}
                   disabled={isRevoking || !revokeReason.trim()}
-                  className={`flex items-center gap-2 h-[42px] px-5 rounded-xl border-none text-white text-sm font-bold transition-all ${
-                    isRevoking || !revokeReason.trim()
-                      ? 'bg-[#FF5B5B]/30 cursor-not-allowed'
-                      : 'bg-[#FF5B5B]/90 hover:bg-[#FF5B5B] cursor-pointer'
-                  }`}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    height: 42, padding: '0 20px', borderRadius: 12,
+                    background: isRevoking || !revokeReason.trim() ? 'rgba(255,91,91,0.3)' : 'rgba(255,91,91,0.9)',
+                    border: 'none', color: '#fff', fontSize: 14, fontWeight: 700,
+                    cursor: isRevoking || !revokeReason.trim() ? 'not-allowed' : 'pointer',
+                  }}
                 >
                   {isRevoking ? (
                     <><Loader2 size={15} className="animate-spin" /> Submitting...</>

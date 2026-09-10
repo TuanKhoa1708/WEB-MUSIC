@@ -122,12 +122,12 @@ function QuickActionBtn({ to, icon, label, color }: { to: string; icon: React.Re
       to={to}
       className="flex items-center gap-3 p-4 md:px-6 md:py-4 rounded-2xl bg-[#121212] border border-white/5 text-white no-underline font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = color
-        e.currentTarget.style.boxShadow = `0 4px 20px ${color}15`
+        ; (e.currentTarget as HTMLAnchorElement).style.borderColor = color
+          ; (e.currentTarget as HTMLAnchorElement).style.boxShadow = `0 4px 20px ${color}15`
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'
-        e.currentTarget.style.boxShadow = 'none'
+        ; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.06)'
+          ; (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none'
       }}
     >
       <div
