@@ -19,10 +19,7 @@ export function ArtistDashboardPage() {
   }
 
   return (
-    <div
-      className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10"
-      style={{ maxWidth: 1400, margin: '0 auto' }}
-    >
+    <div className="px-4 sm:px-6 md:px-8 py-6 md:py-8 max-w-[1400px] mx-auto">
       {/* ── Page header ── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -30,18 +27,15 @@ export function ArtistDashboardPage() {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="mb-6 md:mb-8 lg:mb-10"
       >
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] flex-shrink-0">
-            <LayoutDashboard size={24} className="md:w-7 md:h-7" />
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 md:w-14 md:h-14 rounded-[11px] md:rounded-2xl bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] flex-shrink-0">
+            <LayoutDashboard size={18} className="md:w-7 md:h-7" />
           </div>
           <div>
-            <h1
-              className="text-2xl md:text-3xl lg:text-[32px]"
-              style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
-            >
+            <h1 className="text-[22px] md:text-3xl lg:text-[32px] font-extrabold text-white tracking-[-0.03em] m-0">
               {getGreeting()}, {user?.fullName?.split(' ')[0] ?? 'Artist'}
             </h1>
-            <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
+            <p className="text-[13px] md:text-[15px] text-[#888] mt-0.5 m-0">
               Here's what's happening across the platform today.
             </p>
           </div>
