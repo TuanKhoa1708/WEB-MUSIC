@@ -70,30 +70,23 @@ function SongCover({ title, coverUrl }: { title: string; coverUrl?: string }) {
 
   return (
     <div
+      className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center overflow-hidden shrink-0"
       style={{
-        width: 38,
-        height: 38,
-        borderRadius: 10,
         background: coverUrl ? 'transparent' : `${color}14`,
         border: `1px solid ${color}28`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        flexShrink: 0,
       }}
     >
       {coverUrl ? (
         <img
           src={coverUrl}
           alt={title}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          className="w-full h-full object-cover"
           onError={(e) => {
             e.currentTarget.style.display = 'none'
           }}
         />
       ) : (
-        <span style={{ fontSize: 12, fontWeight: 800, color, letterSpacing: '-0.01em' }}>
+        <span className="text-xs font-extrabold tracking-[-0.01em]" style={{ color }}>
           {initials}
         </span>
       )}
@@ -105,27 +98,14 @@ function SongCover({ title, coverUrl }: { title: string; coverUrl?: string }) {
 
 function SongEmptyState() {
   return (
-    <div style={{ textAlign: 'center', padding: '48px 24px' }}>
-      <div
-        style={{
-          width: 56,
-          height: 56,
-          borderRadius: 16,
-          background: 'rgba(63,214,255,0.06)',
-          border: '1px solid rgba(63,214,255,0.12)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 16px',
-          color: '#3FD6FF',
-        }}
-      >
+    <div className="text-center py-12 px-6">
+      <div className="w-14 h-14 rounded-2xl bg-[#3FD6FF]/5 border border-[#3FD6FF]/10 flex items-center justify-center mx-auto mb-4 text-[#3FD6FF]">
         <Music size={24} />
       </div>
-      <p style={{ fontSize: 15, color: '#aaa', fontWeight: 600, marginBottom: 6 }}>
+      <p className="text-[15px] text-[#aaa] font-semibold mb-1.5 m-0">
         No songs found
       </p>
-      <p style={{ fontSize: 13, color: '#444' }}>
+      <p className="text-[13px] text-[#444] m-0">
         Try adjusting your search or filters.
       </p>
     </div>
@@ -149,19 +129,7 @@ function ActionBtn({
     <button
       title={title}
       onClick={onClick}
-      style={{
-        width: 30,
-        height: 30,
-        borderRadius: 8,
-        border: '1px solid transparent',
-        background: 'transparent',
-        color: '#3a3a3a',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        transition: 'all 0.15s',
-      }}
+      className="w-[30px] h-[30px] rounded-lg border border-transparent bg-transparent text-[#3a3a3a] flex items-center justify-center cursor-pointer transition-all duration-150"
       onMouseEnter={(e) => {
         e.currentTarget.style.background = `${color}12`
         e.currentTarget.style.borderColor = `${color}30`
@@ -203,18 +171,11 @@ function FilterSelect({
 }) {
   const [focused, setFocused] = useState(false)
   return (
-    <div style={{ position: 'relative', flexShrink: 0 }}>
+    <div className="relative shrink-0">
       <span
-        style={{
-          position: 'absolute',
-          left: 10,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          color: value ? '#3FD6FF' : '#555',
-          pointerEvents: 'none',
-          zIndex: 1,
-          transition: 'color 0.15s',
-        }}
+        className={`absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none z-[1] transition-colors duration-150 ${
+          value ? 'text-[#3FD6FF]' : 'text-[#555]'
+        }`}
       >
         {icon}
       </span>
@@ -224,25 +185,15 @@ function FilterSelect({
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
+        className={`h-[38px] pl-[30px] pr-7 rounded-[10px] text-xs font-semibold cursor-pointer appearance-none min-w-[120px] transition-all duration-150 outline-none font-sans ${
+          value ? 'bg-[#3FD6FF]/5 text-[#3FD6FF]' : 'bg-white/5 text-[#666]'
+        }`}
         style={{
-          height: 38,
-          paddingLeft: 30,
-          paddingRight: 28,
-          borderRadius: 10,
           border: `1px solid ${
             focused || value
               ? 'rgba(63,214,255,0.25)'
               : 'rgba(255,255,255,0.06)'
           }`,
-          background: value ? 'rgba(63,214,255,0.05)' : 'rgba(255,255,255,0.02)',
-          color: value ? '#3FD6FF' : '#666',
-          fontSize: 12,
-          fontWeight: 600,
-          cursor: 'pointer',
-          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-          appearance: 'none',
-          minWidth: 120,
-          transition: 'all 0.15s',
         }}
       >
         <option value="">{placeholder}</option>
@@ -250,14 +201,7 @@ function FilterSelect({
       </select>
       <ChevronDown
         size={12}
-        style={{
-          position: 'absolute',
-          right: 8,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          color: '#444',
-          pointerEvents: 'none',
-        }}
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#444] pointer-events-none"
       />
     </div>
   )
@@ -349,24 +293,13 @@ export function SongManagementPage() {
             ? (row.artistId as ArtistRef).stageName
             : row.artistId
         return (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="flex items-center gap-3">
             <SongCover title={row.title} coverUrl={row.coverUrl} />
-            <div style={{ minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: '#fff',
-                  letterSpacing: '-0.01em',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  maxWidth: 200,
-                }}
-              >
+            <div className="min-w-0">
+              <div className="text-[13px] font-bold text-white tracking-[-0.01em] truncate max-w-[200px]">
                 {row.title}
               </div>
-              <div style={{ fontSize: 11, color: '#444', marginTop: 2 }}>
+              <div className="text-[11px] text-[#444] mt-0.5">
                 {artist}
               </div>
             </div>
@@ -385,7 +318,7 @@ export function SongManagementPage() {
               : row.albumId
             : null
         return (
-          <span style={{ fontSize: 12, color: albumName ? '#888' : '#333', fontWeight: 500 }}>
+          <span className={`text-xs font-medium ${albumName ? 'text-[#888]' : 'text-[#333]'}`}>
             {albumName || '—'}
           </span>
         )
@@ -396,26 +329,11 @@ export function SongManagementPage() {
       header: 'Genre',
       render: (row) =>
         row.genre ? (
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 4,
-              height: 22,
-              paddingLeft: 8,
-              paddingRight: 8,
-              borderRadius: 6,
-              background: 'rgba(63,214,255,0.06)',
-              border: '1px solid rgba(63,214,255,0.12)',
-              fontSize: 11,
-              color: '#3FD6FF',
-              fontWeight: 600,
-            }}
-          >
+          <span className="inline-flex items-center gap-1 h-[22px] px-2 rounded-md bg-[#3FD6FF]/5 border border-[#3FD6FF]/10 text-[11px] text-[#3FD6FF] font-semibold">
             {row.genre}
           </span>
         ) : (
-          <span style={{ fontSize: 12, color: '#333' }}>—</span>
+          <span className="text-xs text-[#333]">—</span>
         ),
     },
     {
@@ -423,19 +341,8 @@ export function SongManagementPage() {
       header: 'Duration',
       align: 'right',
       render: (row) => (
-        <span
-          style={{
-            fontSize: 12,
-            color: '#666',
-            fontWeight: 600,
-            fontVariantNumeric: 'tabular-nums',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Clock size={11} style={{ color: '#444' }} />
+        <span className="text-xs text-[#666] font-semibold tabular-nums flex items-center gap-1 justify-end">
+          <Clock size={11} className="text-[#444]" />
           {formatDuration(row.duration)}
         </span>
       ),
@@ -445,19 +352,8 @@ export function SongManagementPage() {
       header: 'Plays',
       align: 'right',
       render: (row) => (
-        <span
-          style={{
-            fontSize: 12,
-            color: '#888',
-            fontWeight: 600,
-            fontVariantNumeric: 'tabular-nums',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            justifyContent: 'flex-end',
-          }}
-        >
-          <BarChart2 size={11} style={{ color: '#444' }} />
+        <span className="text-xs text-[#888] font-semibold tabular-nums flex items-center gap-1 justify-end">
+          <BarChart2 size={11} className="text-[#444]" />
           {formatPlays(row.playCount)}
         </span>
       ),
@@ -466,7 +362,7 @@ export function SongManagementPage() {
       key: 'createdAt',
       header: 'Added',
       render: (row) => (
-        <span style={{ fontSize: 12, color: '#444' }}>
+        <span className="text-xs text-[#444]">
           {new Date(row.createdAt).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -480,7 +376,7 @@ export function SongManagementPage() {
       header: 'Actions',
       align: 'right',
       render: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
+        <div className="flex items-center gap-1 justify-end">
           <ActionBtn
             icon={<Eye size={13} />}
             title="View"
@@ -514,52 +410,24 @@ export function SongManagementPage() {
 
   // ─────────────────────────────────────────────────────
   return (
-    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
+    <div className="p-4 md:p-6 lg:p-7 min-h-full">
 
       {/* ── Page header ──────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          marginBottom: 28,
-          gap: 16,
-          flexWrap: 'wrap',
-        }}
+        className="flex items-start justify-between flex-wrap gap-4 mb-7"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 13,
-              background: 'rgba(63,214,255,0.08)',
-              border: '1px solid rgba(63,214,255,0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#3FD6FF',
-              flexShrink: 0,
-            }}
-          >
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-[13px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] shrink-0">
             <Music size={20} />
           </div>
           <div>
-            <h1
-              style={{
-                fontSize: 22,
-                fontWeight: 800,
-                color: '#fff',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-              }}
-            >
+            <h1 className="text-[22px] font-extrabold text-white tracking-[-0.03em] leading-tight m-0">
               Song Management
             </h1>
-            <p style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+            <p className="text-[13px] text-[#444] mt-1 m-0">
               Manage songs in the Pulse music library
             </p>
           </div>
@@ -575,25 +443,7 @@ export function SongManagementPage() {
               setIsFormOpen(true)
             }}
             id="btn-add-song"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              height: 42,
-              paddingLeft: 18,
-              paddingRight: 18,
-              borderRadius: 11,
-              border: 'none',
-              background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
-              color: '#000',
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
-              flexShrink: 0,
-              letterSpacing: '-0.01em',
-              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-            }}
+            className="flex items-center gap-2 h-[42px] px-4.5 rounded-[11px] border-none bg-gradient-to-br from-[#3FD6FF] to-[#2094ff] text-black text-[13px] font-bold cursor-pointer shadow-[0_4px_20px_rgba(63,214,255,0.3)] shrink-0 tracking-[-0.01em] font-sans"
           >
             <Plus size={16} strokeWidth={2.5} />
             Add Song
@@ -602,14 +452,7 @@ export function SongManagementPage() {
       </motion.div>
 
       {/* ── Stat cards ─────────────────────────────────── */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 14,
-          marginBottom: 24,
-        }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 mb-6">
         <StatCard
           icon={<Music size={18} />}
           iconColor="#3FD6FF"
@@ -640,24 +483,10 @@ export function SongManagementPage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          background: '#0f0f0f',
-          border: '1px solid rgba(255,255,255,0.05)',
-          borderRadius: 16,
-          overflow: 'hidden',
-        }}
+        className="bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden"
       >
         {/* Toolbar */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '16px 20px',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            flexWrap: 'wrap',
-          }}
-        >
+        <div className="flex items-center flex-wrap gap-2.5 p-4 md:px-5 border-b border-white/5">
           {/* Search */}
           <SearchBar
             value={keyword}
@@ -700,30 +529,7 @@ export function SongManagementPage() {
             <button
               onClick={handleReset}
               id="btn-reset-filters"
-              style={{
-                height: 38,
-                paddingLeft: 14,
-                paddingRight: 14,
-                borderRadius: 10,
-                border: '1px solid rgba(255,91,91,0.2)',
-                background: 'rgba(255,91,91,0.06)',
-                color: '#FF5B5B',
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                transition: 'all 0.15s',
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255,91,91,0.12)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255,91,91,0.06)'
-              }}
+              className="h-[38px] px-3.5 rounded-[10px] border border-[#FF5B5B]/20 bg-[#FF5B5B]/10 hover:bg-[#FF5B5B]/20 text-[#FF5B5B] text-xs font-semibold cursor-pointer flex items-center gap-1.5 font-sans transition-all duration-150 shrink-0"
             >
               <Radio size={11} />
               Reset
@@ -732,16 +538,8 @@ export function SongManagementPage() {
 
           {/* Result count */}
           {!isLoading && data && (
-            <span
-              style={{
-                marginLeft: 'auto',
-                fontSize: 12,
-                color: '#333',
-                fontWeight: 500,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <span style={{ color: '#555' }}>{data.total}</span> songs
+            <span className="ml-auto text-xs text-[#333] font-medium whitespace-nowrap">
+              <span className="text-[#555]">{data.total}</span> songs
             </span>
           )}
         </div>
@@ -760,7 +558,7 @@ export function SongManagementPage() {
 
         {/* Pagination */}
         {data && data.totalPages > 1 && (
-          <div style={{ padding: '14px 20px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="px-5 py-3.5 border-t border-white/5">
             <Pagination
               currentPage={data.page}
               totalPages={data.totalPages}

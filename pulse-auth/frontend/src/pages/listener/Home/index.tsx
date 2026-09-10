@@ -41,19 +41,13 @@ export function HomePage() {
     .filter(Boolean) as Song[]
 
   return (
-    <div
-      className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10"
-      style={{ maxWidth: 1400, margin: '0 auto' }}
-    >
+    <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10 max-w-[1400px] mx-auto">
       {/* Greeting */}
       <div className="mb-6 md:mb-8 lg:mb-10">
-        <h1
-          className="text-2xl md:text-3xl lg:text-[32px]"
-          style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
-        >
+        <h1 className="text-2xl md:text-3xl lg:text-[32px] font-black text-white m-0 tracking-[-0.04em]">
           {getGreeting()}{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}
         </h1>
-        <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
+        <p className="text-[15px] text-[#555] m-0 mt-2">
           Discover new music and enjoy your favorites
         </p>
       </div>
@@ -175,38 +169,33 @@ function QuickPlayCard({ song, queue }: { song: Song; queue: Song[] }) {
   return (
     <div
       onClick={() => playSong(song, queue)}
-      className="group flex items-center gap-3 p-2 rounded-[10px] cursor-pointer relative overflow-hidden transition-colors duration-200"
-      style={{
-        background: isCurrent ? 'rgba(63,214,255,0.08)' : 'rgba(255,255,255,0.04)',
-        border: isCurrent ? '1px solid rgba(63,214,255,0.15)' : '1px solid rgba(255,255,255,0.04)',
-      }}
-      onMouseEnter={(e) => { if (!isCurrent) e.currentTarget.style.background = 'rgba(255,255,255,0.07)' }}
-      onMouseLeave={(e) => { if (!isCurrent) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+      className={`group flex items-center gap-3 p-2 rounded-[10px] cursor-pointer relative overflow-hidden transition-colors duration-200 border ${
+        isCurrent
+          ? 'bg-[rgba(63,214,255,0.08)] border-[rgba(63,214,255,0.15)]'
+          : 'bg-[rgba(255,255,255,0.04)] border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.07)]'
+      }`}
     >
-      <div style={{ width: 48, height: 48, borderRadius: 6, overflow: 'hidden', flexShrink: 0, background: '#1a1a1a' }}>
+      <div className="w-12 h-12 rounded-md overflow-hidden shrink-0 bg-[#1a1a1a]">
         {song.coverUrl ? (
-          <img src={song.coverUrl} alt={song.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={song.coverUrl} alt={song.title} className="w-full h-full object-cover" />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>
+          <div className="w-full h-full flex items-center justify-center text-[#444]">
             <Music2 size={18} />
           </div>
         )}
       </div>
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: isCurrent ? '#3FD6FF' : '#fff', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <div className="min-w-0 flex-1">
+        <p className={`text-[13px] font-bold m-0 whitespace-nowrap overflow-hidden text-ellipsis ${isCurrent ? 'text-[#3FD6FF]' : 'text-white'}`}>
           {song.title}
         </p>
-        <p style={{ fontSize: 11, color: '#555', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <p className="text-[11px] text-[#555] mt-0.5 mb-0 whitespace-nowrap overflow-hidden text-ellipsis">
           {getArtistName(song)}
         </p>
       </div>
-      <div style={{
-        width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-        background: isCurrent ? '#3FD6FF' : 'rgba(255,255,255,0.1)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background 0.2s',
-      }}>
-        <Play size={13} fill={isCurrent ? '#000' : '#fff'} color={isCurrent ? '#000' : '#fff'} style={{ marginLeft: 2 }} />
+      <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center transition-colors duration-200 ${
+        isCurrent ? 'bg-[#3FD6FF]' : 'bg-white/10'
+      }`}>
+        <Play size={13} fill={isCurrent ? '#000' : '#fff'} color={isCurrent ? '#000' : '#fff'} className="ml-0.5" />
       </div>
     </div>
   )
