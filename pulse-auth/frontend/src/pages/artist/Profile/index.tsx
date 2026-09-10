@@ -121,13 +121,16 @@ export function ArtistProfilePage() {
   }
 
   return (
-    <div style={{ padding: '32px 40px', maxWidth: 800 }}>
+    <div
+      className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10 pb-20"
+      style={{ maxWidth: 1400, margin: '0 auto' }}
+    >
       {/* ── Page header ──────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ marginBottom: 32 }}
+        className="mb-6 md:mb-8 lg:mb-10"
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div
@@ -148,17 +151,12 @@ export function ArtistProfilePage() {
           </div>
           <div>
             <h1
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: '#fff',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-              }}
+              className="text-2xl md:text-3xl lg:text-[32px]"
+              style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
             >
               My Profile
             </h1>
-            <p style={{ fontSize: 15, color: '#888', marginTop: 4 }}>
+            <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
               Manage your personal information
             </p>
           </div>
