@@ -35,7 +35,7 @@ export function StatCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="p-4 sm:p-5 md:px-6 md:py-5 bg-[#141414] border border-white/5 rounded-2xl flex flex-col gap-3.5 relative overflow-hidden transition-all duration-200 cursor-default hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+      className="p-6 md:p-8 min-h-[180px] bg-[#141414] border border-white/5 rounded-2xl flex flex-col justify-between gap-6 relative overflow-hidden transition-all duration-200 cursor-default hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
     >
       {/* Subtle ambient background glow */}
       <div
@@ -76,10 +76,10 @@ export function StatCard({
 
       {/* Value + label */}
       <div className="flex flex-col gap-1.5 mt-2">
-        <div className="text-[32px] font-extrabold text-white tracking-[-0.04em] leading-none">
+        <div className="text-[36px] font-extrabold text-white tracking-[-0.04em] leading-none">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
-        <div className="text-[14px] text-[#888] font-semibold">
+        <div className="text-[15px] text-[#888] font-semibold">
           {label}
         </div>
         {trendLabel && (
