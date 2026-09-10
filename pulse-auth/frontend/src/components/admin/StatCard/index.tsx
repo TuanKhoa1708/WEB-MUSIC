@@ -35,51 +35,23 @@ export function StatCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="p-4 sm:p-5 md:px-6 md:py-5"
-      style={{
-        background: '#141414',
-        border: '1px solid rgba(255,255,255,0.05)',
-        borderRadius: 16,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 14,
-        position: 'relative',
-        overflow: 'hidden',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
-        cursor: 'default',
-      }}
-      whileHover={{
-        borderColor: 'rgba(255,255,255,0.1)',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-      }}
+      className="p-4 sm:p-5 md:px-6 md:py-5 bg-[#141414] border border-white/5 rounded-2xl flex flex-col gap-3.5 relative overflow-hidden transition-all duration-200 cursor-default hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
     >
       {/* Subtle ambient background glow */}
       <div
+        className="absolute -top-5 -right-5 w-[100px] h-[100px] rounded-full blur-[30px] pointer-events-none"
         style={{
-          position: 'absolute',
-          top: -20,
-          right: -20,
-          width: 100,
-          height: 100,
-          borderRadius: '50%',
           background: iconBg ?? `${iconColor}08`,
-          filter: 'blur(30px)',
-          pointerEvents: 'none',
         }}
       />
 
       {/* Top row: icon + trend */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="flex items-center justify-between">
         <div
+          className="w-10 h-10 rounded-[11px] flex items-center justify-center"
           style={{
-            width: 40,
-            height: 40,
-            borderRadius: 11,
             background: iconBg ?? `${iconColor}14`,
             border: `1px solid ${iconColor}22`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             color: iconColor,
           }}
         >
@@ -88,18 +60,14 @@ export function StatCard({
 
         {hasTrend && (
           <div
+            className="flex items-center gap-1 px-2 py-1 rounded-lg"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
               background: `${trendColor}12`,
               border: `1px solid ${trendColor}22`,
-              borderRadius: 8,
-              padding: '4px 8px',
             }}
           >
             <TrendIcon size={12} style={{ color: trendColor }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: trendColor }}>
+            <span className="text-[11px] font-bold" style={{ color: trendColor }}>
               {Math.abs(trend ?? 0)}%
             </span>
           </div>
@@ -108,23 +76,14 @@ export function StatCard({
 
       {/* Value + label */}
       <div>
-        <div
-          style={{
-            fontSize: 28,
-            fontWeight: 800,
-            color: '#fff',
-            letterSpacing: '-0.04em',
-            lineHeight: 1,
-            marginBottom: 6,
-          }}
-        >
+        <div className="text-[28px] font-extrabold text-white tracking-[-0.04em] leading-none mb-1.5">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
-        <div style={{ fontSize: 13, color: '#555', fontWeight: 500 }}>
+        <div className="text-[13px] text-[#888] font-semibold">
           {label}
         </div>
         {trendLabel && (
-          <div style={{ fontSize: 11, color: '#3a3a3a', marginTop: 4 }}>
+          <div className="text-[11px] text-[#444] mt-1 font-medium">
             {trendLabel}
           </div>
         )}

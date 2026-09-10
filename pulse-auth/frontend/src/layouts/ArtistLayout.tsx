@@ -8,14 +8,7 @@ export function ArtistLayout() {
 
   return (
     <MobileSidebarContext.Provider value={{ mobileOpen, setMobileOpen }}>
-      <div
-        style={{
-          display: 'flex',
-          minHeight: '100vh',
-          backgroundColor: '#090909',
-          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        }}
-      >
+      <div className="flex min-h-screen bg-[#090909] font-sans">
         {/* Desktop sidebar — hidden on mobile */}
         <div className="hidden md:block shrink-0">
           <ArtistSidebar />
@@ -28,27 +21,12 @@ export function ArtistLayout() {
         />
 
         {/* Main column */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0,
-            overflowX: 'hidden',
-          }}
-        >
+        <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden relative h-screen">
           {/* Header */}
           <ArtistHeader />
 
           {/* Page content */}
-          <main
-            style={{
-              flex: 1,
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              paddingBottom: '64px', // Extra padding for mobile if needed
-            }}
-          >
+          <main className="flex-1 overflow-y-auto overflow-x-hidden pb-16 md:pb-0">
             <Outlet />
           </main>
         </div>

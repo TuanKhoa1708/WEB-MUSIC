@@ -3,56 +3,29 @@ import { LayoutDashboard } from 'lucide-react'
 
 export function AdminDashboardPage() {
   return (
-    <div style={{ padding: 'clamp(16px, 3vw, 32px) clamp(16px, 3vw, 28px)' }}>
+    <div className="px-4 sm:px-6 md:px-8 py-6 md:py-8 max-w-[1400px] mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 11,
-              background: 'rgba(63,214,255,0.1)',
-              border: '1px solid rgba(63,214,255,0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#3FD6FF',
-            }}
-          >
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-[11px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF]">
             <LayoutDashboard size={18} />
           </div>
           <div>
-            <h1
-              style={{
-                fontSize: 22,
-                fontWeight: 800,
-                color: '#fff',
-                letterSpacing: '-0.03em',
-              }}
-            >
+            <h1 className="text-[22px] font-extrabold text-white tracking-[-0.03em] m-0">
               Dashboard
             </h1>
-            <p style={{ fontSize: 13, color: '#444', marginTop: 2 }}>
+            <p className="text-[13px] text-[#888] mt-0.5 m-0">
               Overview of Pulse platform metrics
             </p>
           </div>
         </div>
 
-        <div
-          style={{
-            marginTop: 48,
-            padding: 40,
-            borderRadius: 16,
-            border: '1px dashed rgba(255,255,255,0.07)',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ fontSize: 32, marginBottom: 12 }}>🚀</div>
-          <p style={{ color: '#333', fontSize: 14 }}>
+        <div className="mt-12 p-10 rounded-2xl border border-dashed border-white/5 text-center">
+          <div className="text-[32px] mb-3">🚀</div>
+          <p className="text-[#666] text-sm m-0">
             Dashboard metrics coming soon.
           </p>
         </div>
