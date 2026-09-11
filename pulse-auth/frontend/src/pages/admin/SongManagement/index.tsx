@@ -40,11 +40,7 @@ import type {
   AlbumRef,
 } from '@/types/song.types'
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const PAGE_SIZE = 10
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60)
@@ -57,8 +53,6 @@ function formatPlays(n: number): string {
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
   return n.toLocaleString()
 }
-
-// ─── Song cover thumbnail ─────────────────────────────────────────────────────
 
 function SongCover({ title, coverUrl }: { title: string; coverUrl?: string }) {
   const initials = title
@@ -94,8 +88,6 @@ function SongCover({ title, coverUrl }: { title: string; coverUrl?: string }) {
   )
 }
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
-
 function SongEmptyState() {
   return (
     <div className="text-center py-12 px-6">
@@ -111,8 +103,6 @@ function SongEmptyState() {
     </div>
   )
 }
-
-// ─── Action button ────────────────────────────────────────────────────────────
 
 function ActionBtn({
   icon,
@@ -146,8 +136,6 @@ function ActionBtn({
   )
 }
 
-// ─── Filter bar ───────────────────────────────────────────────────────────────
-
 const GENRES = [
   'Pop', 'Rock', 'Hip-Hop', 'R&B', 'Jazz', 'Classical',
   'Electronic', 'Dance', 'Country', 'Folk', 'Indie', 'Metal',
@@ -173,9 +161,8 @@ function FilterSelect({
   return (
     <div className="relative shrink-0">
       <span
-        className={`absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none z-[1] transition-colors duration-150 ${
-          value ? 'text-[#3FD6FF]' : 'text-[#555]'
-        }`}
+        className={`absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none z-[1] transition-colors duration-150 ${value ? 'text-[#3FD6FF]' : 'text-[#555]'
+          }`}
       >
         {icon}
       </span>
@@ -185,15 +172,13 @@ function FilterSelect({
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className={`h-[38px] pl-[30px] pr-7 rounded-[10px] text-xs font-semibold cursor-pointer appearance-none min-w-[120px] transition-all duration-150 outline-none font-sans ${
-          value ? 'bg-[#3FD6FF]/5 text-[#3FD6FF]' : 'bg-white/5 text-[#666]'
-        }`}
+        className={`h-[38px] pl-[30px] pr-7 rounded-[10px] text-xs font-semibold cursor-pointer appearance-none min-w-[120px] transition-all duration-150 outline-none font-sans ${value ? 'bg-[#3FD6FF]/5 text-[#3FD6FF]' : 'bg-white/5 text-[#666]'
+          }`}
         style={{
-          border: `1px solid ${
-            focused || value
+          border: `1px solid ${focused || value
               ? 'rgba(63,214,255,0.25)'
               : 'rgba(255,255,255,0.06)'
-          }`,
+            }`,
         }}
       >
         <option value="">{placeholder}</option>
@@ -207,24 +192,20 @@ function FilterSelect({
   )
 }
 
-// ─── Main page component ──────────────────────────────────────────────────────
-
 export function SongManagementPage() {
   const location = useLocation()
   const isAdmin = location.pathname.startsWith('/admin')
 
-  // ── Filter state ───────────────────────────────────────
-  const [keyword, setKeyword]   = useState('')
+  const [keyword, setKeyword] = useState('')
   const [artistId, setArtistId] = useState('')
-  const [genre, setGenre]       = useState('')
-  const [page, setPage]         = useState(1)
+  const [genre, setGenre] = useState('')
+  const [page, setPage] = useState(1)
 
-  // ── Modal state ────────────────────────────────────────
-  const [deleteTarget, setDeleteTarget]   = useState<Song | null>(null)
-  const [isFormOpen, setIsFormOpen]       = useState(false)
-  const [editTarget, setEditTarget]       = useState<Song | null>(null)
-  const [detailSong, setDetailSong]       = useState<Song | null>(null)
-  const [isDetailOpen, setIsDetailOpen]   = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<Song | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editTarget, setEditTarget] = useState<Song | null>(null)
+  const [detailSong, setDetailSong] = useState<Song | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   const queryParams: SongQueryParams = {
     keyword,
@@ -234,15 +215,13 @@ export function SongManagementPage() {
     limit: PAGE_SIZE,
   }
 
-  // ── Data ────────────────────────────────────────────────
-  const { data, isLoading }     = useSongs(queryParams)
-  const { data: stats }         = useSongStats()
+  const { data, isLoading } = useSongs(queryParams)
+  const { data: stats } = useSongStats()
   const { data: artistOptions } = useArtistOptions()
   const { mutateAsync: deleteSong, isPending: isDeleting } = useDeleteSong()
   const { mutateAsync: createSong, isPending: isCreating } = useCreateSong()
   const { mutateAsync: updateSong, isPending: isUpdating } = useUpdateSong()
 
-  // ── Handlers ───────────────────────────────────────────
   const handleSearchChange = useCallback((v: string) => {
     setKeyword(v)
     setPage(1)
@@ -282,7 +261,6 @@ export function SongManagementPage() {
 
   const hasFilters = !!(keyword || artistId || genre)
 
-  // ── Table columns ───────────────────────────────────────
   const columns: Column<Song>[] = [
     {
       key: 'song',
@@ -408,26 +386,33 @@ export function SongManagementPage() {
     },
   ]
 
-  // ─────────────────────────────────────────────────────
   return (
-    <div className="p-4 md:p-6 lg:p-7 min-h-full">
+    <div style={{ padding: 'clamp(16px, 3vw, 36px)', minHeight: '100%', maxWidth: '1400px', margin: '0 auto' }}>
 
-      {/* ── Page header ──────────────────────────────── */}
+      {/* ── Page header ─────────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-start justify-between flex-wrap gap-4 mb-7"
+        className="flex items-start justify-between flex-wrap gap-4 mb-8"
       >
-        <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-[13px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] shrink-0">
-            <Music size={20} />
+        <div className="flex items-center gap-4">
+          <div
+            className="w-[52px] h-[52px] rounded-2xl flex items-center justify-center shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, rgba(63,214,255,0.15), rgba(63,214,255,0.03))',
+              border: '1px solid rgba(63,214,255,0.25)',
+              color: '#3FD6FF',
+              boxShadow: '0 0 20px rgba(63,214,255,0.1)',
+            }}
+          >
+            <Music size={24} />
           </div>
           <div>
-            <h1 className="text-[22px] font-extrabold text-white tracking-[-0.03em] leading-tight m-0">
+            <h1 style={{ fontSize: 'clamp(22px, 2.5vw, 28px)' }} className="font-extrabold text-white tracking-tight leading-tight m-0">
               Song Management
             </h1>
-            <p className="text-[13px] text-[#444] mt-1 m-0">
+            <p style={{ fontSize: 'clamp(13px, 1.5vw, 14px)' }} className="text-[#777] mt-1.5 m-0">
               Manage songs in the Pulse music library
             </p>
           </div>
@@ -443,7 +428,8 @@ export function SongManagementPage() {
               setIsFormOpen(true)
             }}
             id="btn-add-song"
-            className="flex items-center gap-2 h-[42px] px-4.5 rounded-[11px] border-none bg-gradient-to-br from-[#3FD6FF] to-[#2094ff] text-black text-[13px] font-bold cursor-pointer shadow-[0_4px_20px_rgba(63,214,255,0.3)] shrink-0 tracking-[-0.01em] font-sans"
+            className="flex items-center gap-2 h-10 px-5 rounded-xl border-none bg-gradient-to-br from-[#3FD6FF] to-[#2094ff] text-black text-[14px] font-bold cursor-pointer shrink-0 font-sans"
+            style={{ boxShadow: '0 4px 20px rgba(63,214,255,0.25)' }}
           >
             <Plus size={16} strokeWidth={2.5} />
             Add Song
@@ -451,10 +437,13 @@ export function SongManagementPage() {
         )}
       </motion.div>
 
-      {/* ── Stat cards ─────────────────────────────────── */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 mb-6">
+      {/* ── Stat cards ──────────────────────────────────────────────────────── */}
+      <div
+        className="grid gap-5 mb-9"
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}
+      >
         <StatCard
-          icon={<Music size={18} />}
+          icon={<Music size={20} />}
           iconColor="#3FD6FF"
           label="Total Songs"
           value={stats?.totalSongs ?? '—'}
@@ -463,14 +452,14 @@ export function SongManagementPage() {
           delay={0.05}
         />
         <StatCard
-          icon={<BarChart2 size={18} />}
+          icon={<BarChart2 size={20} />}
           iconColor="#A78BFA"
           label="Total Plays"
           value={stats ? formatPlays(stats.totalPlays) : '—'}
           delay={0.1}
         />
         <StatCard
-          icon={<Filter size={18} />}
+          icon={<Filter size={20} />}
           iconColor="#F7B500"
           label="Filtered Results"
           value={data?.total ?? '—'}
@@ -478,7 +467,7 @@ export function SongManagementPage() {
         />
       </div>
 
-      {/* ── Table card ─────────────────────────────────── */}
+      {/* ── Table card ──────────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -486,15 +475,13 @@ export function SongManagementPage() {
         className="bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden"
       >
         {/* Toolbar */}
-        <div className="flex items-center flex-wrap gap-2.5 p-4 md:px-5 border-b border-white/5">
-          {/* Search */}
+        <div className="flex items-center flex-wrap gap-3 p-4 md:p-6 border-b border-white/5">
           <SearchBar
             value={keyword}
             onChange={handleSearchChange}
             placeholder="Search songs by title..."
           />
 
-          {/* Artist filter */}
           <FilterSelect
             id="filter-artist"
             value={artistId}
@@ -509,7 +496,6 @@ export function SongManagementPage() {
             ))}
           </FilterSelect>
 
-          {/* Genre filter */}
           <FilterSelect
             id="filter-genre"
             value={genre}
@@ -524,22 +510,20 @@ export function SongManagementPage() {
             ))}
           </FilterSelect>
 
-          {/* Reset */}
           {hasFilters && (
             <button
               onClick={handleReset}
               id="btn-reset-filters"
-              className="h-[38px] px-3.5 rounded-[10px] border border-[#FF5B5B]/20 bg-[#FF5B5B]/10 hover:bg-[#FF5B5B]/20 text-[#FF5B5B] text-xs font-semibold cursor-pointer flex items-center gap-1.5 font-sans transition-all duration-150 shrink-0"
+              className="h-[38px] px-3.5 rounded-[10px] border border-[#FF5B5B]/20 bg-[#FF5B5B]/5 hover:bg-[#FF5B5B]/15 text-[#FF5B5B] text-xs font-semibold cursor-pointer flex items-center gap-1.5 font-sans transition-all duration-150 shrink-0"
             >
-              <Radio size={11} />
+              <Radio size={12} />
               Reset
             </button>
           )}
 
-          {/* Result count */}
           {!isLoading && data && (
-            <span className="ml-auto text-xs text-[#333] font-medium whitespace-nowrap">
-              <span className="text-[#555]">{data.total}</span> songs
+            <span className="ml-auto text-[13px] text-[#444] font-medium whitespace-nowrap">
+              <span className="text-[#777] font-semibold">{data.total}</span> songs
             </span>
           )}
         </div>
@@ -558,7 +542,7 @@ export function SongManagementPage() {
 
         {/* Pagination */}
         {data && data.totalPages > 1 && (
-          <div className="px-5 py-3.5 border-t border-white/5">
+          <div className="px-6 py-4 border-t border-white/5">
             <Pagination
               currentPage={data.page}
               totalPages={data.totalPages}
@@ -570,7 +554,7 @@ export function SongManagementPage() {
         )}
       </motion.div>
 
-      {/* ── Confirm delete dialog ─────────────────────── */}
+      {/* ── Modals ──────────────────────────────────────────────────────────── */}
       <ConfirmDialog
         open={!!deleteTarget}
         title="Delete Song"
@@ -583,7 +567,6 @@ export function SongManagementPage() {
         onCancel={() => setDeleteTarget(null)}
       />
 
-      {/* ── Add / Edit form modal ─────────────────────── */}
       <SongForm
         isOpen={isFormOpen}
         onClose={() => {
@@ -595,7 +578,6 @@ export function SongManagementPage() {
         isLoading={isCreating || isUpdating}
       />
 
-      {/* ── Detail modal ──────────────────────────────── */}
       <SongDetailModal
         song={detailSong}
         isOpen={isDetailOpen}

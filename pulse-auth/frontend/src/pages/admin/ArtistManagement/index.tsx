@@ -8,9 +8,9 @@ import {
   Trash2,
   Radio,
 } from 'lucide-react'
-import { 
-  useArtists, 
-  useArtistStats, 
+import {
+  useArtists,
+  useArtistStats,
   useDeleteArtist,
   useCreateArtist,
   useUpdateArtist
@@ -24,11 +24,7 @@ import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import { ArtistModal } from '@/components/admin/ArtistModal'
 import type { Artist, ArtistQueryParams, CreateArtistInput, UpdateArtistInput } from '@/types/artist.types'
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const PAGE_SIZE = 10
-
-// ─── Avatar initials ──────────────────────────────────────────────────────────
 
 function ArtistAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
   const initials = name
@@ -64,8 +60,6 @@ function ArtistAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string })
   )
 }
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
-
 function ArtistEmptyState() {
   return (
     <div style={{ textAlign: 'center', padding: '48px 24px' }}>
@@ -80,32 +74,28 @@ function ArtistEmptyState() {
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 16px',
-          color: '#2a2a2a',
+          color: '#3FD6FF',
         }}
       >
         <Mic2 size={24} />
       </div>
-      <p style={{ fontSize: 15, color: '#333', fontWeight: 600, marginBottom: 6 }}>
+      <p style={{ fontSize: 15, color: '#aaa', fontWeight: 600, marginBottom: 6 }}>
         No artists found
       </p>
-      <p style={{ fontSize: 13, color: '#252525' }}>
+      <p style={{ fontSize: 13, color: '#444' }}>
         Try adjusting your search or filters.
       </p>
     </div>
   )
 }
 
-// ─── Main page component ──────────────────────────────────────────────────────
-
 export function ArtistManagementPage() {
-  // ── Filters state ──────────────────────────────────────
-  const [keyword, setKeyword]       = useState('')
-  const [page, setPage]           = useState(1)
+  const [keyword, setKeyword] = useState('')
+  const [page, setPage] = useState(1)
 
-  // ── Delete & Modal dialog state ────────────────────────────────
   const [deleteTarget, setDeleteTarget] = useState<Artist | null>(null)
-  const [isModalOpen, setIsModalOpen]   = useState(false)
-  const [editTarget, setEditTarget]     = useState<Artist | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editTarget, setEditTarget] = useState<Artist | null>(null)
 
   const queryParams: ArtistQueryParams = {
     keyword,
@@ -113,14 +103,12 @@ export function ArtistManagementPage() {
     limit: PAGE_SIZE,
   }
 
-  // ── Data ───────────────────────────────────────────────
   const { data, isLoading } = useArtists(queryParams)
-  const { data: stats }     = useArtistStats()
+  const { data: stats } = useArtistStats()
   const { mutateAsync: deleteArtist, isPending: isDeleting } = useDeleteArtist()
   const { mutateAsync: createArtist, isPending: isCreating } = useCreateArtist()
   const { mutateAsync: updateArtist, isPending: isUpdating } = useUpdateArtist()
 
-  // ── Handlers ───────────────────────────────────────────
   const handleSearchChange = useCallback((v: string) => {
     setKeyword(v)
     setPage(1)
@@ -147,7 +135,6 @@ export function ArtistManagementPage() {
 
   const hasFilters = !!keyword
 
-  // ── Table columns ──────────────────────────────────────
   const columns: Column<Artist>[] = [
     {
       key: 'artist',
@@ -163,7 +150,6 @@ export function ArtistManagementPage() {
         </div>
       ),
     },
-
     {
       key: 'followers',
       header: 'Followers',
@@ -173,8 +159,8 @@ export function ArtistManagementPage() {
           {row.followers >= 1_000_000
             ? `${(row.followers / 1_000_000).toFixed(1)}M`
             : row.followers >= 1_000
-            ? `${(row.followers / 1_000).toFixed(0)}K`
-            : row.followers.toLocaleString()}
+              ? `${(row.followers / 1_000).toFixed(0)}K`
+              : row.followers.toLocaleString()}
         </span>
       ),
     },
@@ -209,11 +195,11 @@ export function ArtistManagementPage() {
       align: 'right',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-          <ActionBtn icon={<Eye size={13} />}   title="View"   color="#3FD6FF" />
-          <ActionBtn 
-            icon={<Edit2 size={13} />} 
-            title="Edit"   
-            color="#F7B500" 
+          <ActionBtn icon={<Eye size={13} />} title="View" color="#3FD6FF" />
+          <ActionBtn
+            icon={<Edit2 size={13} />}
+            title="Edit"
+            color="#F7B500"
             onClick={() => {
               setEditTarget(row)
               setIsModalOpen(true)
@@ -230,11 +216,8 @@ export function ArtistManagementPage() {
     },
   ]
 
-  // ─────────────────────────────────────────────────────
   return (
-    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
-
-      {/* ── Page header ──────────────────────────────── */}
+    <div style={{ padding: 'clamp(16px, 3vw, 36px)', minHeight: '100%', maxWidth: '1400px', margin: '0 auto' }}>
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -243,32 +226,33 @@ export function ArtistManagementPage() {
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
-          marginBottom: 28,
+          marginBottom: 32,
           gap: 16,
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: 13,
-              background: 'rgba(63,214,255,0.08)',
-              border: '1px solid rgba(63,214,255,0.18)',
+              width: 52,
+              height: 52,
+              borderRadius: 16,
+              background: 'linear-gradient(135deg, rgba(63,214,255,0.15), rgba(63,214,255,0.03))',
+              border: '1px solid rgba(63,214,255,0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#3FD6FF',
               flexShrink: 0,
+              boxShadow: '0 0 20px rgba(63,214,255,0.1)',
             }}
           >
-            <Mic2 size={20} />
+            <Mic2 size={24} />
           </div>
           <div>
             <h1
               style={{
-                fontSize: 22,
+                fontSize: 'clamp(22px, 2.5vw, 28px)',
                 fontWeight: 800,
                 color: '#fff',
                 letterSpacing: '-0.03em',
@@ -277,13 +261,12 @@ export function ArtistManagementPage() {
             >
               Artist Management
             </h1>
-            <p style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+            <p style={{ fontSize: 'clamp(13px, 1.5vw, 14px)', color: '#777', marginTop: 6 }}>
               Manage artists registered on Pulse
             </p>
           </div>
         </div>
 
-        {/* Add Artist button */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
@@ -291,19 +274,18 @@ export function ArtistManagementPage() {
             display: 'flex',
             alignItems: 'center',
             gap: 8,
-            height: 42,
+            height: 40,
             paddingLeft: 18,
             paddingRight: 18,
-            borderRadius: 11,
+            borderRadius: 12,
             border: 'none',
             background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
             color: '#000',
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: 700,
             cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
+            boxShadow: '0 4px 20px rgba(63,214,255,0.25)',
             flexShrink: 0,
-            letterSpacing: '-0.01em',
           }}
           onClick={() => {
             setEditTarget(null)
@@ -316,17 +298,16 @@ export function ArtistManagementPage() {
         </motion.button>
       </motion.div>
 
-      {/* ── Stat cards ───────────────────────────────── */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 14,
-          marginBottom: 24,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: 20,
+          marginBottom: 36,
         }}
       >
         <StatCard
-          icon={<Mic2 size={18} />}
+          icon={<Mic2 size={20} />}
           iconColor="#3FD6FF"
           label="Total Artists"
           value={stats?.totalArtists ?? '—'}
@@ -336,7 +317,6 @@ export function ArtistManagementPage() {
         />
       </div>
 
-      {/* ── Table card ────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -348,13 +328,12 @@ export function ArtistManagementPage() {
           overflow: 'hidden',
         }}
       >
-        {/* Toolbar */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
-            padding: '16px 20px',
+            gap: 12,
+            padding: '16px 24px',
             borderBottom: '1px solid rgba(255,255,255,0.04)',
             flexWrap: 'wrap',
           }}
@@ -392,28 +371,26 @@ export function ArtistManagementPage() {
                 (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,91,91,0.06)'
               }}
             >
-              <Radio size={11} />
+              <Radio size={12} />
               Reset
             </button>
           )}
 
-          {/* Result count */}
           {!isLoading && data && (
             <span
               style={{
                 marginLeft: 'auto',
-                fontSize: 12,
-                color: '#333',
+                fontSize: 13,
+                color: '#444',
                 fontWeight: 500,
                 whiteSpace: 'nowrap',
               }}
             >
-              <span style={{ color: '#555' }}>{data.total}</span> artists
+              <span style={{ color: '#777', fontWeight: 600 }}>{data.total}</span> artists
             </span>
           )}
         </div>
 
-        {/* Table */}
         <div style={{ padding: '0' }}>
           <DataTable
             columns={columns}
@@ -425,9 +402,8 @@ export function ArtistManagementPage() {
           />
         </div>
 
-        {/* Pagination */}
         {data && data.totalPages > 1 && (
-          <div style={{ padding: '14px 20px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <Pagination
               currentPage={data.page}
               totalPages={data.totalPages}
@@ -439,7 +415,6 @@ export function ArtistManagementPage() {
         )}
       </motion.div>
 
-      {/* ── Confirm delete dialog ──────────────────────── */}
       <ConfirmDialog
         open={!!deleteTarget}
         title="Remove Artist"
@@ -452,7 +427,6 @@ export function ArtistManagementPage() {
         onCancel={() => setDeleteTarget(null)}
       />
 
-      {/* ── Add / Edit Modal ───────────────────────────── */}
       <ArtistModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -463,8 +437,6 @@ export function ArtistManagementPage() {
     </div>
   )
 }
-
-// ─── Action icon button ───────────────────────────────────────────────────────
 
 function ActionBtn({
   icon,
@@ -496,13 +468,13 @@ function ActionBtn({
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLButtonElement).style.background = `${color}12`
-        ;(e.currentTarget as HTMLButtonElement).style.borderColor = `${color}30`
-        ;(e.currentTarget as HTMLButtonElement).style.color = color
+          ; (e.currentTarget as HTMLButtonElement).style.borderColor = `${color}30`
+          ; (e.currentTarget as HTMLButtonElement).style.color = color
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
-        ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent'
-        ;(e.currentTarget as HTMLButtonElement).style.color = '#3a3a3a'
+          ; (e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent'
+          ; (e.currentTarget as HTMLButtonElement).style.color = '#3a3a3a'
       }}
     >
       {icon}
