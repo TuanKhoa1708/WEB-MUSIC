@@ -114,7 +114,7 @@ export function ArtistSongManagementPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Song | null>(null)
 
-  const artistId = user?.id || ''
+  const artistId = user?.artistId || ''
   
   const queryParams: SongQueryParams = {
     keyword,

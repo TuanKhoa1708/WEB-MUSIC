@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Artist from "../models/Artist.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
@@ -97,6 +98,14 @@ export const login = async (req, res) => {
         // Sinh JWT
         const accessToken = generateToken(user._id);
 
+        let artistId = undefined;
+        if (user.role === "artist") {
+            const artist = await Artist.findOne({ userId: user._id });
+            if (artist) {
+                artistId = artist._id;
+            }
+        }
+
         res.status(200).json({
             accessToken,
             refreshToken: "",
@@ -110,6 +119,7 @@ export const login = async (req, res) => {
                 isPremium: user.isPremium,
                 subscriptionPlan: user.subscriptionPlan,
                 subscriptionExpiresAt: user.subscriptionExpiresAt,
+                artistId,
             },
         });
     } catch (error) {
@@ -127,6 +137,14 @@ export const getMe = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+        let artistId = undefined;
+        if (user.role === "artist") {
+            const artist = await Artist.findOne({ userId: user._id });
+            if (artist) {
+                artistId = artist._id;
+            }
+        }
+
         res.json({
             id: user._id,
             fullName: user.fullName,
@@ -137,6 +155,7 @@ export const getMe = async (req, res) => {
             isPremium: user.isPremium,
             subscriptionPlan: user.subscriptionPlan,
             subscriptionExpiresAt: user.subscriptionExpiresAt,
+            artistId,
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

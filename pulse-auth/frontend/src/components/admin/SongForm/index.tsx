@@ -13,6 +13,7 @@ import {
 import type { Song, CreateSongInput, UpdateSongInput } from '@/types/song.types'
 import { useArtistOptions, useAlbumOptions } from '@/hooks/admin/useSongs'
 import { uploadFilesApi } from '@/api/song.api'
+import { useAuth } from '@/contexts/AuthContext'
 
 // ─── Field wrapper ────────────────────────────────────────────────────────────
 
@@ -298,6 +299,7 @@ function validate(vals: FormValues, isEdit: boolean, audioFile: File | null): Fo
 }
 
 export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFormProps) {
+  const { user } = useAuth()
   const { data: artists = [], isLoading: loadingArtists } = useArtistOptions()
   const { data: albums = [], isLoading: loadingAlbums } = useAlbumOptions()
 
@@ -306,7 +308,7 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
 
   const emptyForm: FormValues = {
     title: '',
-    artistId: '',
+    artistId: user?.role === 'artist' && user.artistId ? user.artistId : '',
     albumId: '',
     audioUrl: '',
     coverUrl: '',
@@ -613,25 +615,27 @@ export function SongForm({ isOpen, onClose, song, onSubmit, isLoading }: SongFor
                 {/* Artist + Album row */}
                 <div className="song-form-row-grid">
                   <style>{`.song-form-row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } @media (max-width: 480px) { .song-form-row-grid { grid-template-columns: 1fr; } }`}</style>
-                  <Field label="Artist" required error={errors.artistId}>
-                    <StyledSelect
-                      id="song-artist"
-                      icon={<User size={14} />}
-                      value={form.artistId}
-                      onChange={(e) => handleChange('artistId', e.target.value)}
-                      error={!!errors.artistId}
-                      disabled={loadingArtists}
-                    >
-                      <option value="">
-                        {loadingArtists ? 'Loading...' : 'Select artist'}
-                      </option>
-                      {artists.map((a) => (
-                        <option key={a._id} value={a._id} style={{ background: '#1a1a1a' }}>
-                          {a.stageName}
+                  {user?.role === 'admin' && (
+                    <Field label="Artist" required error={errors.artistId}>
+                      <StyledSelect
+                        id="song-artist"
+                        icon={<User size={14} />}
+                        value={form.artistId}
+                        onChange={(e) => handleChange('artistId', e.target.value)}
+                        error={!!errors.artistId}
+                        disabled={loadingArtists}
+                      >
+                        <option value="">
+                          {loadingArtists ? 'Loading...' : 'Select artist'}
                         </option>
-                      ))}
-                    </StyledSelect>
-                  </Field>
+                        {artists.map((a) => (
+                          <option key={a._id} value={a._id} style={{ background: '#1a1a1a' }}>
+                            {a.stageName}
+                          </option>
+                        ))}
+                      </StyledSelect>
+                    </Field>
+                  )}
 
                   <Field label="Album" error={errors.albumId}>
                     <StyledSelect
