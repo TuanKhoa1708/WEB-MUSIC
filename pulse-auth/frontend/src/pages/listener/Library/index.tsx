@@ -31,7 +31,7 @@ export function LibraryPage() {
     .filter(Boolean) as Song[]
 
   return (
-    <div style={{ padding: '32px 32px 0', maxWidth: 1200, margin: '0 auto' }}>
+    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 28, fontWeight: 900, color: '#fff', margin: '0 0 20px', letterSpacing: '-0.03em' }}>

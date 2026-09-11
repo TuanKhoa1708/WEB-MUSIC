@@ -64,7 +64,7 @@ export function AlbumDetailPage() {
 
   if (albumLoading) {
     return (
-      <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-8 md:pt-10 max-w-[1000px] mx-auto">
+      <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
         <div className="h-44 bg-[#111] rounded-2xl mb-6" />
         {Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)}
       </div>
@@ -88,7 +88,7 @@ export function AlbumDetailPage() {
         description={modalConfig.description}
       />
 
-      <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-8 md:pt-10 pb-8 max-w-[1000px] mx-auto">
+      <div style={{ padding: 'clamp(16px, 3vw, 28px)', paddingBottom: 32, minHeight: '100%' }}>
         {/* Back */}
         <button
           onClick={() => navigate(-1)}

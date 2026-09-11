@@ -122,8 +122,8 @@ export function ArtistProfilePage() {
 
   return (
     <div
-      className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10 pb-20"
-      style={{ maxWidth: 1400, margin: '0 auto' }}
+      style={{ padding: "clamp(16px, 3vw, 28px)", paddingBottom: 80, minHeight: "100%" }}
+      style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}
     >
       {/* ── Page header ──────────────────────────────── */}
       <motion.div

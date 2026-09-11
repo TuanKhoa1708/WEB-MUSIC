@@ -34,7 +34,7 @@ export function RecentlyPlayedPage() {
   }
 
   return (
-    <div className="px-6 md:px-8 lg:px-10 pt-8 md:pt-10" style={{ maxWidth: 900, margin: '0 auto' }}>
+    <div style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 mb-8 md:mb-10">
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
