@@ -142,7 +142,7 @@ export function ArtistRequestsPage() {
       header: 'Actions',
       align: 'right',
       render: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
           {row.status === 'pending' && (
             <>
               <ActionBtn icon={<Check size={14} strokeWidth={3} />} title="Approve" color="#3DDC84" onClick={() => setApproveTarget(row)} />
@@ -267,7 +267,7 @@ function ActionBtn({ icon, title, color, onClick }: any) {
       title={title}
       onClick={onClick}
       style={{
-        width: 30, height: 30, borderRadius: 8, background: 'transparent', border: '1px solid transparent',
+        width: 36, height: 36, borderRadius: 8, background: 'transparent', border: '1px solid transparent',
         color: '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s'
       }}
       onMouseEnter={(e) => {

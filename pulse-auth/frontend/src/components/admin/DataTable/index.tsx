@@ -85,7 +85,7 @@ export function DataTable<T>({
                 <th
                   key={col.key}
                   style={{
-                    padding: '12px 20px',
+                    padding: '16px 24px',
                     textAlign: col.align ?? 'left',
                     fontSize: 11,
                     fontWeight: 700,
@@ -151,7 +151,7 @@ export function DataTable<T>({
                       <td
                         key={col.key}
                         style={{
-                          padding: '13px 20px',
+                          padding: '16px 24px',
                           textAlign: col.align ?? 'left',
                           fontSize: 13,
                           color: '#ccc',

@@ -181,8 +181,8 @@ function ActionBtn({
       title={title}
       onClick={onClick}
       style={{
-        width: 30,
-        height: 30,
+        width: 36,
+        height: 36,
         borderRadius: 8,
         border: '1px solid transparent',
         background: 'transparent',
@@ -677,7 +677,7 @@ export function ListenerManagementPage() {
       header: 'Actions',
       align: 'right',
       render: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
           <ActionBtn
             icon={<Eye size={13} />}
             title="View details"

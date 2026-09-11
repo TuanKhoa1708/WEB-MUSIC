@@ -129,7 +129,7 @@ function ActionBtn({
     <button
       title={title}
       onClick={onClick}
-      className="w-[30px] h-[30px] rounded-lg border border-transparent bg-transparent text-[#3a3a3a] flex items-center justify-center cursor-pointer transition-all duration-150"
+      className="w-9 h-9 rounded-lg border border-transparent bg-transparent text-[#3a3a3a] flex items-center justify-center cursor-pointer transition-all duration-150"
       onMouseEnter={(e) => {
         e.currentTarget.style.background = `${color}12`
         e.currentTarget.style.borderColor = `${color}30`
@@ -376,7 +376,7 @@ export function SongManagementPage() {
       header: 'Actions',
       align: 'right',
       render: (row) => (
-        <div className="flex items-center gap-1 justify-end">
+        <div className="flex items-center gap-3 justify-end">
           <ActionBtn
             icon={<Eye size={13} />}
             title="View"
