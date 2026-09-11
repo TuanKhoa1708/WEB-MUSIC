@@ -158,20 +158,20 @@ export function ArtistRequestsPage() {
   ];
 
   return (
-    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(20px, 4vw, 36px)', minHeight: '100%' }}>
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}
+        style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 20 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 13, background: 'rgba(63,214,255,0.08)', border: '1px solid rgba(63,214,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3FD6FF' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: 'rgba(63,214,255,0.08)', border: '1px solid rgba(63,214,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3FD6FF' }}>
             <Inbox size={20} />
           </div>
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.1 }}>Artist Requests</h1>
-            <p style={{ fontSize: 13, color: '#444', marginTop: 4 }}>Review applications from users wanting to become artists</p>
+            <p style={{ fontSize: 13, color: '#444', marginTop: 6 }}>Review applications from users wanting to become artists</p>
           </div>
         </div>
       </motion.div>
@@ -184,7 +184,7 @@ export function ArtistRequestsPage() {
         style={{ background: '#0f0f0f', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 16, overflow: 'hidden' }}
       >
         {/* Toolbar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '18px 24px', borderBottom: '1px solid rgba(255,255,255,0.04)', flexWrap: 'wrap' }}>
           <select 
             value={statusFilter} 
             onChange={e => setStatusFilter(e.target.value)}

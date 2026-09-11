@@ -35,7 +35,7 @@ export function StatCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="p-4 sm:p-5 md:p-6 lg:p-8 min-h-[140px] sm:min-h-[160px] md:min-h-[180px] bg-[#141414] border border-white/5 rounded-2xl flex flex-col justify-between gap-4 md:gap-6 relative overflow-hidden transition-all duration-200 cursor-default hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+      className="p-5 sm:p-6 md:p-7 lg:p-8 min-h-[150px] sm:min-h-[170px] md:min-h-[190px] bg-[#141414] border border-white/5 rounded-2xl flex flex-col justify-between gap-5 md:gap-6 relative overflow-hidden transition-all duration-200 cursor-default hover:border-white/10 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
     >
       {/* Subtle ambient background glow */}
       <div
@@ -48,7 +48,7 @@ export function StatCard({
       {/* Top row: icon + trend */}
       <div className="flex items-center justify-between">
         <div
-          className="w-10 h-10 rounded-[11px] flex items-center justify-center"
+          className="w-11 h-11 rounded-[12px] flex items-center justify-center"
           style={{
             background: iconBg ?? `${iconColor}14`,
             border: `1px solid ${iconColor}22`,

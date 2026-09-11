@@ -3,14 +3,14 @@ import { LayoutDashboard } from 'lucide-react'
 
 export function AdminDashboardPage() {
   return (
-    <div style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}>
+    <div style={{ padding: "clamp(20px, 4vw, 36px)", minHeight: "100%" }}>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-[11px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF]">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-12 h-12 rounded-[14px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF]">
             <LayoutDashboard size={18} />
           </div>
           <div>

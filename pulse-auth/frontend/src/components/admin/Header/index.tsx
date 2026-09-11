@@ -47,8 +47,8 @@ export function AdminHeader() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingLeft: 20,
-        paddingRight: 20,
+        paddingLeft: 28,
+        paddingRight: 28,
         borderBottom: '1px solid rgba(255,255,255,0.05)',
         background: 'rgba(9,9,9,0.8)',
         backdropFilter: 'blur(20px)',
@@ -57,7 +57,7 @@ export function AdminHeader() {
         top: 0,
         zIndex: 30,
         flexShrink: 0,
-        gap: 12,
+        gap: 16,
         minWidth: 0,
       }}
     >
@@ -67,7 +67,7 @@ export function AdminHeader() {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 5,
+          gap: 8,
           flex: 1,
           overflow: 'hidden',
           minWidth: 0,
@@ -79,7 +79,7 @@ export function AdminHeader() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 5,
+              gap: 8,
               overflow: 'hidden',
               minWidth: 0,
               flexShrink: i === crumbs.length - 1 ? 1 : 0,

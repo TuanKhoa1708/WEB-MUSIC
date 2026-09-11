@@ -702,7 +702,7 @@ export function ListenerManagementPage() {
 
   // ─────────────────────────────────────────────────────────
   return (
-    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(20px, 4vw, 36px)', minHeight: '100%' }}>
 
       {/* ── Page header ───────────────────────────────────── */}
       <motion.div
@@ -713,17 +713,17 @@ export function ListenerManagementPage() {
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
-          marginBottom: 28,
-          gap: 16,
+          marginBottom: 32,
+          gap: 20,
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: 13,
+              width: 48,
+              height: 48,
+              borderRadius: 14,
               background: 'rgba(63,214,255,0.08)',
               border: '1px solid rgba(63,214,255,0.18)',
               display: 'flex',
@@ -747,7 +747,7 @@ export function ListenerManagementPage() {
             >
               Listener Management
             </h1>
-            <p style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+            <p style={{ fontSize: 13, color: '#444', marginTop: 6 }}>
               View and manage Pulse music listeners
             </p>
           </div>
@@ -759,8 +759,8 @@ export function ListenerManagementPage() {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 14,
-          marginBottom: 24,
+          gap: 18,
+          marginBottom: 28,
         }}
       >
         <StatCard
@@ -803,8 +803,8 @@ export function ListenerManagementPage() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
-            padding: '16px 20px',
+            gap: 12,
+            padding: '18px 24px',
             borderBottom: '1px solid rgba(255,255,255,0.04)',
             flexWrap: 'wrap',
           }}

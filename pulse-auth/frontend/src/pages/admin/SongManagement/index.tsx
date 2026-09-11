@@ -410,17 +410,17 @@ export function SongManagementPage() {
 
   // ─────────────────────────────────────────────────────
   return (
-    <div className="p-4 md:p-6 lg:p-7 min-h-full">
+    <div className="p-5 md:p-7 lg:p-9 min-h-full">
 
       {/* ── Page header ──────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-start justify-between flex-wrap gap-4 mb-7"
+        className="flex items-start justify-between flex-wrap gap-5 mb-8"
       >
-        <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-[13px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-[14px] bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] shrink-0">
             <Music size={20} />
           </div>
           <div>
@@ -452,7 +452,7 @@ export function SongManagementPage() {
       </motion.div>
 
       {/* ── Stat cards ─────────────────────────────────── */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3.5 mb-6">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[18px] mb-7">
         <StatCard
           icon={<Music size={18} />}
           iconColor="#3FD6FF"
@@ -486,7 +486,7 @@ export function SongManagementPage() {
         className="bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden"
       >
         {/* Toolbar */}
-        <div className="flex items-center flex-wrap gap-2.5 p-4 md:px-5 border-b border-white/5">
+        <div className="flex items-center flex-wrap gap-3 p-[18px] md:px-6 border-b border-white/5">
           {/* Search */}
           <SearchBar
             value={keyword}
