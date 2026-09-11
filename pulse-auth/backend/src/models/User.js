@@ -45,6 +45,30 @@ const userSchema = new mongoose.Schema(
         lastLogin: {
             type: Date,
             default: null,
+        },
+        isPremium: {
+            type: Boolean,
+            default: false,
+        },
+        subscriptionPlan: {
+            type: String,
+            default: "free",
+        },
+        subscriptionStartedAt: {
+            type: Date,
+            default: null,
+        },
+        subscriptionExpiresAt: {
+            type: Date,
+            default: null,
+        },
+        premiumPlan: {
+            type: String,
+            default: "none",
+        },
+        premiumExpiry: {
+            type: Date,
+            default: null,
         }
 
     },
