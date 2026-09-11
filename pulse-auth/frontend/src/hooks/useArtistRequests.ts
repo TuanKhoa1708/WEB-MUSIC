@@ -55,6 +55,7 @@ export function useApproveArtistRequest() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['artist-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['artists'] });
     },
   });
 }

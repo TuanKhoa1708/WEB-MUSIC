@@ -9,7 +9,7 @@ import type { ArtistRequest } from '@/types/artistRequest.types';
 import toast from 'react-hot-toast';
 
 export function ArtistRequestsPage() {
-  const [statusFilter, setStatusFilter] = useState<string>('pending');
+  const [statusFilter, setStatusFilter] = useState<string>('pending_all');
   const { data: requests = [], isLoading } = useAdminArtistRequests(statusFilter === 'all' ? undefined : statusFilter);
   const { mutateAsync: approveRequest, isPending: isApproving } = useApproveArtistRequest();
   const { mutateAsync: rejectRequest, isPending: isRejecting } = useRejectArtistRequest();
@@ -190,6 +190,7 @@ export function ArtistRequestsPage() {
             onChange={e => setStatusFilter(e.target.value)}
             style={{ background: '#1a1a1a', border: '1px solid #333', color: '#fff', padding: '8px 12px', borderRadius: 8, fontSize: 13, outline: 'none', flex: '1 1 180px', maxWidth: 280, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
           >
+            <option value="pending_all">All Pending</option>
             <option value="pending">Pending Application</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>

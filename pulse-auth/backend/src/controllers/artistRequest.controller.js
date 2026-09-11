@@ -70,7 +70,9 @@ export const getArtistRequests = async (req, res) => {
         const { status } = req.query;
         let query = {};
 
-        if (status) {
+        if (status === "pending_all") {
+            query.status = { $in: ["pending", "revoke_pending"] };
+        } else if (status) {
             query.status = status;
         }
 
