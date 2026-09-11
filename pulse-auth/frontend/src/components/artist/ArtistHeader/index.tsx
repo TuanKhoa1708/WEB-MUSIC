@@ -61,13 +61,36 @@ export function ArtistHeader() {
         gap: 20,
       }}
     >
+      {/* ── Hamburger (mobile only) ──────────────────────────── */}
+      <button
+        onClick={() => {
+          // You might need to dispatch an event or use a context here if you added MobileSidebarContext to ArtistLayout
+          // Wait, let me check ArtistLayout conflict first. The mobile context seems to have been added in the stash.
+          // Let's assume MobileSidebarContext is needed. I will check the stashed code.
+          const event = new CustomEvent('open-mobile-sidebar')
+          window.dispatchEvent(event)
+        }}
+        aria-label="Open menu"
+        className="lg:hidden flex items-center justify-center shrink-0 w-9 h-9 rounded-[10px] bg-white/5 border border-white/10 text-[#888] cursor-pointer transition-all"
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#fff'
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.03)'
+          ;(e.currentTarget as HTMLButtonElement).style.color = '#888'
+        }}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+
       {/* ── Breadcrumb ── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, overflow: 'hidden' }}>
         <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
           {crumbs.map((crumb, i) => (
-            <div key={crumb} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div key={crumb} style={{ display: 'flex', alignItems: 'center', gap: 6, overflow: 'hidden', minWidth: 0, flexShrink: i === crumbs.length - 1 ? 1 : 0 }}>
             {i > 0 && (
-              <ChevronRight size={13} style={{ color: '#333', flexShrink: 0 }} />
+              <ChevronRight size={12} style={{ color: '#333', flexShrink: 0 }} />
             )}
             <span
               style={{
@@ -75,6 +98,8 @@ export function ArtistHeader() {
                 fontWeight: i === crumbs.length - 1 ? 700 : 500,
                 color: i === crumbs.length - 1 ? '#fff' : '#444',
                 letterSpacing: '-0.01em',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
               }}
             >

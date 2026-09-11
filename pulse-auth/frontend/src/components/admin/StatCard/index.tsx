@@ -75,15 +75,15 @@ export function StatCard({
       </div>
 
       {/* Value + label */}
-      <div className="flex flex-col gap-1.5 mt-2">
-        <div className="text-[28px] sm:text-[32px] md:text-[36px] font-extrabold text-white tracking-[-0.04em] leading-none">
+      <div className="flex flex-col gap-2 md:gap-3 mt-3 md:mt-4">
+        <div className="text-[28px] sm:text-[32px] md:text-[36px] font-extrabold text-white tracking-[-0.04em] leading-tight">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
         <div className="text-[13px] sm:text-[14px] md:text-[15px] text-[#888] font-semibold">
           {label}
         </div>
         {trendLabel && (
-          <div className="text-[12px] text-[#555] font-medium">
+          <div className="text-[12px] text-[#555] font-medium mt-1">
             {trendLabel}
           </div>
         )}
