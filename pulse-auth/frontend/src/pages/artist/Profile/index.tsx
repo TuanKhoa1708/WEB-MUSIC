@@ -123,7 +123,6 @@ export function ArtistProfilePage() {
   return (
     <div
       style={{ padding: "clamp(16px, 3vw, 28px)", paddingBottom: 80, minHeight: "100%" }}
-      style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}
     >
       {/* ── Page header ──────────────────────────────── */}
       <motion.div

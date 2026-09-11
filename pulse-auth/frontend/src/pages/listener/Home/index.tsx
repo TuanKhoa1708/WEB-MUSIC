@@ -43,7 +43,6 @@ export function HomePage() {
   return (
     <div
       style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}
-      style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}
     >
       {/* Greeting */}
       <div className="mb-6 md:mb-8 lg:mb-10">

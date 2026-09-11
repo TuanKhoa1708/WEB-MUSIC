@@ -105,10 +105,10 @@ export function ArtistDashboardPage() {
         }}
       >
         {[
-          { label: 'Total Plays', value: stats?.totalPlays ?? '12,450', icon: <Play size={20} />, color: '#3FD6FF' },
-          { label: 'Total Likes', value: stats?.totalLikes ?? '1,280', icon: <Heart size={20} />, color: '#FF5B5B' },
-          { label: 'Published Songs', value: stats?.totalSongs ?? '24', icon: <Music size={20} />, color: '#3DDC84' },
-          { label: 'Albums & Playlists', value: stats?.totalCollections ?? '8', icon: <Disc3 size={20} />, color: '#F7B500' },
+          { label: 'Total Plays', value: stats?.statistics.totalPlays ?? '12,450', icon: <Play size={20} />, color: '#3FD6FF' },
+          { label: 'Total Followers', value: stats?.statistics.totalFollowers ?? '1,280', icon: <Heart size={20} />, color: '#FF5B5B' },
+          { label: 'Published Songs', value: stats?.statistics.totalSongs ?? '24', icon: <Music size={20} />, color: '#3DDC84' },
+          { label: 'Albums & Playlists', value: stats?.statistics.totalAlbums ?? '8', icon: <Disc3 size={20} />, color: '#F7B500' },
         ].map((stat, index) => (
           <motion.div
             key={stat.label}
