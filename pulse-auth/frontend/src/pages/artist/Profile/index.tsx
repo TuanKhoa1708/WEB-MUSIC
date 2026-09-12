@@ -58,7 +58,7 @@ export function ArtistProfilePage() {
     setIsUploading(true)
     try {
       const uploadData = new FormData()
-      uploadData.append('coverFile', file) // Using coverFile field from existing upload endpoint
+      uploadData.append('cover', file) // Using cover field from existing upload endpoint
 
       const res = await uploadFilesApi(uploadData)
       if (res.success && res.data.coverUrl) {
@@ -149,10 +149,7 @@ export function ArtistProfilePage() {
             <UserCircle2 size={28} />
           </div>
           <div>
-            <h1
-              className="text-2xl md:text-3xl lg:text-[32px]"
-              style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
-            >
+            <h1 className="text-[22px] font-extrabold text-white tracking-[-0.03em] m-0">
               My Profile
             </h1>
             <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>

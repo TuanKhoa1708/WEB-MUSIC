@@ -37,23 +37,21 @@ export function RecentlyPlayedPage() {
     <div style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 mb-8 md:mb-10">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{
-            width: 60, height: 60, borderRadius: 14,
-            background: 'linear-gradient(135deg, rgba(63,214,255,0.1), rgba(32,148,255,0.05))',
-            border: '1px solid rgba(63,214,255,0.1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Clock size={28} color="#3FD6FF88" />
-          </div>
-          <div>
-            <h1 style={{ fontSize: 26, fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.03em' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ color: '#3FD6FF' }}>
+              <Clock size={32} />
+            </div>
+            <h1
+              className="text-2xl md:text-3xl lg:text-[32px]"
+              style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
+            >
               Recently Played
             </h1>
-            <p style={{ fontSize: 13, color: '#555', margin: '4px 0 0' }}>
-              {songs.length} tracks
-            </p>
           </div>
+          <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
+            {songs.length} tracks
+          </p>
         </div>
         {songs.length > 0 && (
           <button

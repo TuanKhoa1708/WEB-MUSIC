@@ -34,9 +34,17 @@ export function SearchPage() {
     <div style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}>
       {/* Header */}
       <div className="mb-8 md:mb-9">
-        <h1 className="text-2xl md:text-3xl font-black text-white m-0 tracking-tight">
-          Search
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ color: '#3FD6FF' }}>
+            <SearchIcon size={32} />
+          </div>
+          <h1
+            className="text-2xl md:text-3xl lg:text-[32px]"
+            style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
+          >
+            Search
+          </h1>
+        </div>
       </div>
 
       {/* No query — genre browse */}

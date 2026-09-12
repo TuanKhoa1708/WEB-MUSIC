@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Heart, Music2 } from 'lucide-react'
+import { Heart, Music2, Library } from 'lucide-react'
 import { useFavoriteContext } from '@/contexts/FavoriteContext'
 import { useHistory } from '@/hooks/listener/useHistory'
 import { SongRow } from '@/components/listener/SongRow'
@@ -34,9 +34,17 @@ export function LibraryPage() {
     <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 900, color: '#fff', margin: '0 0 20px', letterSpacing: '-0.03em' }}>
-          My Library
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+          <div style={{ color: '#3FD6FF' }}>
+            <Library size={32} />
+          </div>
+          <h1
+            className="text-2xl md:text-3xl lg:text-[32px]"
+            style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
+          >
+            My Library
+          </h1>
+        </div>
 
         {/* Tab bar */}
         <div style={{ display: 'flex', gap: 4, background: '#111', borderRadius: 12, padding: 4, width: 'fit-content', border: '1px solid rgba(255,255,255,0.05)' }}>

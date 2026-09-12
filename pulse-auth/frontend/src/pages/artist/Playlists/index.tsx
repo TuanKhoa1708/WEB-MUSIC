@@ -178,10 +178,7 @@ export function ArtistPlaylistsPage() {
             <ListMusic size={24} />
           </div>
           <div>
-            <h1
-              className="text-2xl md:text-3xl lg:text-[32px]"
-              style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
-            >
+            <h1 className="text-[22px] font-extrabold text-white tracking-[-0.03em] m-0">
               My Playlists
             </h1>
             <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
