@@ -28,29 +28,24 @@ export function FavoriteSongsPage() {
   }
 
   return (
-    <div style={{ padding: '32px 32px 0', maxWidth: 1000, margin: '0 auto' }}>
+    <div style={{ padding: 'clamp(16px, 3vw, 28px)', minHeight: '100%' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          {/* Icon */}
-          <div style={{
-            width: 120, height: 120, borderRadius: 16,
-            background: 'linear-gradient(135deg, rgba(63,214,255,0.15), rgba(32,148,255,0.08))',
-            border: '1px solid rgba(63,214,255,0.15)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <Heart size={52} color="#3FD6FF" fill="rgba(63,214,255,0.2)" />
-          </div>
-          <div>
-            <p style={{ fontSize: 12, fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 6px' }}>Playlist</p>
-            <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', margin: '0 0 8px', letterSpacing: '-0.04em' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ color: '#3FD6FF' }}>
+              <Heart size={32} fill="#3FD6FF" />
+            </div>
+            <h1
+              className="text-2xl md:text-3xl lg:text-[32px]"
+              style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
+            >
               Liked Songs
             </h1>
-            <p style={{ fontSize: 14, color: '#555', margin: 0 }}>
-              {songs.length} songs
-            </p>
           </div>
+          <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
+            {songs.length} songs
+          </p>
         </div>
 
         {/* Action buttons */}

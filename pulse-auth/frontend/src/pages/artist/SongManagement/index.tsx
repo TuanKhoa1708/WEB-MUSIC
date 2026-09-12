@@ -160,16 +160,18 @@ export function ArtistSongManagementPage() {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8 lg:mb-10"
       >
-        <div>
-          <h1
-            className="text-2xl md:text-3xl lg:text-[32px]"
-            style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
-          >
-            My Songs
-          </h1>
-          <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
-            Manage and upload your music catalog
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#3FD6FF]/10 border border-[#3FD6FF]/20 flex items-center justify-center text-[#3FD6FF] flex-shrink-0">
+            <Music size={24} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-extrabold text-white tracking-[-0.03em] m-0">
+              My Songs
+            </h1>
+            <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
+              Manage and upload your music catalog
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">

@@ -271,7 +271,7 @@ export function PlaylistManagementPage() {
           <div>
             <h1
               style={{
-                fontSize: 26,
+                fontSize: 22,
                 fontWeight: 800,
                 color: '#fff',
                 letterSpacing: '-0.03em',

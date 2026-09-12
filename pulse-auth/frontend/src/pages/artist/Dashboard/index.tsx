@@ -53,7 +53,7 @@ export function ArtistDashboardPage() {
           <div>
             <h1
               style={{
-                fontSize: 'clamp(22px, 2.5vw, 28px)',
+                fontSize: 22,
                 fontWeight: 800,
                 color: '#fff',
                 letterSpacing: '-0.03em',

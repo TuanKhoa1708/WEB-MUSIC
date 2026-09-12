@@ -11,7 +11,7 @@ import { SectionHeader } from '@/components/listener/SectionHeader'
 import { SkeletonCard } from '@/components/listener/SkeletonCard'
 import type { Song } from '@/types/song.types'
 import type { History } from '@/types/history.types'
-import { Play, Music2 } from 'lucide-react'
+import { Play, Music2, Home } from 'lucide-react'
 
 function getGreeting(): string {
   const h = new Date().getHours()
@@ -46,12 +46,17 @@ export function HomePage() {
     >
       {/* Greeting */}
       <div className="mb-6 md:mb-8 lg:mb-10">
-        <h1
-          className="text-2xl md:text-3xl lg:text-[32px]"
-          style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
-        >
-          {getGreeting()}{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ color: '#3FD6FF' }}>
+            <Home size={32} />
+          </div>
+          <h1
+            className="text-2xl md:text-3xl lg:text-[32px]"
+            style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
+          >
+            {getGreeting()}{user?.fullName ? `, ${user.fullName.split(' ')[0]}` : ''}
+          </h1>
+        </div>
         <p style={{ fontSize: 15, color: '#555', margin: '8px 0 0' }}>
           Discover new music and enjoy your favorites
         </p>
