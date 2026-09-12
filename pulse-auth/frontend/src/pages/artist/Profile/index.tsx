@@ -58,7 +58,7 @@ export function ArtistProfilePage() {
     setIsUploading(true)
     try {
       const uploadData = new FormData()
-      uploadData.append('coverFile', file) // Using coverFile field from existing upload endpoint
+      uploadData.append('cover', file) // Using cover field from existing upload endpoint
 
       const res = await uploadFilesApi(uploadData)
       if (res.success && res.data.coverUrl) {
