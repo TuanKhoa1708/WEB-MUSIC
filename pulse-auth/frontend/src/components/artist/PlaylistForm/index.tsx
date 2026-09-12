@@ -63,7 +63,7 @@ export function PlaylistForm({ isOpen, artistId, onClose, playlist, onSubmit, is
     setIsUploading(true)
     try {
       const uploadData = new FormData()
-      uploadData.append('coverFile', file)
+      uploadData.append('cover', file)
       const res = await uploadFilesApi(uploadData)
       if (res.success && res.data.coverUrl) {
         setFormData((prev) => ({ ...prev, coverUrl: res.data.coverUrl! }))
