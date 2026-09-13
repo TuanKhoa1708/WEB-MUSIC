@@ -38,3 +38,19 @@ export const protect = async (req, res, next) => {
         });
     }
 };
+
+// Optional protect: identifies user if token is present, but doesn't block if not
+export const optionalProtect = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            const token = authHeader.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            req.user = await User.findById(decoded.id).select("-password");
+        }
+    } catch (_) {
+        // Invalid token — just continue without user
+        req.user = null;
+    }
+    next();
+};

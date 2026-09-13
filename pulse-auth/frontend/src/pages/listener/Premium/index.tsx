@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  Crown, Check, Sparkles, Shuffle, Headphones,
-  Users, Music4, Zap, Shield, ArrowRight, Loader2,
+  Crown, Check, Shuffle, Headphones,
+  Users, Music4, Shield, ArrowRight, Loader2,
   CalendarDays, AlertCircle,
 } from 'lucide-react'
 import { useSubscriptionPackages, useMySubscription, useCancelSubscription } from '@/hooks/listener/useSubscription'
@@ -37,12 +37,6 @@ const BENEFITS = [
     color: '#4CAF50',
     title: 'Shared Listening',
     description: 'Listen together with friends in real-time shared sessions.',
-  },
-  {
-    icon: <Sparkles size={22} />,
-    color: '#FF6B6B',
-    title: 'AI Recommendations',
-    description: 'Discover music tailored to your taste with our AI engine.',
   },
 ]
 
@@ -181,7 +175,7 @@ export function PremiumPage() {
               </h1>
               <p style={{ fontSize: 18, color: '#888', maxWidth: 480, margin: '0 auto 32px' }}>
                 Go Premium and listen without limits. Skip freely, enjoy HD audio,
-                and let AI discover your next favorite song.
+                and experience music in its fullest quality.
               </p>
 
               {!user && (

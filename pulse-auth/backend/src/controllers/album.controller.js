@@ -88,6 +88,23 @@ export const getAlbums = async (req, res) => {
             };
         }
 
+        // If the requester is an artist, restrict to their own albums only
+        if (req.user && req.user.role === "artist") {
+            const artist = await Artist.findOne({ userId: req.user._id });
+            if (artist) {
+                query.artistId = artist._id;
+            } else {
+                // Artist profile not found — return empty
+                return res.json({
+                    success: true,
+                    total: 0,
+                    page: pageNumber,
+                    totalPages: 0,
+                    data: [],
+                });
+            }
+        }
+
         const total = await Album.countDocuments(query);
 
         const albums = await Album.find(query)
@@ -110,6 +127,7 @@ export const getAlbums = async (req, res) => {
         });
     }
 };
+
 
 
 // ===========================

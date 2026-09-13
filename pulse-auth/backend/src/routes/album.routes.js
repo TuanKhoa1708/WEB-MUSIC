@@ -1,5 +1,5 @@
 import express from "express";
-import { protect } from "../middleware/auth.middleware.js";
+import { protect, optionalProtect } from "../middleware/auth.middleware.js";
 import { authorize } from "../middleware/role.middleware.js";
 
 import {
@@ -19,7 +19,7 @@ router.get("/stats", getAlbumStats);
 // CRUD
 router.post("/", protect, authorize("artist", "admin"), createAlbum);
 
-router.get("/", getAlbums);
+router.get("/", optionalProtect, getAlbums);
 
 router.get("/:id", getAlbumById);
 
@@ -27,4 +27,4 @@ router.put("/:id", protect, authorize("artist", "admin"), updateAlbum);
 
 router.delete("/:id", protect, authorize("artist", "admin"), deleteAlbum);
 
-export default router;
+export default router;
