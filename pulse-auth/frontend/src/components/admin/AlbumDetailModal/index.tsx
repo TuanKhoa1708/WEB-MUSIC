@@ -201,7 +201,7 @@ export function AlbumDetailModal({ album, isOpen, onClose }: AlbumDetailModalPro
                         fontWeight: 600,
                       }}
                     >
-                      {new Date(album.releaseDate).getFullYear()}
+                      {album.releaseYear || 'Unknown Year'}
                     </span>
                   </div>
                 </div>
@@ -253,8 +253,8 @@ export function AlbumDetailModal({ album, isOpen, onClose }: AlbumDetailModalPro
               />
               <DetailRow
                 icon={<Calendar size={13} />}
-                label="Release Date"
-                value={formatDate(album.releaseDate)}
+                label="Release Year"
+                value={album.releaseYear || 'Unknown'}
               />
               <DetailRow
                 icon={<Calendar size={13} />}

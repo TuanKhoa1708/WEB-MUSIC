@@ -8,9 +8,6 @@ import {
   Hash,
   Activity,
   CheckCircle,
-  Facebook,
-  Instagram,
-  Youtube,
   Globe,
 } from 'lucide-react'
 import type { Artist } from '@/types/artist.types'
@@ -193,46 +190,6 @@ export function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDetailModal
                   <p style={{ fontSize: 13, color: '#A78BFA', fontWeight: 600, marginBottom: 8 }}>
                     Artist Profile
                   </p>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <span
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        height: 24,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        borderRadius: 6,
-                        background: artist.isVerified ? 'rgba(61,220,132,0.1)' : 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${artist.isVerified ? 'rgba(61,220,132,0.2)' : 'rgba(255,255,255,0.07)'}`,
-                        fontSize: 11,
-                        color: artist.isVerified ? '#3DDC84' : '#888',
-                        fontWeight: 600,
-                      }}
-                    >
-                      <CheckCircle size={10} />
-                      {artist.isVerified ? 'Verified' : 'Unverified'}
-                    </span>
-                    <span
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        height: 24,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        borderRadius: 6,
-                        background: artist.isActive ? 'rgba(63,214,255,0.1)' : 'rgba(255,91,91,0.1)',
-                        border: `1px solid ${artist.isActive ? 'rgba(63,214,255,0.2)' : 'rgba(255,91,91,0.2)'}`,
-                        fontSize: 11,
-                        color: artist.isActive ? '#3FD6FF' : '#FF5B5B',
-                        fontWeight: 600,
-                      }}
-                    >
-                      <Activity size={10} />
-                      {artist.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Close btn */}
@@ -307,17 +264,17 @@ export function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDetailModal
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {facebook && (
                         <a href={facebook} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#3b5998', textDecoration: 'none', fontSize: 12 }}>
-                          <Facebook size={12} /> {facebook}
+                          <Globe size={12} /> {facebook}
                         </a>
                       )}
                       {instagram && (
                         <a href={instagram} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#e1306c', textDecoration: 'none', fontSize: 12 }}>
-                          <Instagram size={12} /> {instagram}
+                          <Globe size={12} /> {instagram}
                         </a>
                       )}
                       {youtube && (
                         <a href={youtube} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#ff0000', textDecoration: 'none', fontSize: 12 }}>
-                          <Youtube size={12} /> {youtube}
+                          <Globe size={12} /> {youtube}
                         </a>
                       )}
                     </div>

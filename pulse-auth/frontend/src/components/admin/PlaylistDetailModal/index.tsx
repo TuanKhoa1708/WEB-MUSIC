@@ -206,24 +206,6 @@ export function PlaylistDetailModal({ playlist, isOpen, onClose }: PlaylistDetai
                       {playlist.isPublic ? <Globe size={10} /> : <Lock size={10} />}
                       {playlist.isPublic ? 'Public' : 'Private'}
                     </span>
-                    <span
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        height: 24,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        borderRadius: 6,
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.07)',
-                        fontSize: 11,
-                        color: '#888',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {playlist.songs?.length || 0} tracks
-                    </span>
                   </div>
                 </div>
 
