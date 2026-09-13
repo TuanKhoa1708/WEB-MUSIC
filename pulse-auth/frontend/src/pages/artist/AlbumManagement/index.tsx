@@ -8,6 +8,7 @@ import {
   Trash2,
   Search,
   Music,
+  Eye,
 } from 'lucide-react'
 import {
   useAlbums,
@@ -18,6 +19,7 @@ import {
 import { Pagination } from '@/components/admin/Pagination'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import { AlbumForm } from '@/components/artist/AlbumForm'
+import { AlbumDetailModal } from '@/components/admin/AlbumDetailModal'
 import type { Album, AlbumQueryParams, CreateAlbumInput, UpdateAlbumInput } from '@/types/album.types'
 
 const PAGE_SIZE = 12
@@ -44,11 +46,13 @@ function AlbumCard({
   album,
   onEdit,
   onDelete,
+  onView,
   isAdmin,
 }: {
   album: Album
   onEdit: (a: Album) => void
   onDelete: (a: Album) => void
+  onView: (a: Album) => void
   isAdmin: boolean
 }) {
   const artistName = (typeof album.artistId === 'object' && album.artistId)
@@ -78,6 +82,12 @@ function AlbumCard({
 
         {/* Hover Action Menu */}
         <div className="absolute top-3 right-3 flex gap-1.5 opacity-90">
+          <button
+            onClick={() => onView(album)}
+            className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer transition-colors hover:bg-[#3FD6FF]/80"
+          >
+            <Eye size={14} />
+          </button>
           {!isAdmin && (
             <button
               onClick={() => onEdit(album)}
@@ -119,6 +129,7 @@ export function AlbumManagementPage() {
   const [page, setPage] = useState(1)
 
   const [deleteTarget, setDeleteTarget] = useState<Album | null>(null)
+  const [detailTarget, setDetailTarget] = useState<Album | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Album | null>(null)
 
@@ -236,6 +247,7 @@ export function AlbumManagementPage() {
                 setIsModalOpen(true)
               }}
               onDelete={setDeleteTarget}
+              onView={setDetailTarget}
             />
           ))
         ) : (
@@ -267,6 +279,12 @@ export function AlbumManagementPage() {
         isLoading={isDeleting}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
+      />
+
+      <AlbumDetailModal
+        album={detailTarget}
+        isOpen={!!detailTarget}
+        onClose={() => setDetailTarget(null)}
       />
 
       {/* ── Add / Edit Modal ── */}

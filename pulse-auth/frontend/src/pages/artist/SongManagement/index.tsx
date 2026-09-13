@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Music, Plus, Edit2, Trash2, Search, Play } from 'lucide-react'
+import { Music, Plus, Edit2, Trash2, Search, Play, Eye } from 'lucide-react'
 import {
   useSongs,
   useDeleteSong,
@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Pagination } from '@/components/admin/Pagination'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
 import { SongForm } from '@/components/admin/SongForm'
+import { SongDetailModal } from '@/components/admin/SongDetailModal'
 import type { Song, SongQueryParams, CreateSongInput, UpdateSongInput } from '@/types/song.types'
 
 const PAGE_SIZE = 12
@@ -41,10 +42,12 @@ function ArtistSongCard({
   song,
   onEdit,
   onDelete,
+  onView,
 }: {
   song: Song
   onEdit: (s: Song) => void
   onDelete: (s: Song) => void
+  onView: (s: Song) => void
 }) {
   const artistName = typeof song.artistId === 'object'
     ? song.artistId.stageName || 'Unknown Artist'
@@ -72,6 +75,12 @@ function ArtistSongCard({
 
         {/* Hover Actions */}
         <div className="absolute top-3 right-3 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+          <button
+            onClick={() => onView(song)}
+            className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer transition-colors hover:bg-[#3FD6FF]/80"
+          >
+            <Eye size={14} />
+          </button>
           <button
             onClick={() => onEdit(song)}
             className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center cursor-pointer transition-colors hover:bg-[#3FD6FF]/80"
@@ -111,6 +120,7 @@ export function ArtistSongManagementPage() {
   const [page, setPage] = useState(1)
 
   const [deleteTarget, setDeleteTarget] = useState<Song | null>(null)
+  const [detailTarget, setDetailTarget] = useState<Song | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Song | null>(null)
 
@@ -224,6 +234,7 @@ export function ArtistSongManagementPage() {
                 setIsModalOpen(true)
               }}
               onDelete={setDeleteTarget}
+              onView={setDetailTarget}
             />
           ))
         ) : (
@@ -253,6 +264,12 @@ export function ArtistSongManagementPage() {
         isLoading={isDeleting}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
+      />
+
+      <SongDetailModal
+        song={detailTarget}
+        isOpen={!!detailTarget}
+        onClose={() => setDetailTarget(null)}
       />
 
       <SongForm

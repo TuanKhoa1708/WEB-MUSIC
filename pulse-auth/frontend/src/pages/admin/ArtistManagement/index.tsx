@@ -17,6 +17,7 @@ import type { Column } from '@/components/admin/DataTable'
 import { SearchBar } from '@/components/admin/SearchBar'
 import { Pagination } from '@/components/admin/Pagination'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
+import { ArtistDetailModal } from '@/components/admin/ArtistDetailModal'
 import type { Artist, ArtistQueryParams } from '@/types/artist.types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -99,6 +100,9 @@ export function ArtistManagementPage() {
 
   // ── Delete dialog state ──────────────────────────────────────────
   const [deleteTarget, setDeleteTarget] = useState<Artist | null>(null)
+  
+  // ── Detail modal state ──────────────────────────────────────────
+  const [detailTarget, setDetailTarget] = useState<Artist | null>(null)
 
   const queryParams: ArtistQueryParams = {
     keyword,
@@ -192,7 +196,12 @@ export function ArtistManagementPage() {
       align: 'right',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-          <ActionBtn icon={<Eye size={13} />} title="View" color="#3FD6FF" />
+          <ActionBtn 
+            icon={<Eye size={13} />} 
+            title="View" 
+            color="#3FD6FF" 
+            onClick={() => setDetailTarget(row)}
+          />
           <ActionBtn
             icon={<Trash2 size={13} />}
             title="Delete"
@@ -396,6 +405,11 @@ export function ArtistManagementPage() {
         onCancel={() => setDeleteTarget(null)}
       />
 
+      <ArtistDetailModal
+        artist={detailTarget}
+        isOpen={!!detailTarget}
+        onClose={() => setDetailTarget(null)}
+      />
 
     </div>
   )
