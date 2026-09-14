@@ -2,6 +2,7 @@ import Song from "../models/Song.js";
 import Artist from "../models/Artist.js";
 import Album from "../models/Album.js";
 import History from "../models/History.js";
+import User from "../models/User.js";
 
 // CREATE SONG
 export const createSong = async (req, res) => {
@@ -314,6 +315,70 @@ export const getRecommendations = async (req, res) => {
             success: true,
             message: "AI recommendations generated successfully",
             data: finalRecommendations,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+// ===========================
+// SKIP SONG (FREE TIER LIMIT)
+// ===========================
+export const skipSong = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // 1. Tài khoản Premium -> Bỏ qua mọi giới hạn
+        if (user.isPremium) {
+            return res.json({
+                success: true,
+                message: "Skipped successfully (Premium)",
+                skipsLeft: "unlimited",
+            });
+        }
+
+        // 2. Tài khoản Free -> Xử lý đếm lượt skip
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Mốc 0h00 hôm nay
+
+        let lastSkip = user.lastSkipDate ? new Date(user.lastSkipDate) : null;
+        if (lastSkip) {
+            lastSkip = new Date(lastSkip.getFullYear(), lastSkip.getMonth(), lastSkip.getDate());
+        }
+
+        // Nếu là qua ngày mới -> Reset bộ đếm về 0
+        if (!lastSkip || lastSkip.getTime() !== today.getTime()) {
+            user.dailySkips = 0;
+        }
+
+        // 3. Kiểm tra xem đã hết lượt chưa (Tối đa 10 lần)
+        if (user.dailySkips >= 10) {
+            return res.status(403).json({
+                success: false,
+                message: "Bạn đã hết lượt chuyển bài hôm nay. Hãy nâng cấp Premium để nghe không giới hạn!",
+                requiresPremium: true,
+            });
+        }
+
+        // 4. Trừ đi 1 lượt skip và lưu lại
+        user.dailySkips += 1;
+        user.lastSkipDate = now;
+        await user.save();
+
+        return res.json({
+            success: true,
+            message: "Skipped successfully",
+            skipsLeft: 10 - user.dailySkips,
         });
     } catch (error) {
         return res.status(500).json({

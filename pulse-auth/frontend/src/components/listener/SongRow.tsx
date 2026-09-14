@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Play, Pause, Music2, ListPlus, Download, Lock } from 'lucide-react'
+import { Play, Pause, Music2, ListPlus, Download, Lock, Radio } from 'lucide-react'
 import { FavoriteButton } from './FavoriteButton'
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext'
+import { useListenRoom } from '@/contexts/ListenRoomContext'
 import { PremiumUpgradeModal, usePremiumModal } from '@/components/premium/PremiumUpgradeModal'
 import { useIsPremium } from '@/hooks/listener/useSubscription'
+import toast from 'react-hot-toast'
 import type { Song } from '@/types/song.types'
 
 interface SongRowProps {
@@ -35,12 +37,19 @@ function getAlbumName(song: Song): string {
 
 export function SongRow({ song, index, queue, showAlbum = false, onAddToPlaylist, locked = false }: SongRowProps) {
   const { playSong, currentSong, isPlaying, togglePlay } = useMusicPlayer()
+  const { isInRoom, isHost } = useListenRoom()
+  const isGuestLocked = isInRoom && !isHost
   const isPremium = useIsPremium()
   const { isOpen: modalOpen, config: modalConfig, openModal, closeModal } = usePremiumModal()
   const isCurrent = currentSong?._id === song._id
   const [hovered, setHovered] = useState(false)
 
   const handlePlay = () => {
+    // Block playback if user is a guest in a listen room session
+    if (isGuestLocked) {
+      toast('🎵 Host controls playback in this session', { icon: <Radio size={14} /> })
+      return
+    }
     if (locked) {
       openModal(
         'Full Playlist Access',
@@ -79,9 +88,12 @@ export function SongRow({ song, index, queue, showAlbum = false, onAddToPlaylist
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        className={
+          showAlbum
+            ? "grid grid-cols-[40px_1fr_32px] sm:grid-cols-[40px_1fr_80px_32px_32px] md:grid-cols-[40px_1fr_1fr_80px_60px_32px_32px]"
+            : "grid grid-cols-[40px_1fr_32px] sm:grid-cols-[40px_1fr_80px_60px_32px_32px]"
+        }
         style={{
-          display: 'grid',
-          gridTemplateColumns: showAlbum ? '40px 1fr 1fr 80px 60px 32px 32px' : '40px 1fr 80px 60px 32px 32px',
           alignItems: 'center',
           gap: 12,
           padding: '6px 12px',
@@ -160,23 +172,23 @@ export function SongRow({ song, index, queue, showAlbum = false, onAddToPlaylist
 
         {/* Album */}
         {showAlbum && (
-          <p style={{ fontSize: 13, color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <p className="hidden md:block" style={{ fontSize: 13, color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {getAlbumName(song)}
           </p>
         )}
 
         {/* Duration */}
-        <p style={{ fontSize: 12, color: '#555', textAlign: 'right' }}>
+        <p className="hidden sm:block" style={{ fontSize: 12, color: '#555', textAlign: 'right' }}>
           {formatDuration(song.duration)}
         </p>
 
         {/* Favorite */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'center' }}>
+        <div className="hidden sm:flex" style={{ alignItems: 'center', gap: 2, justifyContent: 'center' }}>
           {!locked && <FavoriteButton song={song} size={14} />}
         </div>
 
         {/* Download (Premium only) */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="hidden md:flex" style={{ alignItems: 'center', justifyContent: 'center' }}>
           <button
             onClick={(e) => { e.stopPropagation(); handleDownload() }}
             title={isPremium ? 'Download song' : 'Download — Premium only'}

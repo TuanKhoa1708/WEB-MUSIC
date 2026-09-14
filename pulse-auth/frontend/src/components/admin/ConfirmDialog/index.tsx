@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 
+import React from 'react'
+
 interface ConfirmDialogProps {
   open: boolean
   title: string
-  description: string
+  description: string | React.ReactNode
   confirmLabel?: string
   cancelLabel?: string
   variant?: 'danger' | 'warning' | 'primary'
@@ -62,8 +64,8 @@ export function ConfirmDialog({
               background: '#161616',
               border: `1px solid ${accentColor}22`,
               borderRadius: 18,
-              padding: '32px',
-              width: '100%',
+              padding: '28px 24px',
+              width: 'calc(100vw - 32px)',
               maxWidth: 420,
               boxShadow: `0 32px 64px rgba(0,0,0,0.6), 0 0 0 1px ${accentColor}11`,
             }}
@@ -105,7 +107,7 @@ export function ConfirmDialog({
             </p>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <button
                 onClick={onCancel}
                 disabled={isLoading}

@@ -248,13 +248,10 @@ export const updateArtist = async (req, res) => {
 
 
 // ===========================
-// DELETE ARTIST
+// DELETE ARTIST (with cascade: songs + role reset)
 // ===========================
 export const deleteArtist = async (req, res) => {
     try {
-        // ===========================
-        // VALIDATE OBJECT ID
-        // ===========================
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
             return res.status(400).json({
                 success: false,
@@ -262,9 +259,7 @@ export const deleteArtist = async (req, res) => {
             });
         }
 
-        const artist = await Artist.findByIdAndDelete(
-            req.params.id
-        );
+        const artist = await Artist.findById(req.params.id);
 
         if (!artist) {
             return res.status(404).json({
@@ -273,9 +268,21 @@ export const deleteArtist = async (req, res) => {
             });
         }
 
+        // 1. Delete all songs owned by this artist
+        const deletedSongs = await Song.deleteMany({ artistId: artist._id });
+
+        // 2. Reset the linked User's role back to 'user'
+        if (artist.userId) {
+            await User.findByIdAndUpdate(artist.userId, { role: "user" });
+        }
+
+        // 3. Delete the Artist record itself
+        await Artist.findByIdAndDelete(req.params.id);
+
         return res.json({
             success: true,
-            message: "Artist deleted successfully.",
+            message: "Artist removed. Role reset to user and all songs deleted.",
+            deletedSongsCount: deletedSongs.deletedCount,
         });
     } catch (error) {
         return res.status(500).json({

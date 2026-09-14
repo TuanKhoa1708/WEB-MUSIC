@@ -55,6 +55,7 @@ export function useApproveArtistRequest() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['artist-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['artists'] });
     },
   });
 }
@@ -69,6 +70,21 @@ export function useRejectArtistRequest() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['artist-requests'] });
+    },
+  });
+}
+
+export function useApproveRevokeRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await axiosInstance.put(`/artist-requests/${id}/revoke-approve`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['artist-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['artists'] });
     },
   });
 }

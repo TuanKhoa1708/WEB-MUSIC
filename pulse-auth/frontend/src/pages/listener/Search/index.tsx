@@ -11,14 +11,7 @@ import { SkeletonCard, SkeletonRow } from '@/components/listener/SkeletonCard'
 import { EmptyState } from '@/components/listener/EmptyState'
 import { useSongs } from '@/hooks/listener/useSongs'
 
-// ─── Genre Chips ─────────────────────────────────────────────────────────────
-
 const GENRES = ['Pop', 'R&B', 'Hip-Hop', 'Electronic', 'Rock', 'Jazz', 'Classical', 'Indie', 'Lo-fi', 'K-Pop']
-
-const GRID_4: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }
-const GRID_6: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16 }
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -34,25 +27,32 @@ export function SearchPage() {
 
   const { songs, albums, artists, playlists, isLoading, hasResults } = useSearch(debouncedQuery)
 
-  // Suggested genres (no query)
   const { data: genreSongs } = useSongs({ limit: 4 })
   const allSongs = songs.data?.data ?? []
 
   return (
-    <div style={{ padding: '32px 32px 0', maxWidth: 1400, margin: '0 auto' }}>
+    <div style={{ padding: "clamp(16px, 3vw, 28px)", minHeight: "100%" }}>
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 900, color: '#fff', margin: '0 0 16px', letterSpacing: '-0.03em' }}>
-          Search
-        </h1>
+      <div className="mb-8 md:mb-9">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ color: '#3FD6FF' }}>
+            <SearchIcon size={32} />
+          </div>
+          <h1
+            className="text-2xl md:text-3xl lg:text-[32px]"
+            style={{ fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.04em' }}
+          >
+            Search
+          </h1>
+        </div>
       </div>
 
       {/* No query — genre browse */}
       {!debouncedQuery && (
         <>
-          <section style={{ marginBottom: 40 }}>
+          <section className="mb-8 md:mb-10">
             <SectionHeader title="Browse by Genre" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
               {GENRES.map((genre, i) => (
                 <GenreChip
                   key={genre}
@@ -65,9 +65,9 @@ export function SearchPage() {
           </section>
 
           {genreSongs?.data && genreSongs.data.length > 0 && (
-            <section style={{ marginBottom: 40 }}>
+            <section className="mb-8 md:mb-10">
               <SectionHeader title="Trending Now" />
-              <div style={{ background: '#0d0d0d', borderRadius: 14, border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+              <div className="bg-[#0d0d0d] rounded-xl border border-white/5 overflow-hidden">
                 {genreSongs.data.map((song, i) => (
                   <SongRow key={song._id} song={song} index={i} queue={genreSongs.data} />
                 ))}
@@ -99,9 +99,9 @@ export function SearchPage() {
         <>
           {/* Songs */}
           {allSongs.length > 0 && (
-            <section style={{ marginBottom: 40 }}>
+            <section className="mb-8 md:mb-10">
               <SectionHeader title="Songs" subtitle={`${songs.data?.total ?? 0} results`} />
-              <div style={{ background: '#0d0d0d', borderRadius: 14, border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+              <div className="bg-[#0d0d0d] rounded-xl border border-white/5 overflow-hidden">
                 {allSongs.map((song, i) => (
                   <SongRow key={song._id} song={song} index={i} queue={allSongs} showAlbum />
                 ))}
@@ -111,9 +111,9 @@ export function SearchPage() {
 
           {/* Artists */}
           {(artists.data?.data?.length ?? 0) > 0 && (
-            <section style={{ marginBottom: 40 }}>
+            <section className="mb-8 md:mb-10">
               <SectionHeader title="Artists" />
-              <div style={GRID_6}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {artists.data!.data.map((artist, i) => (
                   <ArtistCard key={artist._id} artist={artist} delay={i * 0.04} />
                 ))}
@@ -123,9 +123,9 @@ export function SearchPage() {
 
           {/* Albums */}
           {(albums.data?.data?.length ?? 0) > 0 && (
-            <section style={{ marginBottom: 40 }}>
+            <section className="mb-8 md:mb-10">
               <SectionHeader title="Albums" />
-              <div style={GRID_4}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
                 {albums.data!.data.map((album, i) => (
                   <AlbumCard key={album._id} album={album} delay={i * 0.04} />
                 ))}
@@ -135,9 +135,9 @@ export function SearchPage() {
 
           {/* Playlists */}
           {(playlists.data?.data?.length ?? 0) > 0 && (
-            <section style={{ marginBottom: 40 }}>
+            <section className="mb-8 md:mb-10">
               <SectionHeader title="Playlists" />
-              <div style={GRID_4}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
                 {playlists.data!.data.map((pl, i) => (
                   <PlaylistCard key={pl._id} playlist={pl} delay={i * 0.04} />
                 ))}
@@ -149,8 +149,6 @@ export function SearchPage() {
     </div>
   )
 }
-
-// ─── Genre Chip ──────────────────────────────────────────────────────────────
 
 const GENRE_COLORS = [
   ['#1a3a1a', '#3FD6FF'],
@@ -171,7 +169,7 @@ function GenreChip({ genre, index, onClick }: { genre: string; index: number; on
     <div
       onClick={onClick}
       style={{
-        height: 72,
+        height: 88,
         borderRadius: 12,
         background: bg,
         border: `1px solid ${accent}22`,
@@ -198,19 +196,17 @@ function GenreChip({ genre, index, onClick }: { genre: string; index: number; on
   )
 }
 
-// ─── Skeleton sections ────────────────────────────────────────────────────────
-
 function SkeletonSection({ rows, cols }: { rows?: number; cols?: number }) {
   return (
-    <section style={{ marginBottom: 36 }}>
-      <div style={{ width: 80, height: 14, borderRadius: 4, background: '#1e1e1e', marginBottom: 16 }} />
+    <section className="mb-8">
+      <div className="w-20 h-3.5 rounded bg-[#1e1e1e] mb-4" />
       {rows && (
-        <div style={{ background: '#0d0d0d', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="bg-[#0d0d0d] rounded-xl overflow-hidden border border-white/5">
           {Array.from({ length: rows }).map((_, i) => <SkeletonRow key={i} />)}
         </div>
       )}
       {cols && (
-        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 16 }}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {Array.from({ length: cols }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
       )}

@@ -4,7 +4,7 @@ import type { ApiErrorResponse } from '@/types/auth'
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL as string,
-  timeout: 10_000,
+  timeout: 60_000, // 60s — allow for Render cold starts and large file uploads
   headers: {
     'Content-Type': 'application/json',
   },

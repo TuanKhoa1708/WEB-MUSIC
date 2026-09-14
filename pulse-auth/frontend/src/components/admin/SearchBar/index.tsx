@@ -12,7 +12,14 @@ export function SearchBar({ value, onChange, placeholder = 'Search...' }: Search
 
   return (
     <div
-      style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        flex: '1 1 180px',
+        minWidth: 140,
+        maxWidth: 320,
+      }}
     >
       <Search
         size={14}
@@ -21,6 +28,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search...' }: Search
           left: 12,
           color: '#444',
           pointerEvents: 'none',
+          flexShrink: 0,
         }}
       />
       <input
@@ -31,6 +39,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search...' }: Search
         placeholder={placeholder}
         style={{
           height: 38,
+          width: '100%',
           paddingLeft: 36,
           paddingRight: value ? 36 : 14,
           paddingTop: 0,
@@ -41,18 +50,17 @@ export function SearchBar({ value, onChange, placeholder = 'Search...' }: Search
           color: '#fff',
           fontSize: 13,
           outline: 'none',
-          width: 240,
-          transition: 'border-color 0.2s, box-shadow 0.2s, width 0.2s',
+          transition: 'border-color 0.2s, box-shadow 0.2s',
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+          boxSizing: 'border-box',
         }}
         onFocus={(e) => {
           (e.target as HTMLInputElement).style.borderColor = 'rgba(63,214,255,0.35)'
           ;(e.target as HTMLInputElement).style.boxShadow = '0 0 0 3px rgba(63,214,255,0.07)'
-          ;(e.target as HTMLInputElement).style.width = '280px'
         }}
         onBlur={(e) => {
           (e.target as HTMLInputElement).style.borderColor = 'rgba(255,255,255,0.07)'
           ;(e.target as HTMLInputElement).style.boxShadow = 'none'
-          ;(e.target as HTMLInputElement).style.width = '240px'
         }}
       />
       {value && (

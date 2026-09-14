@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -7,10 +7,9 @@ import {
   Library,
   Heart,
   Clock,
-  ChevronLeft,
-  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   Disc3,
-  Plus,
   Mic2,
   Crown,
   Radio,
@@ -20,7 +19,19 @@ import { PremiumBadge } from '@/components/premium/PremiumBadge'
 import { useIsPremium } from '@/hooks/listener/useSubscription'
 import { useListenRoom } from '@/contexts/ListenRoomContext'
 
-// ─── Nav item ─────────────────────────────────────────────────────────────────
+const NAV_LINK_BASE: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  padding: '10px 14px',
+  borderRadius: 10,
+  fontSize: 14,
+  fontWeight: 500,
+  color: '#666',
+  textDecoration: 'none',
+  transition: 'all 0.2s',
+  cursor: 'pointer',
+}
 
 interface NavItem {
   to: string
@@ -44,35 +55,30 @@ const accountNav: NavItem[] = [
   { to: '/listener/premium', icon: <Crown size={18} />, label: 'Go Premium' },
 ]
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const NAV_LINK_BASE: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  padding: '10px 14px',
-  borderRadius: 10,
-  fontSize: 14,
-  fontWeight: 500,
-  color: '#666',
-  textDecoration: 'none',
-  transition: 'all 0.2s',
-  cursor: 'pointer',
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export function ListenerSidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const { user } = useAuth()
-  const navigate = useNavigate()
   const isPremium = useIsPremium()
   const { isInRoom } = useListenRoom()
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setCollapsed(true)
+      } else {
+        setCollapsed(false)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <motion.div
       animate={{ width: collapsed ? 68 : 240 }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative"
       style={{
         height: '100vh',
         background: '#0a0a0a',
@@ -80,9 +86,10 @@ export function ListenerSidebar() {
         display: 'flex',
         flexDirection: 'column',
         flexShrink: 0,
-        overflow: 'hidden',
+        overflow: 'visible',
         position: 'sticky',
         top: 0,
+        zIndex: 40,
       }}
     >
       {/* Logo */}
@@ -94,70 +101,71 @@ export function ListenerSidebar() {
             exit={{ opacity: 0 }}
             style={{ display: 'flex', alignItems: 'center', gap: 10 }}
           >
-            <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #3FD6FF, #2094ff)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #3FD6FF, #2094ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Disc3 size={18} color="#000" />
             </div>
-            <span style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em' }}>
+            <span style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', textShadow: '0 0 16px rgba(63,214,255,0.4)' }}>
               Pulse
             </span>
           </motion.div>
         )}
         {collapsed && (
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #3FD6FF, #2094ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+          <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #3FD6FF, #2094ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', flexShrink: 0 }}>
             <Disc3 size={18} color="#000" />
           </div>
         )}
       </div>
 
-      {/* Collapse toggle */}
+      {/* Collapse toggle (Fix hiển thị cho Mobile/Tablet) */}
       <button
         onClick={() => setCollapsed((c) => !c)}
+        className="opacity-100 lg:opacity-0 group-hover:opacity-100 transition-all duration-300"
         style={{
           position: 'absolute',
-          top: 22,
-          right: collapsed ? -12 : -12,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          right: -12,
           width: 24,
-          height: 24,
-          borderRadius: '50%',
-          background: '#1e1e1e',
+          height: 48,
+          borderRadius: 12,
+          background: '#1a1a1a',
           border: '1px solid rgba(255,255,255,0.1)',
-          color: '#666',
+          boxShadow: '4px 0 12px rgba(0,0,0,0.5)',
+          color: '#888',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 10,
+          zIndex: 50,
           flexShrink: 0,
         }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = '#3FD6FF'
+          e.currentTarget.style.background = '#222'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = '#888'
+          e.currentTarget.style.background = '#1a1a1a'
+        }}
       >
-        {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+        {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
       </button>
 
       <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: collapsed ? '8px 10px' : '8px 12px' }}>
-        {/* Main Navigation */}
         <NavSection label="Menu" collapsed={collapsed}>
-          {mainNav.map((item) => (
-            <SidebarLink key={item.to} item={item} collapsed={collapsed} />
-          ))}
+          {mainNav.map((item) => <SidebarLink key={item.to} item={item} collapsed={collapsed} />)}
         </NavSection>
 
-        {/* Library */}
         <NavSection label="Library" collapsed={collapsed}>
-          {libraryNav.map((item) => (
-            <SidebarLink key={item.to} item={item} collapsed={collapsed} />
-          ))}
+          {libraryNav.map((item) => <SidebarLink key={item.to} item={item} collapsed={collapsed} />)}
         </NavSection>
 
-        {/* Account Settings */}
         {user?.role === 'user' && (
           <NavSection label="Account" collapsed={collapsed}>
-            {accountNav.map((item) => (
-              <SidebarLink key={item.to} item={item} collapsed={collapsed} />
-            ))}
+            {accountNav.map((item) => <SidebarLink key={item.to} item={item} collapsed={collapsed} />)}
           </NavSection>
         )}
 
-        {/* Join Session */}
         <NavSection label="Listen Together" collapsed={collapsed}>
           <NavLink
             to="/listener/room/join"
@@ -176,12 +184,7 @@ export function ListenerSidebar() {
             <span style={{ flexShrink: 0, position: 'relative' }}>
               <Radio size={18} />
               {isInRoom && (
-                <span style={{
-                  position: 'absolute', top: -2, right: -2,
-                  width: 6, height: 6, borderRadius: '50%',
-                  background: '#4ade80',
-                  boxShadow: '0 0 6px rgba(74,222,128,0.7)',
-                }} />
+                <span style={{ position: 'absolute', top: -2, right: -2, width: 6, height: 6, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.7)' }} />
               )}
             </span>
             {!collapsed && (
@@ -223,8 +226,6 @@ export function ListenerSidebar() {
     </motion.div>
   )
 }
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function NavSection({ label, collapsed, children }: { label: string; collapsed: boolean; children: React.ReactNode }) {
   return (

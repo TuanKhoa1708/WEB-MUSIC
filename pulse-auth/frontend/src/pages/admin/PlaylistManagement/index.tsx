@@ -4,6 +4,7 @@ import {
   ListMusic,
   Trash2,
   Search,
+  Eye,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { 
@@ -12,6 +13,7 @@ import {
 } from '@/hooks/artist/usePlaylists'
 import { Pagination } from '@/components/admin/Pagination'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
+import { PlaylistDetailModal } from '@/components/admin/PlaylistDetailModal'
 import type { Playlist } from '@/types/playlist.types'
 
 const PAGE_SIZE = 12
@@ -54,9 +56,11 @@ function PlaylistEmptyState({ isSearch }: { isSearch?: boolean }) {
 function PlaylistCard({
   playlist,
   onDelete,
+  onView,
 }: {
   playlist: Playlist
   onDelete: (p: Playlist) => void
+  onView: (p: Playlist) => void
 }) {
   const artistName = (typeof playlist.artistId === 'object' && playlist.artistId) 
     ? playlist.artistId.stageName || 'Unknown Artist' 
@@ -149,6 +153,27 @@ function PlaylistCard({
           }}
         >
           <button
+            onClick={(e) => { e.preventDefault(); onView(playlist); }}
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 8,
+              background: 'rgba(0,0,0,0.6)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(63,214,255,0.8)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.6)'}
+          >
+            <Eye size={14} />
+          </button>
+          <button
             onClick={(e) => { e.preventDefault(); onDelete(playlist); }}
             style={{
               width: 32,
@@ -215,6 +240,7 @@ export function PlaylistManagementPage() {
   const [page, setPage] = useState(1)
 
   const [deleteTarget, setDeleteTarget] = useState<Playlist | null>(null)
+  const [detailTarget, setDetailTarget] = useState<Playlist | null>(null)
 
   // Fetch all playlists (admin view)
   const { data: playlistsData, isLoading } = usePlaylists({ keyword, page, limit: PAGE_SIZE })
@@ -237,7 +263,7 @@ export function PlaylistManagementPage() {
   }
 
   return (
-    <div style={{ padding: '32px 40px', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(16px, 4vw, 40px) clamp(16px, 3vw, 40px)', minHeight: '100%' }}>
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -271,7 +297,7 @@ export function PlaylistManagementPage() {
           <div>
             <h1
               style={{
-                fontSize: 26,
+                fontSize: 22,
                 fontWeight: 800,
                 color: '#fff',
                 letterSpacing: '-0.03em',
@@ -286,8 +312,8 @@ export function PlaylistManagementPage() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <form onSubmit={handleSearchSubmit} style={{ position: 'relative' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', flex: 1, justifyContent: 'flex-end' }}>
+          <form onSubmit={handleSearchSubmit} style={{ position: 'relative', flex: '1 1 200px', maxWidth: 280 }}>
             <Search size={16} style={{ position: 'absolute', left: 14, top: 12, color: '#555' }} />
             <input
               type="text"
@@ -296,7 +322,7 @@ export function PlaylistManagementPage() {
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
                 height: 40,
-                width: 240,
+                width: '100%',
                 paddingLeft: 40,
                 paddingRight: 16,
                 borderRadius: 12,
@@ -305,6 +331,8 @@ export function PlaylistManagementPage() {
                 color: '#fff',
                 fontSize: 14,
                 outline: 'none',
+                boxSizing: 'border-box',
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               }}
             />
           </form>
@@ -340,6 +368,7 @@ export function PlaylistManagementPage() {
               key={playlist._id}
               playlist={playlist}
               onDelete={setDeleteTarget}
+              onView={setDetailTarget}
             />
           ))
         ) : (
@@ -369,6 +398,12 @@ export function PlaylistManagementPage() {
         isLoading={isDeleting}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
+      />
+
+      <PlaylistDetailModal
+        playlist={detailTarget}
+        isOpen={!!detailTarget}
+        onClose={() => setDetailTarget(null)}
       />
     </div>
   )

@@ -111,7 +111,9 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
             exit={{ opacity: 0, scale: 0.96, y: 16, transition: { duration: 0.18 } }}
             style={{
               position: 'relative',
-              width: '100%', maxWidth: 520,
+              width: 'calc(100vw - 32px)',
+              maxWidth: 520,
+              maxHeight: 'calc(100vh - 32px)',
               background: '#111111',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: 20,
@@ -164,7 +166,7 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
             </div>
 
             {/* Body */}
-            <div style={{ padding: '20px 24px', overflowY: 'auto', maxHeight: '65vh' }}>
+            <div style={{ padding: '20px 20px', overflowY: 'auto', flex: 1 }}>
               <form id="artist-form" onSubmit={handleSubmit(onFormSubmit)}>
 
                 {/* Avatar Preview */}
@@ -223,7 +225,7 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
                     />
                   </FieldWrapper>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div className="artist-modal-url-grid">
                     {/* Avatar URL */}
                     <FieldWrapper label="Avatar URL" icon={<Image size={13} />} error={errors.avatarUrl?.message}>
                       <input
@@ -248,6 +250,7 @@ export function ArtistModal({ isOpen, onClose, artist, onSubmit, isLoading }: Ar
                       />
                     </FieldWrapper>
                   </div>
+                  <style>{`.artist-modal-url-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } @media (max-width: 480px) { .artist-modal-url-grid { grid-template-columns: 1fr; } }`}</style>
 
                   {/* Social Links */}
                   <div style={{ marginTop: 8 }}>

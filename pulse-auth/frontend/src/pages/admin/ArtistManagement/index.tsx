@@ -2,9 +2,7 @@ import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import {
   Mic2,
-  Plus,
   Eye,
-  Edit2,
   Trash2,
   Radio,
 } from 'lucide-react'
@@ -12,8 +10,6 @@ import {
   useArtists, 
   useArtistStats, 
   useDeleteArtist,
-  useCreateArtist,
-  useUpdateArtist
 } from '@/hooks/admin/useArtists'
 import { StatCard } from '@/components/admin/StatCard'
 import { DataTable } from '@/components/admin/DataTable'
@@ -21,8 +17,8 @@ import type { Column } from '@/components/admin/DataTable'
 import { SearchBar } from '@/components/admin/SearchBar'
 import { Pagination } from '@/components/admin/Pagination'
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog'
-import { ArtistModal } from '@/components/admin/ArtistModal'
-import type { Artist, ArtistQueryParams, CreateArtistInput, UpdateArtistInput } from '@/types/artist.types'
+import { ArtistDetailModal } from '@/components/admin/ArtistDetailModal'
+import type { Artist, ArtistQueryParams } from '@/types/artist.types'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -102,10 +98,11 @@ export function ArtistManagementPage() {
   const [keyword, setKeyword]       = useState('')
   const [page, setPage]           = useState(1)
 
-  // ── Delete & Modal dialog state ────────────────────────────────
+  // ── Delete dialog state ──────────────────────────────────────────
   const [deleteTarget, setDeleteTarget] = useState<Artist | null>(null)
-  const [isModalOpen, setIsModalOpen]   = useState(false)
-  const [editTarget, setEditTarget]     = useState<Artist | null>(null)
+  
+  // ── Detail modal state ──────────────────────────────────────────
+  const [detailTarget, setDetailTarget] = useState<Artist | null>(null)
 
   const queryParams: ArtistQueryParams = {
     keyword,
@@ -117,8 +114,6 @@ export function ArtistManagementPage() {
   const { data, isLoading } = useArtists(queryParams)
   const { data: stats }     = useArtistStats()
   const { mutateAsync: deleteArtist, isPending: isDeleting } = useDeleteArtist()
-  const { mutateAsync: createArtist, isPending: isCreating } = useCreateArtist()
-  const { mutateAsync: updateArtist, isPending: isUpdating } = useUpdateArtist()
 
   // ── Handlers ───────────────────────────────────────────
   const handleSearchChange = useCallback((v: string) => {
@@ -135,14 +130,6 @@ export function ArtistManagementPage() {
     if (!deleteTarget) return
     await deleteArtist(deleteTarget._id)
     setDeleteTarget(null)
-  }
-
-  const handleModalSubmit = async (formData: CreateArtistInput | UpdateArtistInput) => {
-    if (editTarget) {
-      await updateArtist(formData as UpdateArtistInput)
-    } else {
-      await createArtist(formData as CreateArtistInput)
-    }
   }
 
   const hasFilters = !!keyword
@@ -208,16 +195,12 @@ export function ArtistManagementPage() {
       header: 'Actions',
       align: 'right',
       render: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-          <ActionBtn icon={<Eye size={13} />}   title="View"   color="#3FD6FF" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
           <ActionBtn 
-            icon={<Edit2 size={13} />} 
-            title="Edit"   
-            color="#F7B500" 
-            onClick={() => {
-              setEditTarget(row)
-              setIsModalOpen(true)
-            }}
+            icon={<Eye size={13} />} 
+            title="View" 
+            color="#3FD6FF" 
+            onClick={() => setDetailTarget(row)}
           />
           <ActionBtn
             icon={<Trash2 size={13} />}
@@ -232,7 +215,7 @@ export function ArtistManagementPage() {
 
   // ─────────────────────────────────────────────────────
   return (
-    <div style={{ padding: '28px', minHeight: '100%' }}>
+    <div style={{ padding: 'clamp(20px, 4vw, 36px)', minHeight: '100%' }}>
 
       {/* ── Page header ──────────────────────────────── */}
       <motion.div
@@ -243,16 +226,17 @@ export function ArtistManagementPage() {
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
-          marginBottom: 28,
-          gap: 16,
+          marginBottom: 32,
+          gap: 20,
+          flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: 13,
+              width: 48,
+              height: 48,
+              borderRadius: 14,
               background: 'rgba(63,214,255,0.08)',
               border: '1px solid rgba(63,214,255,0.18)',
               display: 'flex',
@@ -276,43 +260,13 @@ export function ArtistManagementPage() {
             >
               Artist Management
             </h1>
-            <p style={{ fontSize: 13, color: '#444', marginTop: 4 }}>
+             <p style={{ fontSize: 13, color: '#444', marginTop: 6 }}>
               Manage artists registered on Pulse
             </p>
           </div>
         </div>
 
-        {/* Add Artist button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            height: 42,
-            paddingLeft: 18,
-            paddingRight: 18,
-            borderRadius: 11,
-            border: 'none',
-            background: 'linear-gradient(135deg, #3FD6FF, #2094ff)',
-            color: '#000',
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(63,214,255,0.3)',
-            flexShrink: 0,
-            letterSpacing: '-0.01em',
-          }}
-          onClick={() => {
-            setEditTarget(null)
-            setIsModalOpen(true)
-          }}
-          id="btn-add-artist"
-        >
-          <Plus size={16} strokeWidth={2.5} />
-          Add Artist
-        </motion.button>
+
       </motion.div>
 
       {/* ── Stat cards ───────────────────────────────── */}
@@ -320,8 +274,8 @@ export function ArtistManagementPage() {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 14,
-          marginBottom: 24,
+          gap: 18,
+          marginBottom: 28,
         }}
       >
         <StatCard
@@ -352,8 +306,8 @@ export function ArtistManagementPage() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
-            padding: '16px 20px',
+            gap: 12,
+            padding: '18px 24px',
             borderBottom: '1px solid rgba(255,255,255,0.04)',
             flexWrap: 'wrap',
           }}
@@ -451,14 +405,12 @@ export function ArtistManagementPage() {
         onCancel={() => setDeleteTarget(null)}
       />
 
-      {/* ── Add / Edit Modal ───────────────────────────── */}
-      <ArtistModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        artist={editTarget}
-        onSubmit={handleModalSubmit}
-        isLoading={isCreating || isUpdating}
+      <ArtistDetailModal
+        artist={detailTarget}
+        isOpen={!!detailTarget}
+        onClose={() => setDetailTarget(null)}
       />
+
     </div>
   )
 }
@@ -481,8 +433,8 @@ function ActionBtn({
       title={title}
       onClick={onClick}
       style={{
-        width: 30,
-        height: 30,
+        width: 36,
+        height: 36,
         borderRadius: 8,
         border: `1px solid transparent`,
         background: 'transparent',

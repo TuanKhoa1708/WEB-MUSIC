@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 export function BecomeArtistPage() {
   const navigate = useNavigate();
-  const { data: request, isLoading } = useMyArtistRequest();
+  const { data: request, isLoading, isError } = useMyArtistRequest();
   const { mutateAsync: apply, isPending } = useApplyArtist();
 
   const [formData, setFormData] = useState({
@@ -45,8 +45,11 @@ export function BecomeArtistPage() {
     return <div style={{ color: 'white', padding: 40, textAlign: 'center' }}>Loading...</div>;
   }
 
-  // If user already has a pending or approved request
-  if (request) {
+  // Only show status screen if we have a valid pending/approved/rejected request
+  const validStatuses = ['pending', 'approved', 'rejected'];
+  const hasValidRequest = !isError && request && validStatuses.includes(request.status);
+
+  if (hasValidRequest) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#090909', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
         <motion.div 

@@ -16,13 +16,17 @@ import listenerRoutes from "./routes/listener.routes.js";
 import searchRoutes from "./routes/search.routes.js";
 import subscriptionRoutes from "./routes/subscription.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import premiumRoutes from "./routes/premium.routes.js";
 import { seedDefaultPlan } from "./models/Subscription.js";
 const app = express();
 
 const allowedOrigins = [
     'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
     'http://localhost:4173',
-    process.env.FRONTEND_URL,           // e.g. https://web-music-xxx.vercel.app
+    'http://localhost:3000',
+    process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({
@@ -86,8 +90,13 @@ app.use("/api/artist-requests", artistRequestRoutes);
 
 // Listener Routes
 app.use("/api/listeners", listenerRoutes);
+
 // Search Routes
 app.use("/api/search", searchRoutes);
+
+// Premium Routes
+app.use("/api/premium", premiumRoutes);
+
 // Subscription Routes
 app.use("/api/subscriptions", subscriptionRoutes);
 

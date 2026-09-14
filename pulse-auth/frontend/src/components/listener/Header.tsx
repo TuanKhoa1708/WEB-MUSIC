@@ -54,23 +54,11 @@ export function ListenerHeader() {
   }, [])
 
   return (
-    <header style={{
-      height: 64,
-      background: 'rgba(9,9,9,0.85)',
-      backdropFilter: 'blur(20px)',
-      borderBottom: '1px solid rgba(255,255,255,0.05)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 16,
-      padding: '0 24px',
-      position: 'sticky',
-      top: 0,
-      zIndex: 20,
-    }}>
+    <header className="flex items-center gap-3 sm:gap-4 px-4 md:px-6 sticky top-0 z-20 h-16 bg-[#090909]/85 backdrop-blur-xl border-b border-white/5">
       {/* Search bar */}
       <form
         onSubmit={(e) => e.preventDefault()}
-        style={{ flex: 1, maxWidth: 480, position: 'relative' }}
+        className="flex-1 max-w-[480px] relative min-w-[140px]"
       >
         <Search
           size={15}
@@ -81,22 +69,32 @@ export function ListenerHeader() {
           placeholder="Search songs, artists, albums..."
           value={searchQuery}
           onChange={handleSearchChange}
-          onFocus={() => { if (location.pathname !== '/listener/search') navigate('/listener/search') }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(63,214,255,0.5)'
+            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(63,214,255,0.08)'
+            if (location.pathname !== '/listener/search') navigate('/listener/search')
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
+          className="search-input"
           style={{
             width: '100%',
-            height: 38,
+            height: 40,
             paddingLeft: 40,
             paddingRight: searchQuery ? 36 : 16,
             borderRadius: 20,
-            background: '#1a1a1a',
-            border: '1px solid rgba(255,255,255,0.08)',
-            color: '#fff',
+            background: '#1e1e1e',
+            border: '1px solid rgba(255,255,255,0.10)',
+            color: '#ffffff',
             fontSize: 14,
             outline: 'none',
-            transition: 'border-color 0.2s',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+            caretColor: '#3FD6FF',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)')}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
+          onMouseEnter={(e) => { if (document.activeElement !== e.currentTarget) e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)' }}
+          onMouseLeave={(e) => { if (document.activeElement !== e.currentTarget) e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)' }}
         />
         {searchQuery && (
           <button
@@ -109,31 +107,21 @@ export function ListenerHeader() {
         )}
       </form>
 
-      <div style={{ flex: 1 }} />
+      <div className="hidden sm:block flex-1" />
 
       {/* Notifications */}
       {user && (
-        <div style={{ marginRight: 8, display: 'flex', alignItems: 'center' }}>
+        <div className="flex items-center mr-1 sm:mr-2">
           <NotificationBell />
         </div>
       )}
 
       {/* User menu */}
       {user && (
-        <div style={{ position: 'relative' }} ref={menuRef}>
+        <div className="relative" ref={menuRef}>
           <button
             onClick={() => setShowUserMenu((p) => !p)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              background: 'none',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 20,
-              padding: '5px 12px 5px 5px',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
+            className="flex items-center gap-1.5 sm:gap-2 bg-transparent border border-white/5 hover:border-[#3FD6FF]/30 rounded-full p-1 pr-2 sm:pr-3 cursor-pointer transition-all"
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(63,214,255,0.3)')}
             onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
           >
@@ -147,10 +135,12 @@ export function ListenerHeader() {
             }}>
               {user.isPremium ? <Crown size={13} /> : (user.fullName?.[0]?.toUpperCase() || '?')}
             </div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#ddd' }}>
+            <span className="hidden sm:block text-[13px] font-semibold text-[#ddd]">
               {user.fullName?.split(' ')[0]}
             </span>
-            <PremiumBadge isPremium={user.isPremium === true} compact />
+            <div className="hidden sm:block">
+              <PremiumBadge isPremium={user.isPremium === true} compact />
+            </div>
           </button>
 
           <AnimatePresence>

@@ -1,4 +1,5 @@
 import PlaylistSong from "../models/PlaylistSong.js";
+import User from "../models/User.js"; // Import model User để kiểm tra Premium
 
 // ===========================
 // ADD SONG TO PLAYLIST
@@ -29,7 +30,7 @@ export const addSongToPlaylist = async (req, res) => {
 };
 
 // ===========================
-// GET SONGS IN PLAYLIST
+// GET SONGS IN PLAYLIST (FREE TIER LIMIT APPLIED)
 // ===========================
 export const getPlaylistSongs = async (req, res) => {
     try {
@@ -39,9 +40,32 @@ export const getPlaylistSongs = async (req, res) => {
             .populate("songId")
             .sort({ order: 1, createdAt: 1 });
 
+        // 1. Kiểm tra trạng thái Premium của user (nếu có đăng nhập)
+        let isPremium = false;
+        if (req.user && req.user._id) {
+            const user = await User.findById(req.user._id);
+            if (user && user.isPremium) {
+                isPremium = true;
+            }
+        }
+
+        // 2. Xử lý giới hạn 4 bài cho tài khoản Free
+        const processedSongs = playlistSongs.map((item, index) => {
+            const psObj = item.toObject(); // Chuyển sang Object thuần để dễ can thiệp dữ liệu
+
+            // Nếu không phải Premium và là bài thứ 5 trở đi (index >= 4)
+            if (!isPremium && index >= 4) {
+                if (psObj.songId) {
+                    psObj.songId.audioUrl = ""; // Ẩn link nhạc
+                    psObj.songId.requiresPremium = true; // Báo cho FE biết bài này cần Premium
+                }
+            }
+            return psObj;
+        });
+
         return res.json({
             success: true,
-            data: playlistSongs,
+            data: processedSongs,
         });
     } catch (error) {
         return res.status(500).json({

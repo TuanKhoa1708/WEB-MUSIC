@@ -24,6 +24,7 @@ export interface AuthUser {
   isPremium?: boolean
   subscriptionPlan?: 'free' | 'premium'
   subscriptionExpiresAt?: string | null
+  artistId?: string
 }
 
 export interface LoginResponse {
