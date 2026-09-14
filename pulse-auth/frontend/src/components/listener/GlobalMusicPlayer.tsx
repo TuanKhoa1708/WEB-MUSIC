@@ -351,29 +351,10 @@ export function GlobalMusicPlayer() {
           </div>
         </div>
 
-        {/* Right: Volume + queue */}
-        <div className="flex items-center gap-1.5 md:gap-2 justify-end min-w-0">
-          {/* Audio Quality Badge */}
-          <button
-            onClick={() => {
-              if (!isPremium) {
-                openModal('HD Audio Quality', 'Premium members enjoy crystal-clear audio. Upgrade to unlock 320kbps high-definition streaming.')
-              }
-            }}
-            title={isPremium ? 'HD Audio — 320kbps' : 'Standard Audio — Upgrade for HD'}
-            className={`hidden sm:flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-extrabold border transition-all ${isPremium
-                ? 'bg-[#FFB900]/10 border-[#FFB900]/30 text-[#FFB900] cursor-default'
-                : 'bg-white/5 border-white/10 text-[#555] cursor-pointer'
-              }`}
-          >
-            {isPremium ? (
-              <><Headphones size={10} /> HD</>
-            ) : (
-              <><Lock size={9} /> STD</>
-            )}
-          </button>
+        {/* Right: Actions */}
+        <div className="flex items-center gap-1 sm:gap-1.5 justify-end">
 
-          {/* Share Session Button */}
+          {/* Share Session Button (Premium only) — always visible on all screen sizes */}
           {isPremium && (
             <button
               onClick={() => {
@@ -386,19 +367,22 @@ export function GlobalMusicPlayer() {
               }}
               disabled={isConnecting}
               title={isInRoom ? `Live session: ${roomCode}` : 'Share this session'}
-              className={`hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all ${isInRoom
+              className={`flex items-center gap-1 px-2 py-1 sm:px-2.5 rounded-lg text-[10px] sm:text-[11px] font-bold border transition-all flex-shrink-0 ${isInRoom
                   ? 'bg-gradient-to-r from-[#3FD6FF]/20 to-[#2094ff]/10 border-[#3FD6FF]/40 text-[#3FD6FF]'
                   : 'bg-white/5 border-white/10 text-[#666] hover:text-white hover:border-white/20'
                 }`}
             >
               {isInRoom ? (
                 <>
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#4ade80] shadow-[0_0_6px_rgba(74,222,128,0.7)]" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#4ade80] shadow-[0_0_6px_rgba(74,222,128,0.7)] flex-shrink-0" />
                   <Radio size={12} />
-                  LIVE
+                  <span className="hidden sm:inline">LIVE</span>
                 </>
               ) : (
-                <><Radio size={12} /> Share</>
+                <>
+                  <Radio size={12} />
+                  <span className="hidden sm:inline">Share</span>
+                </>
               )}
             </button>
           )}
