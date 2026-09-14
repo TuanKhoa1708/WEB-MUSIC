@@ -58,6 +58,14 @@ export function GlobalMusicPlayer() {
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false)
   const isGuestLocked = isInRoom && !isHost
 
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Ad banner tracking for free users
   const [showAdBanner, setShowAdBanner] = useState(false)
   const songCountRef = useRef(0)
@@ -273,10 +281,10 @@ export function GlobalMusicPlayer() {
           backdropFilter: 'blur(30px)',
           borderTop: '1px solid rgba(255,255,255,0.06)',
           display: 'grid',
-          gridTemplateColumns: '1fr 2fr 1fr',
+          gridTemplateColumns: isMobile ? '1fr auto' : '1fr 2fr 1fr',
           alignItems: 'center',
-          gap: 16,
-          padding: '0 24px',
+          gap: isMobile ? 8 : 16,
+          padding: isMobile ? '0 12px' : '0 24px',
           zIndex: 50,
         }}
       >
@@ -337,7 +345,8 @@ export function GlobalMusicPlayer() {
           </button>
         </div>
 
-        {/* Center: Controls + progress */}
+        {/* Center: Controls + progress (hidden on mobile) */}
+        {!isMobile && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
           {/* Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -443,36 +452,62 @@ export function GlobalMusicPlayer() {
             </span>
           </div>
         </div>
+        )}
 
-        {/* Right: Volume + queue */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-          {/* Audio Quality Badge */}
-          <button
-            onClick={() => {
-              if (!isPremium) {
-                openModal('HD Audio Quality', 'Premium members enjoy crystal-clear audio. Upgrade to unlock 320kbps high-definition streaming.')
-              }
-            }}
-            title={isPremium ? 'HD Audio — 320kbps' : 'Standard Audio — Upgrade for HD'}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 4,
-              padding: '3px 8px', borderRadius: 6,
-              background: isPremium ? 'rgba(255,185,0,0.1)' : 'rgba(255,255,255,0.05)',
-              border: `1px solid ${isPremium ? 'rgba(255,185,0,0.3)' : 'rgba(255,255,255,0.1)'}`,
-              color: isPremium ? '#FFB900' : '#555',
-              fontSize: 10, fontWeight: 800, letterSpacing: '0.04em',
-              cursor: isPremium ? 'default' : 'pointer',
-              transition: 'all 0.2s',
-            }}
-          >
-            {isPremium ? (
-              <><Headphones size={10} /> HD</>
-            ) : (
-              <><Lock size={9} /> STD</>
-            )}
-          </button>
+        {/* Right: Controls + queue (mobile-aware) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 4 : 8, justifyContent: 'flex-end' }}>
 
-          {/* Share Session Button (Premium only) */}
+          {/* Mobile: Play/Pause button inline */}
+          {isMobile && (
+            <button
+              onClick={isGuestLocked ? undefined : togglePlay}
+              disabled={isGuestLocked}
+              style={{
+                width: 36, height: 36,
+                borderRadius: '50%',
+                background: isGuestLocked ? '#555' : '#fff',
+                border: 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: isGuestLocked ? 'not-allowed' : 'pointer',
+                transition: 'transform 0.1s, background 0.2s',
+                color: '#000',
+                opacity: isGuestLocked ? 0.5 : 1,
+                flexShrink: 0,
+              }}
+            >
+              {isPlaying ? <Pause size={16} fill="#000" /> : <Play size={16} fill="#000" style={{ marginLeft: 2 }} />}
+            </button>
+          )}
+
+          {/* Audio Quality Badge — hidden on mobile */}
+          {!isMobile && (
+            <button
+              onClick={() => {
+                if (!isPremium) {
+                  openModal('HD Audio Quality', 'Premium members enjoy crystal-clear audio. Upgrade to unlock 320kbps high-definition streaming.')
+                }
+              }}
+              title={isPremium ? 'HD Audio — 320kbps' : 'Standard Audio — Upgrade for HD'}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                padding: '3px 8px', borderRadius: 6,
+                background: isPremium ? 'rgba(255,185,0,0.1)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${isPremium ? 'rgba(255,185,0,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                color: isPremium ? '#FFB900' : '#555',
+                fontSize: 10, fontWeight: 800, letterSpacing: '0.04em',
+                cursor: isPremium ? 'default' : 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              {isPremium ? (
+                <><Headphones size={10} /> HD</>
+              ) : (
+                <><Lock size={9} /> STD</>
+              )}
+            </button>
+          )}
+
+          {/* Share Session Button (Premium only) — always visible, compact on mobile */}
           {isPremium && (
             <button
               onClick={() => {
@@ -487,28 +522,30 @@ export function GlobalMusicPlayer() {
               title={isInRoom ? `Live session: ${roomCode}` : 'Share this session'}
               style={{
                 display: 'flex', alignItems: 'center', gap: 4,
-                padding: '4px 10px', borderRadius: 8,
+                padding: isMobile ? '4px 8px' : '4px 10px',
+                borderRadius: 8,
                 background: isInRoom
                   ? 'linear-gradient(135deg, rgba(63,214,255,0.2), rgba(32,148,255,0.12))'
                   : 'rgba(255,255,255,0.05)',
                 border: `1px solid ${isInRoom ? 'rgba(63,214,255,0.4)' : 'rgba(255,255,255,0.1)'}`,
                 color: isInRoom ? '#3FD6FF' : '#666',
-                fontSize: 11, fontWeight: 700, letterSpacing: '0.03em',
+                fontSize: isMobile ? 10 : 11, fontWeight: 700, letterSpacing: '0.03em',
                 cursor: isConnecting ? 'wait' : 'pointer',
                 transition: 'all 0.2s',
                 opacity: isConnecting ? 0.7 : 1,
+                flexShrink: 0,
               }}
               onMouseEnter={(e) => { if (!isInRoom) { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }}}
               onMouseLeave={(e) => { if (!isInRoom) { e.currentTarget.style.color = '#666'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}}
             >
               {isInRoom ? (
                 <>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.7)' }} />
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 6px rgba(74,222,128,0.7)', flexShrink: 0 }} />
                   <Radio size={12} />
-                  LIVE
+                  {!isMobile && 'LIVE'}
                 </>
               ) : (
-                <><Radio size={12} /> Share</>
+                <><Radio size={12} />{!isMobile && ' Share'}</>
               )}
             </button>
           )}
@@ -518,42 +555,46 @@ export function GlobalMusicPlayer() {
             <ListMusic size={16} />
           </ControlBtn>
 
-          {/* Mute */}
-          <button
-            onClick={toggleMute}
-            title={isMuted ? 'Unmute' : 'Mute'}
-            style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: 4, transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#666')}
-          >
-            {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
-          </button>
+          {/* Mute — hidden on mobile */}
+          {!isMobile && (
+            <button
+              onClick={toggleMute}
+              title={isMuted ? 'Unmute' : 'Mute'}
+              style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: 4, transition: 'color 0.2s' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#666')}
+            >
+              {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
+          )}
 
-          {/* Volume slider */}
-          <div
-            onClick={handleVolumeClick}
-            style={{
-              width: 80,
-              height: 4,
-              background: '#2a2a2a',
-              borderRadius: 4,
-              cursor: 'pointer',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.height = '6px')}
-            onMouseLeave={(e) => (e.currentTarget.style.height = '4px')}
-          >
-            <div style={{
-              position: 'absolute',
-              left: 0, top: 0,
-              height: '100%',
-              width: `${isMuted ? 0 : volume * 100}%`,
-              background: '#3FD6FF',
-              borderRadius: 4,
-              transition: 'width 0.05s',
-            }} />
-          </div>
+          {/* Volume slider — hidden on mobile */}
+          {!isMobile && (
+            <div
+              onClick={handleVolumeClick}
+              style={{
+                width: 80,
+                height: 4,
+                background: '#2a2a2a',
+                borderRadius: 4,
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.height = '6px')}
+              onMouseLeave={(e) => (e.currentTarget.style.height = '4px')}
+            >
+              <div style={{
+                position: 'absolute',
+                left: 0, top: 0,
+                height: '100%',
+                width: `${isMuted ? 0 : volume * 100}%`,
+                background: '#3FD6FF',
+                borderRadius: 4,
+                transition: 'width 0.05s',
+              }} />
+            </div>
+          )}
         </div>
       </motion.div>
     </>
